@@ -1,0 +1,6 @@
+node_modules
+*.log
+build*
+lib_d
+*.pro.user
+*.exp

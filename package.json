@@ -1,0 +1,31 @@
+{
+	"name": "node-deps-qmlui-raub",
+	"author": "Luis Blanco <raubtierxxx@gmail.com>",
+	"description": "A dependency for node-qml-raub.",
+	"version": "0.1.2",
+	"main": "index.js",
+	"keywords": [
+		"qt",
+		"qml",
+		"deps",
+		"dependency",
+		"lib",
+		"library",
+		"binary"
+	],
+	"maintainers": [
+		{
+			"name": "Luis Blanco",
+			"email": "raubtierxxx@gmail.com",
+			"skype": "rauber666"
+		}
+	],
+	"license" : "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/raub/node-deps-qmlui"
+	},
+	"dependencies": {
+		"node-deps-qt-qml-raub": "^0.1.2"
+	}
+}
