@@ -4,3 +4,5 @@ build*
 lib_d
 *.pro.user
 *.exp
+*.pdb
+*.ilk

@@ -67,8 +67,9 @@ QmlRenderer::QmlRenderer(const QString &cwdOwn, const QString &cwdLib, int wnd, 
 	if (!_qmlEngine->incubationController())
 		_qmlEngine->setIncubationController(_offscreenWindow->incubationController());
 	
-	_qmlEngine->addImportPath(cwdLib + "/" + PLATFORM_QT_DIR + "/qml");
-	_qmlEngine->addImportPath(_directoryPath);
+	_qmlEngine->addImportPath("qml");
+	_qmlEngine->addImportPath("plugins");
+	qDebug() << "IMP" << _qmlEngine->importPathList();
 	
 	_qmlEngine->rootContext()->setContextProperty("CWD", _directoryPath);
 	_qmlEngine->rootContext()->setContextProperty("cb", _cb);
@@ -257,7 +258,6 @@ void QmlRenderer::_customStatusUpdate(QQmlComponent::Status status) {
 		}
 	}
 	
-	
 	if( QQmlComponent::Ready != status ) {
 		_cb->call("use", result);
 		return;
@@ -316,7 +316,6 @@ void QmlRenderer::useQml(const QString &filename) {
 }
 
 void QmlRenderer::useText(const QString &source) {
-//	"import QtQuick 2.0; Rectangle { color: 'green'; }"
 	
 	if (_customComponent) {
 		if (_customItem) {
@@ -335,14 +334,14 @@ void QmlRenderer::useText(const QString &source) {
 
 void QmlRenderer::setProp(const QString &objname, const QByteArray &propname, const QByteArray &json)
 {
-
+	
 	if ( ! _customItem ) {
 		_qmlReport("Qml setProp() failed. Do a proper useQml() first.", "prop");
 		return;
 	}
 	
 	QQuickItem *obj = _findItem(_customItem, objname);
-//	qDebug() << "LOL";
+	
 	if ( ! obj ) {
 		_qmlReport(QString("Qml setProp() failed. Object not found: ") + objname, "prop");
 		return;
@@ -402,7 +401,7 @@ void QmlRenderer::invoke(const QString &objname, const QByteArray &method, const
 		_qmlReport(QString("Qml invoke() failed. Invalid value: '") + json + QString("'"), "prop");
 		return;
 	}
-//	qDebug() << "INV JSON" << json;
+	
 	QMetaObject::invokeMethod(obj, method.constData(), Q_ARG(QVariant, parsed.at(0)));
 }
 
@@ -413,10 +412,11 @@ void QmlRenderer::confirm() {
 	}
 }
 
-void QmlRenderer::mouse(int type, int x, int y) {
+void QmlRenderer::mouse(int type, int button, int buttons, int x, int y) {
 	QPointF mousePoint( x, y );
 	
-    Qt::MouseButton button = Qt::LeftButton;
+    Qt::MouseButton qbutton = static_cast<Qt::MouseButton>(1 << button);
+    Qt::MouseButton qbuttons = static_cast<Qt::MouseButton>(buttons);
 
 	QMouseEvent mouseEvent = QMouseEvent(
 					QEvent::MouseMove,
@@ -427,17 +427,17 @@ void QmlRenderer::mouse(int type, int x, int y) {
 	case 0: mouseEvent = QMouseEvent(
 					QEvent::MouseMove,
 					mousePoint, mousePoint,
-					Qt::NoButton, Qt::NoButton, 0 );
+					qbutton, qbuttons, 0 );
 			break;
 	case 1: mouseEvent = QMouseEvent(
 					QEvent::MouseButtonPress,
 					mousePoint, mousePoint,
-					button, button, 0 );
+					qbutton, qbuttons, 0 );
 			break;
 	case 2: mouseEvent = QMouseEvent(
 					QEvent::MouseButtonRelease,
 					mousePoint, mousePoint,
-					button, Qt::NoButton, 0 );
+					qbutton, qbuttons, 0 );
 			break;
 	}
 	
@@ -447,9 +447,7 @@ void QmlRenderer::mouse(int type, int x, int y) {
 void QmlRenderer::keyboard(int type, int key, char text) {
 	Qt::Key qtKey = keyconv(key);
 	QKeySequence seq = QKeySequence(qtKey);
-	
-	
-	qDebug() << "KEY" << (type ? "KeyPress" : "KeyRelease") << seq << qtKey;
+	//qDebug() << "KEY" << (type ? "KeyPress" : "KeyRelease") << seq << qtKey;
 	QKeyEvent keyEvent( type ? QEvent::KeyPress : QEvent::KeyRelease, qtKey, Qt::NoModifier, QString(text), text != 0);
 	QCoreApplication::sendEvent( _offscreenWindow, &keyEvent );
 }
@@ -463,17 +461,12 @@ void QmlRenderer::libs(const QString &dirname)
 
 QQuickItem* QmlRenderer::_findItem(QObject* node, const QString& name, int depth) const
 {
-//	qDebug() << "TRAVERSING" << node->objectName() << "depth" << depth;
-	// search for node
 	if (node && node->objectName() == name){
-//		if (!node->objectName().isEmpty()) 
-//			qDebug() << "FOUND" << node->objectName() << "depth" << depth;
+	
 		return qobject_cast<QQuickItem *>(node);
 		
 	} else if (node && node->children().size() > 0) {
 	
-//		if (!node->objectName().isEmpty()) 
-//			qDebug() << "GOIN" << node->objectName() << "depth" << depth;
 		for (int i = node->children().size() - 1; i >= 0; i--) {
 			QQuickItem* item = _findItem(node->children().at(i), name, depth + 1);
 			if (item) {
@@ -481,9 +474,6 @@ QQuickItem* QmlRenderer::_findItem(QObject* node, const QString& name, int depth
 			}
 		}
 		
-	} else {
-//		if (!node->objectName().isEmpty()) 
-//			qDebug() << "END" << node->objectName() << "depth" << depth;
 	}
     
     // not found

@@ -13,7 +13,7 @@ Qt::Key keyconv(int from)
 //		qDebug() << "CONV contains" << Qt::Key_0 << keys[from] << from;
 		return keys[from];
 	} else {
-		qDebug() << "CONV absent" << static_cast<Qt::Key>(from) << from;
+//		qDebug() << "CONV absent" << static_cast<Qt::Key>(from) << from;
 		return static_cast<Qt::Key>(from);
 	}
 }

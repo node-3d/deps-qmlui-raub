@@ -15,7 +15,7 @@ typedef void (*EventCb) (const char *data);
 
 extern "C" QMLUI_DLLSPEC void qmlui_init(const char *cwdOwn, const char *cwdLib, int wnd, int ctx, int w, int h, EventCb cb);
 extern "C" QMLUI_DLLSPEC void qmlui_resize(int w, int h);
-extern "C" QMLUI_DLLSPEC void qmlui_mouse(int type, int x, int y);
+extern "C" QMLUI_DLLSPEC void qmlui_mouse(int type, int button, int buttons, int x, int y);
 extern "C" QMLUI_DLLSPEC void qmlui_keyboard(int type, int key, char text);
 extern "C" QMLUI_DLLSPEC void qmlui_use(const char *str, bool isFile);
 extern "C" QMLUI_DLLSPEC void qmlui_set(const char *obj, const char *prop, const char *json);

@@ -29,7 +29,7 @@ public:
 	~QmlRenderer();
 	
 	void resize(const QSize& size);
-	void mouse(int type, int x, int y);
+	void mouse(int type, int button, int buttons, int x, int y);
 	void keyboard(int type, int key, char text);
 	
 	bool isReady();

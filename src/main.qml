@@ -6,6 +6,8 @@ MouseArea {
 	id: __mouse
 	anchors.fill: parent
 	
+	acceptedButtons: Qt.AllButtons
+	
 	function eventData(action, mouse) {
 		return {
 			action   : action,

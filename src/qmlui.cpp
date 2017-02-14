@@ -24,8 +24,9 @@ void qmlui_init(const char *cwdOwn, const char *cwdLib, int wnd, int ctx, int w,
 	
 	QString cwdOwnStr = QString(cwdOwn);
 	QString cwdLibStr = QString(cwdLib);
-	qputenv("path", (cwdLibStr + "/" + PLATFORM_BIN_DIR).toLatin1() + ";" + qgetenv("path"));
-	QCoreApplication::addLibraryPath(cwdLibStr + "/" + PLATFORM_QT_DIR + "/plugins");
+//	qputenv("path", (cwdLibStr + "/" + PLATFORM_BIN_DIR).toLatin1() + ";" + qgetenv("path"));
+	QCoreApplication::addLibraryPath("plugins");
+	qDebug() << "LIB" << QCoreApplication::libraryPaths();
 	
 	int c = 0;
 	char* v = nullptr;
@@ -33,6 +34,7 @@ void qmlui_init(const char *cwdOwn, const char *cwdLib, int wnd, int ctx, int w,
 	
 	renderer = new QmlRenderer(cwdOwnStr, cwdLibStr, wnd, ctx, w, h, cb);
 	renderer->confirm();
+	
 }
 
 
@@ -45,12 +47,12 @@ void qmlui_resize(int w, int h) {
 }
 
 
-void qmlui_mouse(int type, int x, int y) {
+void qmlui_mouse(int type, int button, int buttons, int x, int y) {
 	if ( renderer == nullptr ) {
 		qDebug() << "qmlui_mouse: not inited.";
 		return;
 	}
-	renderer->mouse(type, x, y);
+	renderer->mouse(type, button, buttons, x, y);
 }
 
 
@@ -59,7 +61,7 @@ void qmlui_keyboard(int type, int key, char text) {
 		qDebug() << "qmlui_keyboard: not inited.";
 		return;
 	}
-	qDebug() << "qmlui_keyboard" << type << key << text;
+//	qDebug() << "qmlui_keyboard" << type << key << text;
 	renderer->keyboard(type, key, text);
 }
 
