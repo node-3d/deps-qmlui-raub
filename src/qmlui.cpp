@@ -25,7 +25,7 @@ void qmlui_init(const char *cwdOwn, const char *cwdLib, int wnd, int ctx, int w,
 	QString cwdOwnStr = QString(cwdOwn);
 	QString cwdLibStr = QString(cwdLib);
 //	qputenv("path", (cwdLibStr + "/" + PLATFORM_BIN_DIR).toLatin1() + ";" + qgetenv("path"));
-	QCoreApplication::addLibraryPath("plugins");
+//	QCoreApplication::addLibraryPath(cwdLibStr + "/plugins");
 	qDebug() << "LIB" << QCoreApplication::libraryPaths();
 	
 	int c = 0;
@@ -145,5 +145,12 @@ void qmlui_libs(const char *libs)
 	}
 	
 	renderer->libs(QString(libs));
+	
+}
+
+void qmlui_plugins(const char *plugins)
+{
+	
+	QCoreApplication::addLibraryPath(QString(plugins));
 	
 }

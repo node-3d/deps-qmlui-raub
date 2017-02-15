@@ -68,7 +68,6 @@ QmlRenderer::QmlRenderer(const QString &cwdOwn, const QString &cwdLib, int wnd, 
 		_qmlEngine->setIncubationController(_offscreenWindow->incubationController());
 	
 	_qmlEngine->addImportPath("qml");
-	_qmlEngine->addImportPath("plugins");
 	qDebug() << "IMP" << _qmlEngine->importPathList();
 	
 	_qmlEngine->rootContext()->setContextProperty("CWD", _directoryPath);

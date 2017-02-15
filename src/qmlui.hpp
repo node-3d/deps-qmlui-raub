@@ -22,5 +22,6 @@ extern "C" QMLUI_DLLSPEC void qmlui_set(const char *obj, const char *prop, const
 extern "C" QMLUI_DLLSPEC void qmlui_get(const char *obj, const char *prop);
 extern "C" QMLUI_DLLSPEC void qmlui_invoke(const char *obj, const char *method, const char *json);
 extern "C" QMLUI_DLLSPEC void qmlui_libs(const char *libs);
+extern "C" QMLUI_DLLSPEC void qmlui_plugins(const char *plugins);
 
 #endif // QMLUI_HPP
