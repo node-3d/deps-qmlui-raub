@@ -22,7 +22,7 @@
 #include "qml-cb.hpp"
 #include "keyconv.hpp"
 
-QmlRenderer::QmlRenderer(const QString &cwdOwn, const QString &cwdLib, int wnd, int ctx, int w, int h, EventCb eventCb) {
+QmlRenderer::QmlRenderer(const QString &cwdOwn, size_t wnd, size_t ctx, int w, int h, EventCb eventCb) {
 	
 	keyfill();
 	
@@ -68,7 +68,7 @@ QmlRenderer::QmlRenderer(const QString &cwdOwn, const QString &cwdLib, int wnd, 
 		_qmlEngine->setIncubationController(_offscreenWindow->incubationController());
 	
 	_qmlEngine->addImportPath("qml");
-	qDebug() << "IMP" << _qmlEngine->importPathList();
+//	qDebug() << "IMP" << _qmlEngine->importPathList();
 	
 	_qmlEngine->rootContext()->setContextProperty("CWD", _directoryPath);
 	_qmlEngine->rootContext()->setContextProperty("cb", _cb);

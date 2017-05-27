@@ -14,7 +14,7 @@ QmlRenderer *renderer = nullptr;
 // -- C-API -- //
 
 
-void qmlui_init(const char *cwdOwn, const char *cwdLib, int wnd, int ctx, int w, int h, EventCb cb)
+void qmlui_init(const char *cwdOwn, size_t wnd, size_t ctx, int w, int h, EventCb cb)
 {
 	
 	if (renderer) {
@@ -23,16 +23,12 @@ void qmlui_init(const char *cwdOwn, const char *cwdLib, int wnd, int ctx, int w,
 	}
 	
 	QString cwdOwnStr = QString(cwdOwn);
-	QString cwdLibStr = QString(cwdLib);
-//	qputenv("path", (cwdLibStr + "/" + PLATFORM_BIN_DIR).toLatin1() + ";" + qgetenv("path"));
-//	QCoreApplication::addLibraryPath(cwdLibStr + "/plugins");
-	qDebug() << "LIB" << QCoreApplication::libraryPaths();
 	
 	int c = 0;
 	char* v = nullptr;
 	app = new QGuiApplication(c, &v);
 	
-	renderer = new QmlRenderer(cwdOwnStr, cwdLibStr, wnd, ctx, w, h, cb);
+	renderer = new QmlRenderer(cwdOwnStr, wnd, ctx, w, h, cb);
 	renderer->confirm();
 	
 }

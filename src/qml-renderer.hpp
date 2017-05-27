@@ -25,7 +25,7 @@ class QmlRenderer : public QWindow
 	Q_OBJECT
 
 public:
-	QmlRenderer(const QString &cwdOwn, const QString &cwdLib, int wnd, int ctx, int w, int h, EventCb eventCb);
+	QmlRenderer(const QString &cwdOwn, size_t wnd, size_t ctx, int w, int h, EventCb eventCb);
 	~QmlRenderer();
 	
 	void resize(const QSize& size);

@@ -9,12 +9,12 @@ TEMPLATE = lib
 TARGET = qmlui
 DEFINES += QMLUI_SHARED QT_DEPRECATED_WARNINGS
 
-win32 {
-	DESTDIR = $$PWD/../bin_win32
-}
-win64 {
+
+DESTDIR = $$PWD/../bin_win32
+contains(QMAKE_TARGET.arch, x86_64):{
 	DESTDIR = $$PWD/../bin_win64
 }
+
 macx {
 	DESTDIR = $$PWD/../bin_macx
 }
@@ -24,6 +24,7 @@ unix:!macx{
 linux-g++ {
     DESTDIR = $$PWD/../bin_linux
 }
+
 
 WPWD = $${PWD}
 WPWD ~= s,/,\\,g
