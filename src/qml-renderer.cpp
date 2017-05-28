@@ -64,11 +64,15 @@ QmlRenderer::QmlRenderer(const QString &cwdOwn, size_t wnd, size_t ctx, int w, i
 
 	// Create a QML engine.
 	_qmlEngine = new QQmlEngine;
-	if (!_qmlEngine->incubationController())
+	if ( ! _qmlEngine->incubationController() ) {
 		_qmlEngine->setIncubationController(_offscreenWindow->incubationController());
+	}
 	
-	_qmlEngine->addImportPath("qml");
-//	qDebug() << "IMP" << _qmlEngine->importPathList();
+	foreach (const QString &dir, QCoreApplication::libraryPaths()) {
+		QString replaced = dir;
+		replaced = replaced.replace(QRegExp("plugins$"), "qml");
+		_qmlEngine->addImportPath(replaced);
+	}
 	
 	_qmlEngine->rootContext()->setContextProperty("CWD", _directoryPath);
 	_qmlEngine->rootContext()->setContextProperty("cb", _cb);
@@ -193,28 +197,33 @@ void QmlRenderer::_qmlReport(const QString &message, const QString &type) const
 	_cb->call("error", pmap);
 }
 
+bool QmlRenderer::_qmlCheckErrors(const QQmlComponent *component) const
+{
+	if (_systemComponent->isError()) {
+		QList<QQmlError> errorList = component->errors();
+		foreach (const QQmlError &error, errorList) {
+			_qmlReport(error.toString());
+		}
+		return true;
+	}
+	return false;
+}
+
 void QmlRenderer::_rootStatusUpdate(QQmlComponent::Status status) {
 	
 	if( QQmlComponent::Ready != status ) {
+		_qmlCheckErrors(_systemComponent);
 		return;
 	}
 	
 	disconnect(_systemComponent, &QQmlComponent::statusChanged, this, &QmlRenderer::_rootStatusUpdate);
 	
-	if (_systemComponent->isError()) {
-		QList<QQmlError> errorList = _systemComponent->errors();
-		foreach (const QQmlError &error, errorList) {
-			_qmlReport(error.toString());
-		}
+	if (_qmlCheckErrors(_systemComponent)) {
 		return;
 	}
 	
 	QObject *rootObject = _systemComponent->create();
-	if (_systemComponent->isError()) {
-		QList<QQmlError> errorList = _systemComponent->errors();
-		foreach (const QQmlError &error, errorList) {
-			_qmlReport(error.toString());
-		}
+	if (_qmlCheckErrors(_systemComponent)) {
 		return;
 	}
 	
@@ -248,35 +257,21 @@ void QmlRenderer::_customStatusUpdate(QQmlComponent::Status status) {
 	result["used"] = _currentQml;
 	result["status"] = "error";
 	
-	if( QQmlComponent::Error == status ) {
-		if (_customComponent->isError()) {
-			QList<QQmlError> errorList = _customComponent->errors();
-			foreach (const QQmlError &error, errorList) {
-				_qmlReport(error.toString());
-			}
-		}
-	}
-	
 	if( QQmlComponent::Ready != status ) {
+		_qmlCheckErrors(_customComponent);
 		_cb->call("use", result);
 		return;
 	}
 	
 	disconnect(_customComponent, &QQmlComponent::statusChanged, this, &QmlRenderer::_customStatusUpdate);
 	
-	if (_customComponent->isError()) {
-		QList<QQmlError> errorList = _customComponent->errors();
-		foreach (const QQmlError &error, errorList)
-			qDebug() << error.url() << error.line() << error;
+	if (_qmlCheckErrors(_customComponent)) {
 		_cb->call("use", result);
 		return;
 	}
 	
 	QObject *rootObject = _customComponent->create();
-	if (_customComponent->isError()) {
-		QList<QQmlError> errorList = _customComponent->errors();
-		foreach (const QQmlError &error, errorList)
-			qDebug() << error.url() << error.line() << error;
+	if (_qmlCheckErrors(_customComponent)) {
 		_cb->call("use", result);
 		return;
 	}

@@ -64,6 +64,7 @@ private:
 	QQuickItem* _findItem(QObject* node, const QString& name, int depth = 0) const;
 	
 	void _qmlReport(const QString &message, const QString &type = QString("qml")) const;
+	bool _qmlCheckErrors(const QQmlComponent *component) const;
 	
 	QOpenGLContext           *_openglContext;
 	QOffscreenSurface        *_offscreenSurface;
