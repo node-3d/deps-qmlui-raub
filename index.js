@@ -1,5 +1,7 @@
 'use strict';
 
+require('node-deps-qt-qml-raub');
+
 
 const remDirs = {
 	bin_win32  : 1,
