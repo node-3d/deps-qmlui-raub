@@ -1,5 +1,5 @@
-#ifndef WINDOW_SINGLETHREADED_H
-#define WINDOW_SINGLETHREADED_H
+#ifndef QML_RENDERER_HPP
+#define QML_RENDERER_HPP
 
 #include <QWindow>
 #include <QTimer>
@@ -97,4 +97,4 @@ private:
 	
 };
 
-#endif
+#endif // QML_RENDERER_HPP

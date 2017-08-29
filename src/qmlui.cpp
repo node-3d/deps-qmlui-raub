@@ -1,8 +1,10 @@
 #include <QCoreApplication>
 #include <QGuiApplication>
 #include <QDebug>
+#include <QVector>
 
 #include "qml-renderer.hpp"
+#include "qml-window.hpp"
 #include "qmlui.hpp"
 #include "platform.hpp"
 
@@ -10,7 +12,7 @@
 QGuiApplication *app = nullptr;
 QmlRenderer *renderer = nullptr;
 
-
+QVector<QmlWindow *> windowList;
 // -- C-API -- //
 
 
@@ -28,13 +30,23 @@ void qmlui_init(const char *cwdOwn, size_t wnd, size_t ctx, int w, int h, EventC
 	char* v = nullptr;
 	app = new QGuiApplication(c, &v);
 	
-	renderer = new QmlRenderer(cwdOwnStr, wnd, ctx, w, h, cb);
-	renderer->confirm();
+	renderer = new QmlRenderer(cwdOwnStr, wnd, ctx);
 	
 }
 
+void qmlui_window(int *i, int w, int h, EventCb cb)
+{
 
-void qmlui_resize(int w, int h) {
+	QmlWindow *window = new QmlWindow(renderer, w, h, cb);
+	window->confirm();
+
+	i = windowList.size();
+	windowList.push(window);
+
+}
+
+
+void qmlui_resize(int i, int w, int h) {
 	if ( renderer == nullptr ) {
 		qDebug() << "qmlui_resize: not inited.";
 		return;

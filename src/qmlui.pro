@@ -34,12 +34,14 @@ SOURCES += \
     qmlui.cpp \
     qml-renderer.cpp \
     qml-cb.cpp \
-    keyconv.cpp
+    keyconv.cpp \
+    qml-window.cpp
 HEADERS += qmlui.hpp \
     qml-renderer.hpp \
     platform.hpp \
     qml-cb.hpp \
-    keyconv.hpp
+    keyconv.hpp \
+    qml-window.hpp
 
 RESOURCES += qml.qrc
 
