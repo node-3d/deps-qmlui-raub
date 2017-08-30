@@ -28,14 +28,14 @@ public:
 	QmlWindow(QmlRenderer * renderer, int w, int h, EventCb eventCb);
 	~QmlWindow();
 	
-	void addLibsDirectory(const QString &dirName);
+	void addLibsDir(const QString &dirName);
 	
 	void resize(const QSize& size);
 	void mouse(int type, int button, int buttons, int x, int y);
 	void keyboard(int type, int key, char text);
 	
 	bool isReady();
-	void useQml(const QString &filename);
+	void useQml(const QString &fileName);
 	void useText(const QString &source);
 	
 	void setProp(const QString &objname, const QByteArray &propname, const QByteArray &json);

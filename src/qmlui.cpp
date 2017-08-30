@@ -9,12 +9,12 @@
 #include "platform.hpp"
 
 // Main static objects
-QGuiApplication *app = nullptr;
+QGuiApplication *app  = nullptr;
 QmlRenderer *renderer = nullptr;
 
 QVector<QmlWindow *> windowList;
 
-inline bool isOpen(int i, char *name) {
+inline bool isOpen(int i, const char *name) {
 	
 	if ( renderer == nullptr ) {
 		qDebug() << name << ": not inited.";
@@ -32,26 +32,23 @@ inline bool isOpen(int i, char *name) {
 
 // -- C-API -- //
 
-void qmlui_init(const char *cwdOwn, size_t wnd, size_t ctx, int w, int h, EventCb cb) {
+void qmlui_init(const char *cwdOwn, size_t wnd, size_t ctx) {
 	
 	if (renderer) {
 		qDebug() << "qmlui_init: already inited.";
 		return;
 	}
 	
-	QString cwdOwnStr = QString(cwdOwn);
-	
 	int c = 0;
 	char* v = nullptr;
 	app = new QGuiApplication(c, &v);
 	
-	renderer = new QmlRenderer(cwdOwnStr, wnd, ctx);
+	renderer = new QmlRenderer(QString(cwdOwn), wnd, ctx);
 	
 }
 
 
-void qmlui_window(int *i, int w, int h, EventCb cb)
-{
+void qmlui_window(volatile int *i, int w, int h, EventCb cb) {
 	
 	if ( renderer == nullptr ) {
 		qDebug() << "qmlui_window: not inited.";
@@ -63,7 +60,7 @@ void qmlui_window(int *i, int w, int h, EventCb cb)
 	window->confirm();
 	
 	*i = windowList.size();
-	windowList.push(window);
+	windowList.push_front(window);
 
 }
 
@@ -91,7 +88,7 @@ void qmlui_resize(int i, int w, int h) {
 }
 
 
-void qmlui_mouse(int type, int button, int buttons, int x, int y) {
+void qmlui_mouse(int i, int type, int button, int buttons, int x, int y) {
 	
 	if ( ! isOpen(i, "qmlui_mouse") ) {
 		return;
@@ -102,7 +99,7 @@ void qmlui_mouse(int type, int button, int buttons, int x, int y) {
 }
 
 
-void qmlui_keyboard(int type, int key, char text) {
+void qmlui_keyboard(int i, int type, int key, char text) {
 	
 	if ( ! isOpen(i, "qmlui_keyboard") ) {
 		return;
@@ -113,7 +110,7 @@ void qmlui_keyboard(int type, int key, char text) {
 }
 
 
-void qmlui_use(const char *str, bool isFile)
+void qmlui_use(int i, const char *str, bool isFile)
 {
 	
 	if ( ! isOpen(i, "qmlui_use") ) {
@@ -128,7 +125,7 @@ void qmlui_use(const char *str, bool isFile)
 	
 }
 
-void qmlui_set(const char *obj, const char *prop, const char *json)
+void qmlui_set(int i, const char *obj, const char *prop, const char *json)
 {
 	
 	if ( ! isOpen(i, "qmlui_set") ) {
@@ -139,7 +136,7 @@ void qmlui_set(const char *obj, const char *prop, const char *json)
 	
 }
 
-void qmlui_get(const char *obj, const char *prop)
+void qmlui_get(int i, const char *obj, const char *prop)
 {
 	
 	if ( ! isOpen(i, "qmlui_get") ) {
@@ -151,7 +148,7 @@ void qmlui_get(const char *obj, const char *prop)
 }
 
 
-void qmlui_invoke(const char *obj, const char *method, const char *json)
+void qmlui_invoke(int i, const char *obj, const char *method, const char *json)
 {
 	
 	if ( ! isOpen(i, "qmlui_get") ) {
@@ -163,14 +160,14 @@ void qmlui_invoke(const char *obj, const char *method, const char *json)
 }
 
 
-void qmlui_libs(const char *libs)
+void qmlui_libs(int i, const char *libs)
 {
 	
 	if ( ! isOpen(i, "qmlui_libs") ) {
 		return;
 	}
-	FOR
-	windowList[i]->libs(QString(libs));
+	
+	windowList[i]->addLibsDir(QString(libs));
 	
 }
 
