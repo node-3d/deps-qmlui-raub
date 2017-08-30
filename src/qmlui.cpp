@@ -13,11 +13,26 @@ QGuiApplication *app = nullptr;
 QmlRenderer *renderer = nullptr;
 
 QVector<QmlWindow *> windowList;
+
+inline bool isOpen(int i, char *name) {
+	
+	if ( renderer == nullptr ) {
+		qDebug() << name << ": not inited.";
+		return false;
+	}
+	
+	if (windowList.size() > i) {
+		return windowList[i] != nullptr;
+	} else {
+		qDebug() << name << i << ": no window.";
+		return false;
+	}
+	
+}
+
 // -- C-API -- //
 
-
-void qmlui_init(const char *cwdOwn, size_t wnd, size_t ctx, int w, int h, EventCb cb)
-{
+void qmlui_init(const char *cwdOwn, size_t wnd, size_t ctx, int w, int h, EventCb cb) {
 	
 	if (renderer) {
 		qDebug() << "qmlui_init: already inited.";
@@ -34,62 +49,81 @@ void qmlui_init(const char *cwdOwn, size_t wnd, size_t ctx, int w, int h, EventC
 	
 }
 
+
 void qmlui_window(int *i, int w, int h, EventCb cb)
 {
-
+	
+	if ( renderer == nullptr ) {
+		qDebug() << "qmlui_window: not inited.";
+		*i = -1;
+		return;
+	}
+	
 	QmlWindow *window = new QmlWindow(renderer, w, h, cb);
 	window->confirm();
-
-	i = windowList.size();
+	
+	*i = windowList.size();
 	windowList.push(window);
 
 }
 
 
-void qmlui_resize(int i, int w, int h) {
-	if ( renderer == nullptr ) {
-		qDebug() << "qmlui_resize: not inited.";
+void qmlui_close(int i) {
+	
+	if ( ! isOpen(i, "qmlui_close") ) {
 		return;
 	}
-	renderer->resize(QSize(w, h));
+	
+	delete windowList[i];
+	windowList[i] = nullptr;
+	
+}
+
+
+void qmlui_resize(int i, int w, int h) {
+	
+	if ( ! isOpen(i, "qmlui_resize") ) {
+		return;
+	}
+	
+	windowList[i]->resize(QSize(w, h));
+	
 }
 
 
 void qmlui_mouse(int type, int button, int buttons, int x, int y) {
-	if ( renderer == nullptr ) {
-		qDebug() << "qmlui_mouse: not inited.";
+	
+	if ( ! isOpen(i, "qmlui_mouse") ) {
 		return;
 	}
-	renderer->mouse(type, button, buttons, x, y);
+	
+	windowList[i]->mouse(type, button, buttons, x, y);
+	
 }
 
 
 void qmlui_keyboard(int type, int key, char text) {
-	if ( renderer == nullptr ) {
-		qDebug() << "qmlui_keyboard: not inited.";
+	
+	if ( ! isOpen(i, "qmlui_keyboard") ) {
 		return;
 	}
-//	qDebug() << "qmlui_keyboard" << type << key << text;
-	renderer->keyboard(type, key, text);
+	
+	windowList[i]->keyboard(type, key, text);
+	
 }
 
 
 void qmlui_use(const char *str, bool isFile)
 {
 	
-	if ( renderer == nullptr ) {
-		qDebug() << "qmlui_use: not inited.";
-		return;
-	}
-	if ( ! renderer->isReady() ) {
-		qDebug() << "qmlui_use: not ready.";
+	if ( ! isOpen(i, "qmlui_use") ) {
 		return;
 	}
 	
 	if (isFile) {
-		renderer->useQml(QString(str));
+		windowList[i]->useQml(QString(str));
 	} else {
-		renderer->useText(QString(str));
+		windowList[i]->useText(QString(str));
 	}
 	
 }
@@ -97,32 +131,22 @@ void qmlui_use(const char *str, bool isFile)
 void qmlui_set(const char *obj, const char *prop, const char *json)
 {
 	
-	if ( renderer == nullptr ) {
-		qDebug() << "qmlui_set: not inited.";
-		return;
-	}
-	if ( ! renderer->isReady() ) {
-		qDebug() << "qmlui_set: not ready.";
+	if ( ! isOpen(i, "qmlui_set") ) {
 		return;
 	}
 	
-	renderer->setProp(QString(obj), QByteArray(prop), QByteArray(json));
+	windowList[i]->setProp(QString(obj), QByteArray(prop), QByteArray(json));
 	
 }
 
 void qmlui_get(const char *obj, const char *prop)
 {
 	
-	if ( renderer == nullptr ) {
-		qDebug() << "qmlui_get: not inited.";
-		return;
-	}
-	if ( ! renderer->isReady() ) {
-		qDebug() << "qmlui_get: not ready.";
+	if ( ! isOpen(i, "qmlui_get") ) {
 		return;
 	}
 	
-	renderer->getProp(QString(obj), QByteArray(prop));
+	windowList[i]->getProp(QString(obj), QByteArray(prop));
 	
 }
 
@@ -130,29 +154,23 @@ void qmlui_get(const char *obj, const char *prop)
 void qmlui_invoke(const char *obj, const char *method, const char *json)
 {
 	
-	if ( renderer == nullptr ) {
-		qDebug() << "qmlui_invoke: not inited.";
-		return;
-	}
-	if ( ! renderer->isReady() ) {
-		qDebug() << "qmlui_invoke: not ready.";
+	if ( ! isOpen(i, "qmlui_get") ) {
 		return;
 	}
 	
-	renderer->invoke(QString(obj), QByteArray(method), QByteArray(json));
+	windowList[i]->invoke(QString(obj), QByteArray(method), QByteArray(json));
 	
 }
 
 
 void qmlui_libs(const char *libs)
 {
-
-	if ( renderer == nullptr ) {
-		qDebug() << "qmlui_libs: not inited.";
+	
+	if ( ! isOpen(i, "qmlui_libs") ) {
 		return;
 	}
-	
-	renderer->libs(QString(libs));
+	FOR
+	windowList[i]->libs(QString(libs));
 	
 }
 
