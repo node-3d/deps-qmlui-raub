@@ -2,7 +2,7 @@
 	"name": "node-deps-qmlui-raub",
 	"author": "Luis Blanco <raubtierxxx@gmail.com>",
 	"description": "A dependency for node-qml-raub.",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"main": "index.js",
 	"keywords": [
 		"qt",
