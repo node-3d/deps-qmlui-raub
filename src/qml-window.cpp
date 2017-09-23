@@ -40,9 +40,13 @@ QmlWindow::QmlWindow(QmlRenderer *renderer, int w, int h, EventCb eventCb) {
 	_openglContext = renderer->glContext();
 	
 	_renderControl   = new QQuickRenderControl();
+	
 	_offscreenWindow = new QQuickWindow( _renderControl );
+	
 	_offscreenWindow->setGeometry(0, 0, w, h);
+	
 	_offscreenWindow->contentItem()->setSize( QSizeF(_offscreenWindow->size()) );
+	
 	_offscreenWindow->setColor(Qt::transparent);
 	
 	_offscreenSurface = new QOffscreenSurface;
