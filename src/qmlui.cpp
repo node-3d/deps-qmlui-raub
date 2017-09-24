@@ -9,6 +9,10 @@
 #include "platform.hpp"
 
 // Main static objects
+int argc = 1;
+char argvData[] = "qmlui";
+char *argv = &argvData[0];
+
 QGuiApplication *app  = nullptr;
 QmlRenderer *renderer = nullptr;
 
@@ -39,9 +43,7 @@ void qmlui_init(const char *cwdOwn, size_t wnd, size_t ctx) {
 		return;
 	}
 	
-	int c = 0;
-	char* v = nullptr;
-	app = new QGuiApplication(c, &v);
+	app = new QGuiApplication(argc, &argv);
 	
 	renderer = new QmlRenderer(QString(cwdOwn), wnd, ctx);
 	
