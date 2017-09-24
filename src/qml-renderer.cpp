@@ -41,13 +41,23 @@ QmlRenderer::QmlRenderer(const QString &workingDir, size_t windowHandle, size_t 
 
 
 QmlRenderer::~QmlRenderer() {
+
 	_openglContext->makeCurrent(_offscreenSurface);
+	
+	delete _offscreenSurface;
+	
 	delete _openglContext;
+	
 }
 
 
-QOpenGLContext *QmlRenderer::glContext() const {
+QOpenGLContext *QmlRenderer::context() const {
 	return _openglContext;
+}
+
+
+QOffscreenSurface *QmlRenderer::surface() const {
+	return _offscreenSurface;
 }
 
 
