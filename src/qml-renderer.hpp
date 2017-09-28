@@ -16,7 +16,9 @@ public:
 	
 	void addLibsDirectory(const QString &dirName);
 	
-	QOpenGLContext *glContext() const;
+	QOpenGLContext *context() const;
+	QOffscreenSurface *surface() const;
+	
 	QString cwd() const;
 	
 private:

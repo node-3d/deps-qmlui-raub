@@ -37,7 +37,7 @@ QmlWindow::QmlWindow(QmlRenderer *renderer, int w, int h, EventCb eventCb) {
 	
 	setSurfaceType(QSurface::OpenGLSurface);
 	
-	_openglContext = renderer->glContext();
+	_openglContext = renderer->context();
 	
 	_renderControl   = new QQuickRenderControl();
 	
@@ -49,9 +49,7 @@ QmlWindow::QmlWindow(QmlRenderer *renderer, int w, int h, EventCb eventCb) {
 	
 	_offscreenWindow->setColor(Qt::transparent);
 	
-	_offscreenSurface = new QOffscreenSurface;
-	_offscreenSurface->setFormat(_openglContext->format());
-	_offscreenSurface->create();
+	_offscreenSurface = renderer->surface();
 	
 	// Create a QML engine.
 	_qmlEngine = new QQmlEngine;
@@ -116,8 +114,6 @@ QmlWindow::~QmlWindow() {
 	delete _qmlEngine;
 	delete _framebuffer;
 	
-	delete _offscreenSurface;
-	
 	_openglContext->doneCurrent();
 	
 }
@@ -137,7 +133,7 @@ void QmlWindow::_createFramebuffer() {
 
 void QmlWindow::_destroyFramebuffer() {
 	delete _framebuffer;
-	_framebuffer = 0;
+	_framebuffer = nullptr;
 }
 
 
