@@ -62,7 +62,7 @@ void qmlui_window(volatile int *i, int w, int h, EventCb cb) {
 	window->confirm();
 	
 	*i = windowList.size();
-	windowList.push_front(window);
+	windowList.push_back(window);
 
 }
 
