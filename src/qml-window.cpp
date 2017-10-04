@@ -208,7 +208,7 @@ void QmlWindow::_qmlReport(const QString &message, const QString &type) const
 bool QmlWindow::_qmlCheckErrors(const QQmlComponent *component) const
 {
 	
-	if (_systemComponent->isError()) {
+	if (component->isError()) {
 		QList<QQmlError> errorList = component->errors();
 		foreach (const QQmlError &error, errorList) {
 			_qmlReport(error.toString());
