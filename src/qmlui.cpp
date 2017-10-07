@@ -112,17 +112,17 @@ void qmlui_keyboard(int i, int type, int key, char text) {
 }
 
 
-void qmlui_use(int i, const char *str, bool isFile)
+void qmlui_load(int i, const char *str, bool isFile)
 {
 	
-	if ( ! isOpen(i, "qmlui_use") ) {
+	if ( ! isOpen(i, "qmlui_load") ) {
 		return;
 	}
 	
 	if (isFile) {
-		windowList[i]->useQml(QString(str));
+		windowList[i]->loadQml(QString(str));
 	} else {
-		windowList[i]->useText(QString(str));
+		windowList[i]->loadText(QString(str));
 	}
 	
 }

@@ -19,7 +19,7 @@ extern "C" QMLUI_DLLSPEC void qmlui_close(int i);
 extern "C" QMLUI_DLLSPEC void qmlui_resize(int i, int w, int h);
 extern "C" QMLUI_DLLSPEC void qmlui_mouse(int i, int type, int button, int buttons, int x, int y);
 extern "C" QMLUI_DLLSPEC void qmlui_keyboard(int i, int type, int key, char text);
-extern "C" QMLUI_DLLSPEC void qmlui_use(int i, const char *str, bool isFile);
+extern "C" QMLUI_DLLSPEC void qmlui_load(int i, const char *str, bool isFile);
 extern "C" QMLUI_DLLSPEC void qmlui_set(int i, const char *obj, const char *prop, const char *json);
 extern "C" QMLUI_DLLSPEC void qmlui_get(int i, const char *obj, const char *prop);
 extern "C" QMLUI_DLLSPEC void qmlui_invoke(int i, const char *obj, const char *method, const char *json);

@@ -34,9 +34,10 @@ public:
 	void mouse(int type, int button, int buttons, int x, int y);
 	void keyboard(int type, int key, char text);
 	
-	bool isReady();
-	void useQml(const QString &fileName);
-	void useText(const QString &source);
+	bool isReady() { return _isReady; }
+	void loadQml(const QString &fileName);
+	void loadText(const QString &source);
+	void unload();
 	
 	void setProp(const QString &objname, const QByteArray &propname, const QByteArray &json);
 	void getProp(const QString &objname, const QByteArray &propname);
