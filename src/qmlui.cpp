@@ -15,6 +15,7 @@ char *argv = &argvData[0];
 
 QGuiApplication *app  = nullptr;
 QmlRenderer *renderer = nullptr;
+EventCb callback;
 
 QVector<QmlWindow *> windowList;
 
@@ -38,7 +39,7 @@ inline bool isOpen(int i, const char *name) {
 
 // -- C-API -- //
 
-void qmlui_init(const char *cwdOwn, size_t wnd, size_t ctx) {
+void qmlui_init(const char *cwdOwn, size_t wnd, size_t ctx, EventCb cb) {
 	
 	if (renderer) {
 		qDebug() << "qmlui_init: already inited.";
@@ -49,10 +50,12 @@ void qmlui_init(const char *cwdOwn, size_t wnd, size_t ctx) {
 	
 	renderer = new QmlRenderer(QString(cwdOwn), wnd, ctx);
 	
+	callback = cb;
+	
 }
 
 
-void qmlui_view(volatile int *i, int w, int h, EventCb cb) {
+void qmlui_view(volatile int *i, int w, int h) {
 	
 	if ( renderer == nullptr ) {
 		qDebug() << "qmlui_window: not inited.";
@@ -60,10 +63,11 @@ void qmlui_view(volatile int *i, int w, int h, EventCb cb) {
 		return;
 	}
 	
-	QmlWindow *window = new QmlWindow(renderer, w, h, cb);
+	*i = windowList.size();
+	
+	QmlWindow *window = new QmlWindow(renderer, w, h, *i, callback);
 	window->confirm();
 	
-	*i = windowList.size();
 	windowList.push_back(window);
 
 }

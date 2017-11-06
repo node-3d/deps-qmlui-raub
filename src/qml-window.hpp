@@ -25,7 +25,7 @@ class QmlWindow : public QWindow {
 	Q_OBJECT
 	
 public:
-	QmlWindow(QmlRenderer * renderer, int w, int h, EventCb eventCb);
+	QmlWindow(QmlRenderer * renderer, int w, int h, int i, EventCb eventCb);
 	~QmlWindow();
 	
 	void addLibsDir(const QString &dirName);
@@ -67,7 +67,6 @@ private:
 	
 	void _qmlReport(const QString &message, const QString &type = QString("qml")) const;
 	bool _qmlCheckErrors(const QQmlComponent *component) const;
-	
 	
 	
 	QOpenGLContext           *_openglContext;

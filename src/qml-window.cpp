@@ -24,7 +24,7 @@
 #include "keyconv.hpp"
 
 
-QmlWindow::QmlWindow(QmlRenderer *renderer, int w, int h, EventCb eventCb) {
+QmlWindow::QmlWindow(QmlRenderer *renderer, int w, int h, int i, EventCb eventCb) {
 	
 	// Initial values all zero
 	_customItem      = nullptr;
@@ -35,7 +35,7 @@ QmlWindow::QmlWindow(QmlRenderer *renderer, int w, int h, EventCb eventCb) {
 	_hasConfirmed = false;
 	
 	// Wrap JS event callback
-	_cb = new QmlCb(this, eventCb);
+	_cb = new QmlCb(this, i, eventCb);
 	
 	// Tell window it's gonna be OpenGL based
 	setSurfaceType(QSurface::OpenGLSurface);

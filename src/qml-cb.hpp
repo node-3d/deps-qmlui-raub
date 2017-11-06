@@ -12,13 +12,14 @@ class QmlCb : public QObject
 	Q_OBJECT
 	
 public:
-	explicit QmlCb(QObject *parent, EventCb cb);
+	explicit QmlCb(QObject *parent, int i, EventCb cb);
 	
 	Q_INVOKABLE void call(const QString &type, QVariantMap props = QVariantMap());
 	
 	
 private:
-	EventCb m_eventCb;
+	int _index;
+	EventCb _eventCb;
 	
 };
 

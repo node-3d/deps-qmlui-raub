@@ -9,7 +9,7 @@
 
 
 // Callback type
-typedef void (*EventCb) (const char *data);
+typedef void (*EventCb) (int i, const char *data);
 
 // C-API:
 
