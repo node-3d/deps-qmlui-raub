@@ -50,7 +50,7 @@ void qmlui_init(const char *cwdOwn, size_t wnd, size_t ctx) {
 }
 
 
-void qmlui_window(volatile int *i, int w, int h, EventCb cb) {
+void qmlui_view(volatile int *i, int w, int h, EventCb cb) {
 	
 	if ( renderer == nullptr ) {
 		qDebug() << "qmlui_window: not inited.";
