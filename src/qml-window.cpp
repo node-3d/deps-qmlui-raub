@@ -27,6 +27,10 @@
 QmlWindow::QmlWindow(QmlRenderer *renderer, int w, int h, int i, EventCb eventCb) {
 	
 	// Initial values all zero
+	_systemItem      = nullptr;
+	_systemComponent = nullptr;
+	_systemRoot      = nullptr;
+	
 	_customItem      = nullptr;
 	_customComponent = nullptr;
 	
@@ -47,9 +51,11 @@ QmlWindow::QmlWindow(QmlRenderer *renderer, int w, int h, int i, EventCb eventCb
 	// Create a window with custom RenderControl to render offscreen
 	_renderControl   = new QQuickRenderControl();
 	_offscreenWindow = new QQuickWindow( _renderControl );
+	_framebuffer     = nullptr;
 	
 	// Set window looks accordingly
 	_offscreenWindow->setGeometry(0, 0, w, h);
+	_currentSize = QSize(w, h);
 	_offscreenWindow->contentItem()->setSize( QSizeF(_offscreenWindow->size()) );
 	_offscreenWindow->setColor(Qt::transparent);
 	
@@ -115,15 +121,15 @@ QmlWindow::~QmlWindow() {
 	
 	// Delete the render control first since it will free the scenegraph resources.
 	// Destroy the QQuickWindow only afterwards.
-	delete _renderControl;
-	delete _offscreenWindow;
+	_renderControl->deleteLater();
+	_offscreenWindow->deleteLater();
 	
 	// Now that scene is clear (no component based items) - delete the components
-	delete _customComponent;
-	delete _systemComponent;
+	_customComponent->deleteLater();
+	_systemComponent->deleteLater();
 	
 	// Free the engine and FBO
-	delete _qmlEngine;
+	_qmlEngine->deleteLater();
 	delete _framebuffer;
 	
 	_openglContext->doneCurrent();
