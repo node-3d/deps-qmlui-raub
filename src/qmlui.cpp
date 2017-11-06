@@ -18,6 +18,7 @@ QmlRenderer *renderer = nullptr;
 
 QVector<QmlWindow *> windowList;
 
+
 inline bool isOpen(int i, const char *name) {
 	
 	if ( renderer == nullptr ) {
@@ -33,6 +34,7 @@ inline bool isOpen(int i, const char *name) {
 	}
 	
 }
+
 
 // -- C-API -- //
 
@@ -112,8 +114,7 @@ void qmlui_keyboard(int i, int type, int key, char text) {
 }
 
 
-void qmlui_load(int i, const char *str, bool isFile)
-{
+void qmlui_load(int i, const char *str, bool isFile) {
 	
 	if ( ! isOpen(i, "qmlui_load") ) {
 		return;
@@ -127,8 +128,8 @@ void qmlui_load(int i, const char *str, bool isFile)
 	
 }
 
-void qmlui_set(int i, const char *obj, const char *prop, const char *json)
-{
+
+void qmlui_set(int i, const char *obj, const char *prop, const char *json) {
 	
 	if ( ! isOpen(i, "qmlui_set") ) {
 		return;
@@ -138,8 +139,8 @@ void qmlui_set(int i, const char *obj, const char *prop, const char *json)
 	
 }
 
-void qmlui_get(int i, const char *obj, const char *prop)
-{
+
+void qmlui_get(int i, const char *obj, const char *prop) {
 	
 	if ( ! isOpen(i, "qmlui_get") ) {
 		return;
@@ -150,8 +151,7 @@ void qmlui_get(int i, const char *obj, const char *prop)
 }
 
 
-void qmlui_invoke(int i, const char *obj, const char *method, const char *json)
-{
+void qmlui_invoke(int i, const char *obj, const char *method, const char *json) {
 	
 	if ( ! isOpen(i, "qmlui_get") ) {
 		return;
@@ -162,8 +162,7 @@ void qmlui_invoke(int i, const char *obj, const char *method, const char *json)
 }
 
 
-void qmlui_libs(int i, const char *libs)
-{
+void qmlui_libs(int i, const char *libs) {
 	
 	if ( ! isOpen(i, "qmlui_libs") ) {
 		return;
@@ -173,9 +172,16 @@ void qmlui_libs(int i, const char *libs)
 	
 }
 
-void qmlui_plugins(const char *plugins)
-{
+
+void qmlui_plugins(const char *plugins) {
 	
 	QCoreApplication::addLibraryPath(QString(plugins));
 	
+}
+
+
+void qmlui_exit() {
+	for (int i = windowList.size() - 1; i >= 0; i--) {
+		qmlui_close(i);
+	}
 }
