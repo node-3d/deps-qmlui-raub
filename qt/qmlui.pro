@@ -16,36 +16,38 @@ contains(QMAKE_TARGET.arch, x86_64):{
 }
 
 macx {
-	DESTDIR = $$PWD/../bin_macx
+	DESTDIR = $$PWD/../bin_mac64
 }
-unix:!macx{
-	DESTDIR = $$PWD/../bin_unix
-}
+
 linux-g++ {
-    DESTDIR = $$PWD/../bin_linux
+	DESTDIR = $$PWD/../bin_linux32
+	contains(QMAKE_TARGET.arch, x86_64):{
+		DESTDIR = $$PWD/../bin_linux64
+	}
 }
 
 
 WPWD = $${PWD}
+
 WPWD ~= s,/,\\,g
 QMAKE_POST_LINK += $$quote(cmd /c copy /y $$WPWD\\qmlui.hpp $$WPWD\\..\\include)
 
+macx,linux-g++ {
+	QMAKE_POST_LINK += $$quote(cp $$PWD/qmlui.hpp $$PWD/../include)
+}
+
 SOURCES += \
-    qmlui.cpp \
-    qml-renderer.cpp \
-    qml-cb.cpp \
-    keyconv.cpp \
-    qml-window.cpp
+	qmlui.cpp \
+	qml-renderer.cpp \
+	qml-cb.cpp \
+	keyconv.cpp \
+	qml-window.cpp
+
 HEADERS += qmlui.hpp \
-    qml-renderer.hpp \
-    platform.hpp \
-    qml-cb.hpp \
-    keyconv.hpp \
-    qml-window.hpp
+	qml-renderer.hpp \
+	platform.hpp \
+	qml-cb.hpp \
+	keyconv.hpp \
+	qml-window.hpp
 
 RESOURCES += qml.qrc
-
-# Additional import path used to resolve QML modules in Qt Creator's code model
-QML_IMPORT_PATH =
-# Additional import path used to resolve QML modules just for Qt Quick Designer
-QML_DESIGNER_IMPORT_PATH =

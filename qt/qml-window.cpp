@@ -16,6 +16,7 @@
 #include <QCoreApplication>
 #include <QByteArray>
 #include <QMap>
+#include <QThread>
 #include <QJsonDocument>
 
 #include "qml-renderer.hpp"
@@ -46,6 +47,7 @@ QmlWindow::QmlWindow(QmlRenderer *renderer, int w, int h, int i, EventCb eventCb
 	
 	// Grab GL context and surface from owner renderer
 	_openglContext    = renderer->context();
+	
 	_offscreenSurface = renderer->surface();
 	
 	// Create a window with custom RenderControl to render offscreen
@@ -91,6 +93,7 @@ QmlWindow::QmlWindow(QmlRenderer *renderer, int w, int h, int i, EventCb eventCb
 		_offscreenWindow, &QQuickWindow::sceneGraphInitialized,
 		this,             &QmlWindow::_createFramebuffer
 	);
+	
 	connect(
 		_offscreenWindow, &QQuickWindow::sceneGraphInvalidated,
 		this,             &QmlWindow::_destroyFramebuffer
@@ -112,7 +115,12 @@ QmlWindow::QmlWindow(QmlRenderer *renderer, int w, int h, int i, EventCb eventCb
 }
 
 QmlWindow::~QmlWindow() {
-
+	
+	if (QThread::currentThread() != this->thread()) {
+		// Well, it's not my business!
+		return;
+	}
+	
 	// Make sure the context is current while doing cleanup. Note that we use the
 	// offscreen surface here because passing 'this' at this point is not safe: the
 	// underlying platform window may already be destroyed. To avoid all the trouble, use
@@ -139,6 +147,10 @@ QmlWindow::~QmlWindow() {
 
 // Create a new FBO
 void QmlWindow::_createFramebuffer() {
+	
+	if ( ! _openglContext->makeCurrent(_offscreenSurface) ) {
+		return;
+	}
 	
 	// Get hold of a new FBO
 	_framebuffer = new QOpenGLFramebufferObject(
@@ -183,7 +195,6 @@ void QmlWindow::_render() {
 	// Finish OpenGL business
 	_offscreenWindow->resetOpenGLState();
 	_openglContext->functions()->glFlush();
-	_openglContext->doneCurrent();
 	
 }
 
@@ -213,7 +224,6 @@ void QmlWindow::_applySize() {
 	if ( _openglContext && _openglContext->makeCurrent( _offscreenSurface ) ) {
 		_destroyFramebuffer();
 		_createFramebuffer();
-		_openglContext->doneCurrent();
 	}
 	
 }
@@ -300,7 +310,6 @@ void QmlWindow::_rootStatusUpdate(QQmlComponent::Status status) {
 	// Initialize the render control and our OpenGL resources.
 	_openglContext->makeCurrent( _offscreenSurface );
 	_renderControl->initialize( _openglContext );
-	_openglContext->doneCurrent();
 	
 	// Now system is ready to load user ui
 	_isReady = true;
@@ -319,10 +328,16 @@ void QmlWindow::_customStatusUpdate(QQmlComponent::Status status) {
 	result["status"] = "error";
 	
 	// If not ready yet, then only check for errors
-	if( QQmlComponent::Ready != status ) {
-		_qmlCheckErrors(_customComponent);
+	if ( QQmlComponent::Ready != status ) {
+		
+		if ( ! _qmlCheckErrors(_customComponent) ) {
+			result["status"] = "loading";
+		}
+		
 		_cb->call("load", result);
+		
 		return;
+		
 	}
 	
 	// Prevent further status changes
@@ -346,6 +361,7 @@ void QmlWindow::_customStatusUpdate(QQmlComponent::Status status) {
 	if ( ! _customItem ) {
 		_qmlReport("Not a QQuickItem: " + _currentQml);
 		delete rootObject;
+		rootObject = nullptr;
 		_cb->call("load", result);
 		return;
 	}
