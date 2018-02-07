@@ -1,24 +1,20 @@
 {
 	'variables': {
-		'rem' : '<!(node -e "console.log(require(\'.\').rem)")',
+		'rm'  : '<!(node -e "require(\'addon-tools-raub\').rm()")',
+		'rem' : '<!(node -e "require(\'.\').rem()")',
 	},
 	'targets': [
 		{
-			'target_name'  : 'remove_extras',
-			'type'         : 'none',
-			'actions'      : [
+			'target_name' : 'remove_extras',
+			'type'        : 'none',
+			'actions'     : [
 				{
 					'action_name' : 'Unnecessary binaries removed.',
-					'inputs'      : ['<@(rem)'],
+					'inputs'      : [],
 					'outputs'     : ['build'],
-					'conditions'  : [
-						[ 'OS=="linux"', { 'action' : [ 'rm', '-rf', '<@(_inputs)' ] } ],
-						[ 'OS=="mac"'  , { 'action' : [ 'rm', '-rf', '<@(_inputs)' ] } ],
-						[ 'OS=="win"'  , { 'action' : [ '<(module_root_dir)/_rd', '<@(_inputs)' ] } ],
-					],
+					'action'      : ['<(rm)', '-rf', '<@(rem)'],
 				}
 			],
-		},
-		
+		}
 	]
 }

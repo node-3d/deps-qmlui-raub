@@ -1,8 +1,8 @@
 {
-	"name": "node-deps-qmlui-raub",
+	"name": "deps-qmlui-raub",
 	"author": "Luis Blanco <raubtierxxx@gmail.com>",
-	"description": "A dependency for node-qml-raub.",
-	"version": "0.3.1",
+	"description": "Binaries and headers for QmlUi-dependent compilation",
+	"version": "0.0.1",
 	"main": "index.js",
 	"keywords": [
 		"qt",
@@ -26,6 +26,7 @@
 		"url": "https://github.com/raub/node-deps-qmlui"
 	},
 	"dependencies": {
-		"node-deps-qt-qml-raub": "5.9.1"
+		"node-deps-qt-qml-raub": "0.0.1",
+		"addon-tools-raub": "0.0.7"
 	}
 }

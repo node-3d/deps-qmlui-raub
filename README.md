@@ -1,22 +1,26 @@
-# qmlui
+# Bullet binaries
+
+* Platforms: win x32/x64, linux x32/x64, mac x64.
+* Library: QmlUi.
+* Linking: static dll-type.
 
 Offscreen OpenGL Qt QML renderer with C-way API.
-Contains a Qt project. Binaries are prebuilt and then used as dependency.
+Contains a Qt project. Binaries are prebuilt and then used as dependencies.
 
 
 ## Install
 
-`npm i -s node-deps-qmlui-raub`
+`npm i -s deps-qmlui-raub`
 
 
-## Use
+## Usage
 
 **binding.gyp**
 
 ```javascript
 	'variables': {
-		'qmlui_include' : '<!(node -e "console.log(require(\'node-deps-qmlui-raub\').include)")',
-		'qmlui_bin'     : '<!(node -e "console.log(require(\'node-deps-qmlui-raub\').bin)")',
+		'qmlui_include' : '<!(node -e "require(\'deps-qmlui-raub\').include()")',
+		'qmlui_bin'     : '<!(node -e "require(\'deps-qmlui-raub\').bin()")',
 	},
 	...
 	'targets': [
@@ -33,19 +37,10 @@ Contains a Qt project. Binaries are prebuilt and then used as dependency.
 			
 			'conditions': [
 				
-				['OS=="linux"', {
+				['OS=="linux" or OS=="mac"', {
 					'libraries': [
 						'-Wl,-rpath,<(qmlui_bin)',
 					],
-				}],
-				
-				['OS=="mac"', {
-					'libraries': [
-						'-Wl,-rpath,<(qmlui_bin)',
-				}],
-				
-				['OS=="win"', {
-					
 				}],
 				
 			],
