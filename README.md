@@ -1,4 +1,4 @@
-# Bullet binaries
+# QmlUi binaries
 
 * Platforms: win x32/x64, linux x32/x64, mac x64.
 * Library: QmlUi.

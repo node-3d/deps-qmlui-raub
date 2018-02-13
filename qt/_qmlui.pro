@@ -10,31 +10,22 @@ TARGET = qmlui
 DEFINES += QMLUI_SHARED QT_DEPRECATED_WARNINGS
 
 
-DESTDIR = $$PWD/../bin_win32
+DESTDIR = $$PWD/../bin-win32
 contains(QMAKE_TARGET.arch, x86_64):{
-	DESTDIR = $$PWD/../bin_win64
+	DESTDIR = $$PWD/../bin-win64
 }
 
-macx {
-	DESTDIR = $$PWD/../bin_mac64
-}
-
-linux-g++ {
-	DESTDIR = $$PWD/../bin_linux32
+unix {
+	DESTDIR = $$PWD/../bin-linux32
 	contains(QMAKE_TARGET.arch, x86_64):{
-		DESTDIR = $$PWD/../bin_linux64
+		DESTDIR = $$PWD/../bin-linux64
 	}
 }
 
-
-WPWD = $${PWD}
-
-WPWD ~= s,/,\\,g
-QMAKE_POST_LINK += $$quote(cmd /c copy /y $$WPWD\\qmlui.hpp $$WPWD\\..\\include)
-
-macx,linux-g++ {
-	QMAKE_POST_LINK += $$quote(cp $$PWD/qmlui.hpp $$PWD/../include)
+macx {
+	DESTDIR = $$PWD/../bin-mac64
 }
+
 
 SOURCES += \
 	qmlui.cpp \
