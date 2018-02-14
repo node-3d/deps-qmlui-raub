@@ -14,7 +14,7 @@ public:
 	
 	QmlCb(QmlUi *owner, QmlUi::Cb cb);
 	
-	Q_INVOKABLE void call(const QString &type, QVariantMap props = QVariantMap());
+	Q_INVOKABLE void call(const QString &type, QVariantMap props = QVariantMap()) const;
 	
 	
 private:

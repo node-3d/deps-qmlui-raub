@@ -4,6 +4,7 @@
 #include <QVector>
 
 #include "qml-renderer.hpp"
+#include "qml-cb.hpp"
 #include "qml-view.hpp"
 #include "qmlui.hpp"
 #include "platform.hpp"
@@ -17,10 +18,10 @@ char *argv = &argvData[0];
 QGuiApplication *app  = nullptr;
 QmlRenderer *renderer = nullptr;
 
-QVector<QmlWindow *> windowList;
 
+QmlUi::Cb QmlUi::__globalCb;
 
-static void QmlUi::init(const char *cwdOwn, size_t wnd, size_t ctx, QmlUi::Cb cb) {
+void QmlUi::init(const char *cwdOwn, size_t wnd, size_t ctx, QmlUi::Cb cb) {
 	
 	if (renderer) {
 		return;
@@ -35,14 +36,14 @@ static void QmlUi::init(const char *cwdOwn, size_t wnd, size_t ctx, QmlUi::Cb cb
 }
 
 
-static void QmlUi::plugins(const char *plugins) {
+void QmlUi::plugins(const char *plugins) {
 	
 	QCoreApplication::addLibraryPath(QString(plugins));
 	
 }
 
 
-void QmlUi::QmlUi(int w, int h) {
+QmlUi::QmlUi(int w, int h) {
 	
 	if ( renderer == nullptr ) {
 		throw "QmlUi: not inited.";
@@ -57,7 +58,7 @@ void QmlUi::QmlUi(int w, int h) {
 }
 
 
-void QmlUi::~QmlUi() {
+QmlUi::~QmlUi() {
 	
 	delete _view;
 	_view = nullptr;

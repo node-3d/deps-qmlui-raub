@@ -3,17 +3,17 @@
 
 
 #if defined QMLUI_SHARED
- #define QMLUI_DLLSPEC Q_DECL_EXPORT
+ #define QMLUI_DLLSPEC __declspec(dllexport)
 #else
  #define QMLUI_DLLSPEC __declspec(dllimport)
 #endif
 
 
-class QmlWindow;
+class QmlView;
 class QmlCb;
 
 
-class QMLUI_SHARED QmlUi {
+class QMLUI_DLLSPEC QmlUi {
 	
 public:
 	
@@ -44,12 +44,12 @@ public:
 private:
 	
 	QmlCb *_qmlCb;
-	QmlWindow *_view;
+	QmlView *_view;
 	
 	
 private:
 	
-	static QmlUi::Cb *__globalCb;
+	static QmlUi::Cb __globalCb;
 	
 };
 

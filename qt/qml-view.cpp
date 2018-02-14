@@ -24,7 +24,7 @@
 #include "keyconv.hpp"
 
 
-QmlWindow::QmlWindow(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
+QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 	
 	// Initial values all zero
 	_systemItem      = nullptr;
@@ -79,40 +79,40 @@ QmlWindow::QmlWindow(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 	// Debounced rendering with singleshot timer
 	_renderTimer.setSingleShot(true);
 	_renderTimer.setInterval(5);
-	connect(&_renderTimer, &QTimer::timeout, this, &QmlWindow::_render);
+	connect(&_renderTimer, &QTimer::timeout, this, &QmlView::_render);
 	
 	// Debounced resizing, must be enough time, resize is costly
 	_resizeTimer.setSingleShot(true);
 	_resizeTimer.setInterval(300);
-	connect(&_resizeTimer, &QTimer::timeout, this, &QmlWindow::_applySize);
+	connect(&_resizeTimer, &QTimer::timeout, this, &QmlView::_applySize);
 	
 	// Set up event listeners
 	connect(
 		_offscreenWindow, &QQuickWindow::sceneGraphInitialized,
-		this,             &QmlWindow::_createFramebuffer
+		this,             &QmlView::_createFramebuffer
 	);
 	
 	connect(
 		_offscreenWindow, &QQuickWindow::sceneGraphInvalidated,
-		this,             &QmlWindow::_destroyFramebuffer
+		this,             &QmlView::_destroyFramebuffer
 	);
 	connect(
 		_renderControl, &QQuickRenderControl::renderRequested,
-		this,           &QmlWindow::_requestUpdate
+		this,           &QmlView::_requestUpdate
 	);
 	connect(
 		_renderControl, &QQuickRenderControl::sceneChanged,
-		this,           &QmlWindow::_syncScene
+		this,           &QmlView::_syncScene
 	);
 	
 	// Init system component, ASYNC
 	_systemComponent = new QQmlComponent( _qmlEngine );
-	connect( _systemComponent, &QQmlComponent::statusChanged, this, &QmlWindow::_rootStatusUpdate );
+	connect( _systemComponent, &QQmlComponent::statusChanged, this, &QmlView::_rootStatusUpdate );
 	_systemComponent->loadUrl(QString("qrc:/main.qml"), QQmlComponent::Asynchronous);
 	
 }
 
-QmlWindow::~QmlWindow() {
+QmlView::~QmlView() {
 	
 	if (QThread::currentThread() != this->thread()) {
 		// Well, it's not my business!
@@ -144,7 +144,7 @@ QmlWindow::~QmlWindow() {
 
 
 // Create a new FBO
-void QmlWindow::_createFramebuffer() {
+void QmlView::_createFramebuffer() {
 	
 	if ( ! _openglContext->makeCurrent(_offscreenSurface) ) {
 		return;
@@ -168,14 +168,14 @@ void QmlWindow::_createFramebuffer() {
 
 
 // Dispose FBO
-void QmlWindow::_destroyFramebuffer() {
+void QmlView::_destroyFramebuffer() {
 	delete _framebuffer;
 	_framebuffer = nullptr;
 }
 
 
 // Update and render the scene
-void QmlWindow::_render() {
+void QmlView::_render() {
 	
 	if ( ! _openglContext->makeCurrent(_offscreenSurface) ) {
 		return;
@@ -198,7 +198,7 @@ void QmlWindow::_render() {
 
 
 // Activate/reactivate resize timer for debounce
-void QmlWindow::resize(const QSize &size) {
+void QmlView::resize(const QSize &size) {
 	
 	_currentSize = size;
 	
@@ -212,7 +212,7 @@ void QmlWindow::resize(const QSize &size) {
 
 
 // Update the size of the Window
-void QmlWindow::_applySize() {
+void QmlView::_applySize() {
 	
 	// Both window and content
 	_offscreenWindow->setGeometry(0, 0, _currentSize.width(), _currentSize.height());
@@ -228,7 +228,7 @@ void QmlWindow::_applySize() {
 
 
 // Call for render if not called yet
-void QmlWindow::_requestUpdate() {
+void QmlView::_requestUpdate() {
 	
 	if ( ! _renderTimer.isActive() ) {
 		_renderTimer.start();
@@ -238,11 +238,11 @@ void QmlWindow::_requestUpdate() {
 
 
 // Scene changed, set changed flag and call for render
-void QmlWindow::_syncScene() { _hasChanged = true; _requestUpdate(); }
+void QmlView::_syncScene() { _hasChanged = true; _requestUpdate(); }
 
 
 // Report an error message to JS
-void QmlWindow::_qmlReport(const QString &message, const QString &type) const {
+void QmlView::_qmlReport(const QString &message, const QString &type) const {
 	QVariantMap pmap;
 	pmap["message"] = message;
 	pmap["type"] = type;
@@ -251,7 +251,7 @@ void QmlWindow::_qmlReport(const QString &message, const QString &type) const {
 
 
 // Check if the given component has some errors. Report if any.
-bool QmlWindow::_qmlCheckErrors(const QQmlComponent *component) const {
+bool QmlView::_qmlCheckErrors(const QQmlComponent *component) const {
 	
 	// If there are errors, report each of them
 	if (component->isError()) {
@@ -268,7 +268,7 @@ bool QmlWindow::_qmlCheckErrors(const QQmlComponent *component) const {
 
 
 // Status listener for System Component
-void QmlWindow::_rootStatusUpdate(QQmlComponent::Status status) {
+void QmlView::_rootStatusUpdate(QQmlComponent::Status status) {
 	
 	// If not ready yet, then only check for errors
 	if( QQmlComponent::Ready != status ) {
@@ -277,7 +277,7 @@ void QmlWindow::_rootStatusUpdate(QQmlComponent::Status status) {
 	}
 	
 	// Prevent further status changes
-	disconnect(_systemComponent, &QQmlComponent::statusChanged, this, &QmlWindow::_rootStatusUpdate);
+	disconnect(_systemComponent, &QQmlComponent::statusChanged, this, &QmlView::_rootStatusUpdate);
 	
 	// If any errors - quit
 	if (_qmlCheckErrors(_systemComponent)) {
@@ -319,7 +319,7 @@ void QmlWindow::_rootStatusUpdate(QQmlComponent::Status status) {
 
 
 // Status listener for User UI Component
-void QmlWindow::_customStatusUpdate(QQmlComponent::Status status) {
+void QmlView::_customStatusUpdate(QQmlComponent::Status status) {
 	
 	QVariantMap result;
 	result["source"] = _currentQml;
@@ -339,7 +339,7 @@ void QmlWindow::_customStatusUpdate(QQmlComponent::Status status) {
 	}
 	
 	// Prevent further status changes
-	disconnect(_customComponent, &QQmlComponent::statusChanged, this, &QmlWindow::_customStatusUpdate);
+	disconnect(_customComponent, &QQmlComponent::statusChanged, this, &QmlView::_customStatusUpdate);
 	
 	// If any errors - quit
 	if (_qmlCheckErrors(_customComponent)) {
@@ -375,35 +375,35 @@ void QmlWindow::_customStatusUpdate(QQmlComponent::Status status) {
 
 
 // Load a QML file from the given source. Source must have an absolute path.
-void QmlWindow::loadQml(const QString &fileName) {
+void QmlView::loadQml(const QString &fileName) {
 	
 	unload();
 	
 	// Setup the new component
 	_currentQml = fileName;
 	_customComponent = new QQmlComponent( _qmlEngine );
-	connect( _customComponent, &QQmlComponent::statusChanged, this, &QmlWindow::_customStatusUpdate );
+	connect( _customComponent, &QQmlComponent::statusChanged, this, &QmlView::_customStatusUpdate );
 	_customComponent->loadUrl(QUrl::fromLocalFile(_currentQml), QQmlComponent::Asynchronous);
 	
 }
 
 
 // Parse the given text as QML file
-void QmlWindow::loadText(const QString &source) {
+void QmlView::loadText(const QString &source) {
 	
 	unload();
 	
 	// Setup the new component
 	_currentQml = source;
 	_customComponent = new QQmlComponent( _qmlEngine );
-	connect( _customComponent, &QQmlComponent::statusChanged, this, &QmlWindow::_customStatusUpdate );
+	connect( _customComponent, &QQmlComponent::statusChanged, this, &QmlView::_customStatusUpdate );
 	_customComponent->setData( source.toUtf8(), QString("loadText") );
 	
 }
 
 
 // If something is currently loaded, disregard that
-void QmlWindow::unload() {
+void QmlView::unload() {
 	if (_customComponent) {
 		if (_customItem) {
 			_customItem->deleteLater();
@@ -416,7 +416,7 @@ void QmlWindow::unload() {
 
 
 // Set the property value on a given object, by "objectName", not "id"
-void QmlWindow::setProp(const QString &objname, const QByteArray &propname, const QByteArray &json) {
+void QmlView::setProp(const QString &objname, const QByteArray &propname, const QByteArray &json) {
 	
 	if ( ! _customItem ) {
 		_qmlReport("Qml setProp() failed. Do a proper loadQml() first.", "prop");
@@ -442,7 +442,7 @@ void QmlWindow::setProp(const QString &objname, const QByteArray &propname, cons
 }
 
 
-void QmlWindow::getProp(const QString &objname, const QByteArray &propname) {
+void QmlView::getProp(const QString &objname, const QByteArray &propname) {
 	
 	if ( ! _customItem ) {
 		_qmlReport("Qml getProp() failed. Do a proper loadQml() first.", "prop");
@@ -466,7 +466,7 @@ void QmlWindow::getProp(const QString &objname, const QByteArray &propname) {
 }
 
 
-void QmlWindow::invoke(const QString &objname, const QByteArray &method, const QByteArray &json) {
+void QmlView::invoke(const QString &objname, const QByteArray &method, const QByteArray &json) {
 	
 	if ( ! _customItem ) {
 		_qmlReport("Qml invoke() failed. Do a proper loadQml() first.", "invoke");
@@ -494,7 +494,7 @@ void QmlWindow::invoke(const QString &objname, const QByteArray &method, const Q
 
 
 // Confirm Window status (in case it's ready too soon)
-void QmlWindow::confirm() {
+void QmlView::confirm() {
 	_hasConfirmed = true;
 	if (_isReady) {
 		_cb->call("ready");
@@ -503,7 +503,7 @@ void QmlWindow::confirm() {
 
 
 // Apply mouse event
-void QmlWindow::mouse(int type, int button, int buttons, int x, int y) {
+void QmlView::mouse(int type, int button, int buttons, int x, int y) {
 	
 	QPointF mousePoint(x, y);
 	
@@ -540,7 +540,7 @@ void QmlWindow::mouse(int type, int button, int buttons, int x, int y) {
 
 // Apply keyboard events
 // FIXME: eliminate incorrect key codes
-void QmlWindow::keyboard(int type, int key, char text) {
+void QmlView::keyboard(int type, int key, char text) {
 	
 	Qt::Key qtKey = keyconv(key);
 	QKeySequence seq = QKeySequence(qtKey);
@@ -554,13 +554,13 @@ void QmlWindow::keyboard(int type, int key, char text) {
 
 
 // Tell QML Engine where extra files are
-void QmlWindow::addLibsDir(const QString &dirName) {
+void QmlView::addLibsDir(const QString &dirName) {
 	_qmlEngine->addImportPath(dirName);
 }
 
 
 // Find Item by name
-QQuickItem* QmlWindow::_findItem(QObject* node, const QString& name, int depth) const {
+QQuickItem* QmlView::_findItem(QObject* node, const QString& name, int depth) const {
 	
 	if (node && node->objectName() == name){
 	

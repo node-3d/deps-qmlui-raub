@@ -21,12 +21,12 @@ class QmlCb;
 class QmlRenderer;
 
 
-class QmlWindow : public QWindow {
+class QmlView : public QWindow {
 	Q_OBJECT
 	
 public:
-	QmlWindow(QmlRenderer * renderer, int w, int h, QmlCb *cb);
-	~QmlWindow();
+	QmlView(QmlRenderer * renderer, int w, int h, QmlCb *cb);
+	~QmlView();
 	
 	void addLibsDir(const QString &dirName);
 	
