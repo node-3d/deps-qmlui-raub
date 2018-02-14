@@ -1,5 +1,5 @@
-#ifndef QMLTRANSMITTER_HPP
-#define QMLTRANSMITTER_HPP
+#ifndef _QMLCB_HPP_
+#define _QMLCB_HPP_
 
 #include <QObject>
 #include <QVariantMap>
@@ -7,20 +7,22 @@
 #include "qmlui.hpp"
 
 
-class QmlCb : public QObject
-{
+class QmlCb : public QObject {
 	Q_OBJECT
 	
 public:
-	explicit QmlCb(QObject *parent, int i, EventCb cb);
+	
+	QmlCb(QmlUi *owner, QmlUi::Cb cb);
 	
 	Q_INVOKABLE void call(const QString &type, QVariantMap props = QVariantMap());
 	
 	
 private:
-	int _index;
-	EventCb _eventCb;
+	
+	QmlUi *_owner;
+	QmlUi::Cb _cb;
 	
 };
 
-#endif // QMLTRANSMITTER_HPP
+
+#endif // _QMLCB_HPP_

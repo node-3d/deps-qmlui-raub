@@ -24,7 +24,6 @@ public:
 	
 	static void init(const char *cwdOwn, size_t wnd, size_t ctx, QmlUi::Cb cb);
 	static void plugins(const char *path);
-	static void exit();
 	
 	
 public:
@@ -44,14 +43,13 @@ public:
 	
 private:
 	
-	QmlCb *_callback;
+	QmlCb *_qmlCb;
 	QmlWindow *_view;
 	
 	
 private:
 	
-	static QmlCb *_callback;
-	QmlWindow *_view;
+	static QmlUi::Cb *__globalCb;
 	
 };
 

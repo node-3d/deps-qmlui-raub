@@ -8,6 +8,7 @@
 #include "qmlui.hpp"
 #include "platform.hpp"
 
+
 // Main static objects
 int argc = 1;
 char argvData[] = "qmlui";
@@ -19,11 +20,13 @@ QmlRenderer *renderer = nullptr;
 QVector<QmlWindow *> windowList;
 
 
-static void QmlUi::init(const char *cwdOwn, size_t wnd, size_t ctx) {
+static void QmlUi::init(const char *cwdOwn, size_t wnd, size_t ctx, QmlUi::Cb cb) {
 	
 	if (renderer) {
 		return;
 	}
+	
+	__globalCb = cb;
 	
 	app = new QGuiApplication(argc, &argv);
 	
@@ -39,13 +42,16 @@ static void QmlUi::plugins(const char *plugins) {
 }
 
 
-void QmlUi::QmlUi(int w, int h, QmlUi::Cb cb) {
+void QmlUi::QmlUi(int w, int h) {
 	
 	if ( renderer == nullptr ) {
 		throw "QmlUi: not inited.";
 	}
 	
-	_view = new QmlView(renderer, w, h, *i, cb);
+	// Wrap JS event callback
+	_qmlCb = new QmlCb(this, __globalCb);
+	
+	_view = new QmlView(renderer, w, h, _qmlCb);
 	_view->confirm();
 	
 }
@@ -55,6 +61,9 @@ void QmlUi::~QmlUi() {
 	
 	delete _view;
 	_view = nullptr;
+	
+	delete _qmlCb;
+	_qmlCb = nullptr;
 	
 }
 

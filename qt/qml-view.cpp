@@ -1,23 +1,22 @@
+#include <QByteArray>
+#include <QCoreApplication>
+#include <QJsonDocument>
+#include <QMap>
+#include <QOffscreenSurface>
+#include <QOpenGLBuffer>
 #include <QOpenGLContext>
-#include <QOpenGLFunctions>
 #include <QOpenGLFramebufferObject>
+#include <QOpenGLFunctions>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLVertexArrayObject>
-#include <QOpenGLBuffer>
-#include <QOpenGLVertexArrayObject>
-#include <QOffscreenSurface>
-#include <QScreen>
-#include <QQmlEngine>
-#include <QQmlContext>
 #include <QQmlComponent>
+#include <QQmlContext>
+#include <QQmlEngine>
 #include <QQuickItem>
-#include <QQuickWindow>
 #include <QQuickRenderControl>
-#include <QCoreApplication>
-#include <QByteArray>
-#include <QMap>
+#include <QQuickWindow>
+#include <QScreen>
 #include <QThread>
-#include <QJsonDocument>
 
 #include "qml-renderer.hpp"
 #include "qml-view.hpp"
@@ -25,7 +24,7 @@
 #include "keyconv.hpp"
 
 
-QmlWindow::QmlWindow(QmlRenderer *renderer, int w, int h, int i, EventCb eventCb) {
+QmlWindow::QmlWindow(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 	
 	// Initial values all zero
 	_systemItem      = nullptr;
@@ -39,8 +38,7 @@ QmlWindow::QmlWindow(QmlRenderer *renderer, int w, int h, int i, EventCb eventCb
 	_isReady      = false;
 	_hasConfirmed = false;
 	
-	// Wrap JS event callback
-	_cb = new QmlCb(this, i, eventCb);
+	_cb = cb;
 	
 	// Tell window it's gonna be OpenGL based
 	setSurfaceType(QSurface::OpenGLSurface);

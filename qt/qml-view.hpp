@@ -25,7 +25,7 @@ class QmlWindow : public QWindow {
 	Q_OBJECT
 	
 public:
-	QmlWindow(QmlRenderer * renderer, int w, int h, int i, EventCb eventCb);
+	QmlWindow(QmlRenderer * renderer, int w, int h, QmlCb *cb);
 	~QmlWindow();
 	
 	void addLibsDir(const QString &dirName);
@@ -47,6 +47,7 @@ public:
 	
 	
 private slots:
+
 	void _rootStatusUpdate(QQmlComponent::Status status);
 	void _customStatusUpdate(QQmlComponent::Status status);
 	
@@ -61,6 +62,7 @@ private slots:
 	
 	
 private:
+	
 	void _resizeFbo();
 	
 	QQuickItem* _findItem(QObject* node, const QString& name, int depth = 0) const;
@@ -74,29 +76,29 @@ private:
 	QQuickRenderControl      *_renderControl;
 	QQuickWindow             *_offscreenWindow;
 	QOpenGLFramebufferObject *_framebuffer;
-
+	
 	QQmlEngine    *_qmlEngine;
-
+	
 	QQmlComponent *_systemComponent;
 	QQuickItem    *_systemItem;
 	QQuickItem    *_systemRoot;
-
+	
 	QQmlComponent *_customComponent;
 	QQuickItem    *_customItem;
-
+	
 	bool _hasChanged;
 	bool _isReady;
 	bool _hasConfirmed;
-
+	
 	QTimer _renderTimer;
 	QTimer _resizeTimer;
-
+	
 	QmlCb *_cb;
-
+	
 	QString _currentQml;
-
+	
 	QSize _currentSize;
-
+	
 };
 
 #endif // QML_WINDOW_HPP
