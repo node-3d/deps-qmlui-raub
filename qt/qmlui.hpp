@@ -1,5 +1,6 @@
-#ifndef QMLUI_HPP
-#define QMLUI_HPP
+#ifndef _QMLUI_HPP_
+#define _QMLUI_HPP_
+
 
 #if defined QMLUI_SHARED
  #define QMLUI_DLLSPEC Q_DECL_EXPORT
@@ -8,23 +9,51 @@
 #endif
 
 
-// Callback type
-typedef void (*EventCb) (int i, const char *data);
+class QmlWindow;
+class QmlCb;
 
-// C-API:
 
-extern "C" QMLUI_DLLSPEC void qmlui_init(const char *cwdOwn, size_t wnd, size_t ctx, EventCb cb);
-extern "C" QMLUI_DLLSPEC void qmlui_view(volatile int *i, int w, int h);
-extern "C" QMLUI_DLLSPEC void qmlui_close(int i);
-extern "C" QMLUI_DLLSPEC void qmlui_exit();
-extern "C" QMLUI_DLLSPEC void qmlui_resize(int i, int w, int h);
-extern "C" QMLUI_DLLSPEC void qmlui_mouse(int i, int type, int button, int buttons, int x, int y);
-extern "C" QMLUI_DLLSPEC void qmlui_keyboard(int i, int type, int key, char text);
-extern "C" QMLUI_DLLSPEC void qmlui_load(int i, const char *str, bool isFile);
-extern "C" QMLUI_DLLSPEC void qmlui_set(int i, const char *obj, const char *prop, const char *json);
-extern "C" QMLUI_DLLSPEC void qmlui_get(int i, const char *obj, const char *prop);
-extern "C" QMLUI_DLLSPEC void qmlui_invoke(int i, const char *obj, const char *method, const char *json);
-extern "C" QMLUI_DLLSPEC void qmlui_libs(int i, const char *libs);
-extern "C" QMLUI_DLLSPEC void qmlui_plugins(const char *plugins);
+class QMLUI_SHARED QmlUi {
+	
+public:
+	
+	typedef void (*Cb) (QmlUi *target, const char *data);
+	
+	
+public:
+	
+	static void init(const char *cwdOwn, size_t wnd, size_t ctx, QmlUi::Cb cb);
+	static void plugins(const char *path);
+	static void exit();
+	
+	
+public:
+	
+	QmlUi(int w, int h);
+	~QmlUi();
+	
+	void resize(int w, int h);
+	void mouse(int type, int button, int buttons, int x, int y);
+	void keyboard(int type, int key, char text);
+	void load(const char *str, bool isFile);
+	void set(const char *obj, const char *prop, const char *json);
+	void get(const char *obj, const char *prop);
+	void invoke(const char *obj, const char *method, const char *json);
+	void libs(const char *path);
+	
+	
+private:
+	
+	QmlCb *_callback;
+	QmlWindow *_view;
+	
+	
+private:
+	
+	static QmlCb *_callback;
+	QmlWindow *_view;
+	
+};
 
-#endif // QMLUI_HPP
+
+#endif // _QMLUI_HPP_

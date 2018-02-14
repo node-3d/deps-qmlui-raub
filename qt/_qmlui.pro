@@ -32,13 +32,13 @@ SOURCES += \
 	qml-renderer.cpp \
 	qml-cb.cpp \
 	keyconv.cpp \
-	qml-window.cpp
+    qml-view.cpp
 
 HEADERS += qmlui.hpp \
 	qml-renderer.hpp \
 	platform.hpp \
 	qml-cb.hpp \
 	keyconv.hpp \
-	qml-window.hpp
+    qml-view.hpp
 
 RESOURCES += qml.qrc

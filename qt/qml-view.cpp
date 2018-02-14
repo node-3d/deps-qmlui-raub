@@ -20,7 +20,7 @@
 #include <QJsonDocument>
 
 #include "qml-renderer.hpp"
-#include "qml-window.hpp"
+#include "qml-view.hpp"
 #include "qml-cb.hpp"
 #include "keyconv.hpp"
 
