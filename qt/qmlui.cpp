@@ -9,6 +9,8 @@
 #include "qmlui.hpp"
 #include "platform.hpp"
 
+#include "keyconv.hpp"
+
 
 // Main static objects
 int argc = 1;
@@ -28,6 +30,8 @@ void QmlUi::init(const char *cwdOwn, size_t wnd, size_t ctx, QmlUi::Cb cb) {
 	}
 	
 	__globalCb = cb;
+	
+	keyfill();
 	
 	app = new QGuiApplication(argc, &argv);
 	

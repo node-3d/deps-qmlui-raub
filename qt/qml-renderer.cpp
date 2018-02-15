@@ -5,19 +5,18 @@
 
 #include "qml-renderer.hpp"
 #include "qml-cb.hpp"
-#include "keyconv.hpp"
 #include "platform.hpp"
 
 
 QmlRenderer::QmlRenderer(const QString &workingDir, size_t windowHandle, size_t windowContext) {
 	
-	keyfill();
-	
 	_directoryPath = workingDir;
 	
-	QWGLNativeContext nativeContext(
-		reinterpret_cast<CtxHandle>(windowContext),
-		reinterpret_cast<WndHandle>(windowHandle)
+	NativeContext nativeContext(
+		reinterpret_cast<CtxHandle>(windowContext)
+#ifndef __APPLE__
+		, reinterpret_cast<WndHandle>(windowHandle)
+#endif
 	);
 	QOpenGLContext* extContext = new QOpenGLContext;
 	extContext->setNativeHandle(QVariant::fromValue(nativeContext));

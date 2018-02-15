@@ -7,7 +7,7 @@
 QmlCb::QmlCb(QmlUi *owner, QmlUi::Cb cb) {
 	
 	_owner = owner;
-	_cb    = cb;
+	_cb = cb;
 	
 }
 
@@ -19,6 +19,6 @@ void QmlCb::call(const QString &type, QVariantMap props) const {
 	ba.replace("%1", type.toLatin1());
 	ba.replace("%2", QJsonDocument::fromVariant(props).toJson());
 	
-	_cb( _owner, ba.constData() );
+	_cb(_owner, ba.constData());
 	
 }

@@ -1,7 +1,8 @@
-#ifndef PLATFORM_HPP
-#define PLATFORM_HPP
+#ifndef _PLATFORM_HPP_
+#define _PLATFORM_HPP_
 
-#ifdef WIN32
+
+#if defined WIN32
 	
 	#include <windows.h>
 	typedef HGLRC CtxHandle;
@@ -10,14 +11,25 @@
 	#include <QtPlatformHeaders/QWGLNativeContext>
 	typedef QWGLNativeContext NativeContext;
 	
-#else
+#elif defined __linux__
 	
-	#error FIXME: non-windows renderer needed
-	typedef int CtxHandle;
+	#include <X11/Xlib.h>
+	typedef VisualID CtxHandle;
+	typedef Window WndHandle;
+	
+	#include <QtPlatformHeaders/QGLXNativeContext>
+	typedef QGLXNativeContext NativeContext;
+	
+#elif defined __APPLE__
+	
+	#import <Cocoa/Cocoa.h>
+	typedef NSOpenGLContext CtxHandle;
 	typedef int WndHandle;
 	
-	typedef void NativeContext;
+	#include <QtPlatformHeaders/QCocoaNativeContext>
+	typedef QCocoaNativeContext NativeContext;
 	
 #endif
 
-#endif // PLATFORM_HPP
+
+#endif // _PLATFORM_HPP_
