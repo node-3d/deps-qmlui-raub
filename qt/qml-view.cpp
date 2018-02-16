@@ -493,15 +493,6 @@ void QmlView::invoke(const QString &objname, const QByteArray &method, const QBy
 }
 
 
-// Confirm Window status (in case it's ready too soon)
-void QmlView::confirm() {
-	_hasConfirmed = true;
-	if (_isReady) {
-		_cb->call("ready");
-	}
-}
-
-
 // Apply mouse event
 void QmlView::mouse(int type, int button, int buttons, int x, int y) {
 	

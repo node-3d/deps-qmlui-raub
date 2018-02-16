@@ -57,7 +57,6 @@ QmlUi::QmlUi(int w, int h) {
 	_qmlCb = new QmlCb(this, __globalCb);
 	
 	_view = new QmlView(renderer, w, h, _qmlCb);
-	_view->confirm();
 	
 }
 

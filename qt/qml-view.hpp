@@ -25,6 +25,7 @@ class QmlView : public QWindow {
 	Q_OBJECT
 	
 public:
+	
 	QmlView(QmlRenderer * renderer, int w, int h, QmlCb *cb);
 	~QmlView();
 	
@@ -43,11 +44,9 @@ public:
 	void getProp(const QString &objname, const QByteArray &propname);
 	void invoke(const QString &objname, const QByteArray &method, const QByteArray &json);
 	
-	void confirm();
-	
 	
 private slots:
-
+	
 	void _rootStatusUpdate(QQmlComponent::Status status);
 	void _customStatusUpdate(QQmlComponent::Status status);
 	
