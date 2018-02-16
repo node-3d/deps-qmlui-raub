@@ -9,3 +9,4 @@ lib_d
 *.ilk
 test
 include
+package-lock.json

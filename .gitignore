@@ -8,3 +8,4 @@ lib_d
 *.pdb
 *.ilk
 include
+package-lock.json
