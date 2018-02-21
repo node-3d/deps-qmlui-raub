@@ -37,7 +37,7 @@
 				'action_name' : 'Header copied.',
 				'inputs'      : [],
 				'outputs'     : ['include'],
-				'action'      : ['<(cp)', 'qt/qmlui.hpp', 'include/qmlui.hpp'],
+				'action'      : ['<(cp)', 'qt/qml-ui.hpp', 'include/qml-ui.hpp'],
 			}],
 		},
 	]
