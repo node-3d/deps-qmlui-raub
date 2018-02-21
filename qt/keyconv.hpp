@@ -5,6 +5,7 @@
 
 
 void keyfill();
+
 Qt::Key keyconv(int from);
 
 

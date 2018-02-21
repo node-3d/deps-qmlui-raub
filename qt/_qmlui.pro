@@ -28,17 +28,18 @@ macx {
 
 
 SOURCES += \
-	qmlui.cpp \
 	qml-renderer.cpp \
 	qml-cb.cpp \
 	keyconv.cpp \
-    qml-view.cpp
+	qml-view.cpp \
+	qml-ui.cpp
 
-HEADERS += qmlui.hpp \
+HEADERS += \
 	qml-renderer.hpp \
 	platform.hpp \
 	qml-cb.hpp \
 	keyconv.hpp \
-    qml-view.hpp
+	qml-view.hpp \
+	qml-ui.hpp
 
 RESOURCES += qml.qrc

@@ -1,11 +1,11 @@
-#ifndef QML_WINDOW_HPP
-#define QML_WINDOW_HPP
+#ifndef QML_VIEW_HPP
+#define QML_VIEW_HPP
 
 #include <QWindow>
 #include <QTimer>
 #include <QQmlComponent>
 
-#include "qmlui.hpp"
+#include "qml-ui.hpp"
 #include "platform.hpp"
 
 
@@ -100,5 +100,5 @@ private:
 	
 };
 
-#endif // QML_WINDOW_HPP
+#endif // QML_VIEW_HPP
 

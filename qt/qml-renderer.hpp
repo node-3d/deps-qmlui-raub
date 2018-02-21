@@ -16,8 +16,6 @@ public:
 	QmlRenderer(const QString &workingDir, size_t windowHandle, size_t windowContext);
 	~QmlRenderer();
 	
-	void addLibsDirectory(const QString &dirName);
-	
 	QOpenGLContext *context() const;
 	QOffscreenSurface *surface() const;
 	

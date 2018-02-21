@@ -6,7 +6,7 @@
 #include "qml-renderer.hpp"
 #include "qml-cb.hpp"
 #include "qml-view.hpp"
-#include "qmlui.hpp"
+#include "qml-ui.hpp"
 #include "platform.hpp"
 
 #include "keyconv.hpp"
@@ -21,15 +21,13 @@ QGuiApplication *app  = nullptr;
 QmlRenderer *renderer = nullptr;
 
 
-QmlUi::Cb QmlUi::__globalCb;
-
 void QmlUi::init(const char *cwdOwn, size_t wnd, size_t ctx, QmlUi::Cb cb) {
 	
 	if (renderer) {
 		return;
 	}
 	
-	__globalCb = cb;
+	QmlCb::init(cb);
 	
 	keyfill();
 	
@@ -47,6 +45,13 @@ void QmlUi::plugins(const char *plugins) {
 }
 
 
+void QmlUi::update() {
+	
+	QCoreApplication::processEvents();
+	
+}
+
+
 QmlUi::QmlUi(int w, int h) {
 	
 	if ( renderer == nullptr ) {
@@ -54,7 +59,7 @@ QmlUi::QmlUi(int w, int h) {
 	}
 	
 	// Wrap JS event callback
-	_qmlCb = new QmlCb(this, __globalCb);
+	_qmlCb = new QmlCb(this);
 	
 	_view = new QmlView(renderer, w, h, _qmlCb);
 	

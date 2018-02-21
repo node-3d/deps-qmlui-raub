@@ -1,24 +1,26 @@
-#include <QDebug>
 #include <QJsonDocument>
 
 #include "qml-cb.hpp"
 
 
-QmlCb::QmlCb(QmlUi *owner, QmlUi::Cb cb) {
+QmlUi::Cb QmlCb::__cb;
+
+
+void QmlCb::init(QmlUi::Cb cb)
+{
+	__cb = cb;
+}
+
+
+QmlCb::QmlCb(QmlUi *owner) {
 	
 	_owner = owner;
-	_cb = cb;
 	
 }
 
 
 void QmlCb::call(const QString &type, QVariantMap props) const {
 	
-	QByteArray ba("{\"type\":\"%1\",\"data\":%2}");
-	
-	ba.replace("%1", type.toLatin1());
-	ba.replace("%2", QJsonDocument::fromVariant(props).toJson());
-	
-	_cb(_owner, ba.constData());
+	__cb(_owner, type.toLatin1(), QJsonDocument::fromVariant(props).toJson());
 	
 }

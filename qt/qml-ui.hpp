@@ -1,5 +1,5 @@
-#ifndef _QMLUI_HPP_
-#define _QMLUI_HPP_
+#ifndef _QML_UI_HPP_
+#define _QML_UI_HPP_
 
 
 #if defined QMLUI_SHARED
@@ -17,14 +17,14 @@ class QMLUI_DLLSPEC QmlUi {
 	
 public:
 	
-	typedef void (*Cb) (QmlUi *target, const char *data);
+	typedef void (*Cb) (QmlUi *target, const char *type, const char *json);
 	
 	
 public:
 	
 	static void init(const char *cwdOwn, size_t wnd, size_t ctx, QmlUi::Cb cb);
 	static void plugins(const char *path);
-	
+	static void update();
 	
 public:
 	
@@ -43,15 +43,12 @@ public:
 	
 private:
 	
+	// Instance-specific callback
 	QmlCb *_qmlCb;
+	// Aggregation hides implementation and disregards Qt headers
 	QmlView *_view;
-	
-	
-private:
-	
-	static QmlUi::Cb __globalCb;
 	
 };
 
 
-#endif // _QMLUI_HPP_
+#endif // _QML_UI_HPP_
