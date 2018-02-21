@@ -51,5 +51,5 @@ Contains a Qt project. Binaries are prebuilt and then used as dependencies.
 **addon.cpp**
 
 ```cpp
-#include <qmlui.hpp>
+#include <qml-ui.hpp>
 ```
