@@ -480,6 +480,11 @@ void QmlView::invoke(const QString &objname, const QByteArray &method, const QBy
 		return;
 	}
 	
+	if (json.size() == 0) {
+		QMetaObject::invokeMethod(obj, method.constData());
+		return;
+	}
+	
 	QByteArray enclosed = QByteArray("[") + json + QByteArray("]");
 	QList<QVariant> parsed = QJsonDocument::fromJson(enclosed).toVariant().toList();
 	
