@@ -2,7 +2,7 @@
 	"name": "deps-qmlui-raub",
 	"author": "Luis Blanco <raubtierxxx@gmail.com>",
 	"description": "Binaries and headers for QmlUi-dependent compilation",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"main": "index.js",
 	"keywords": [
 		"qt",
