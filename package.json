@@ -31,6 +31,6 @@
 	},
 	"dependencies": {
 		"deps-qt-qml-raub": "0.0.2",
-		"addon-tools-raub": "0.0.8"
+		"addon-tools-raub": "0.1.8"
 	}
 }
