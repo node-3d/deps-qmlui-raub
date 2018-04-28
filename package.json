@@ -1,8 +1,9 @@
 {
+	"author": "Luis Blanco <luisblanco1337@gmail.com>",
 	"name": "deps-qmlui-raub",
-	"author": "Luis Blanco <raubtierxxx@gmail.com>",
-	"description": "Binaries and headers for QmlUi-dependent compilation",
 	"version": "0.0.3",
+	"description": "Binaries and headers for QmlUi-dependent compilation",
+	"license": "MIT",
 	"main": "index.js",
 	"keywords": [
 		"qt",
@@ -13,21 +14,20 @@
 		"library",
 		"binary"
 	],
+	"engines": {
+		"node" : ">=8.11.1",
+		"npm" : ">=5.6.0"
+	},
 	"maintainers": [
 		{
 			"name": "Luis Blanco",
-			"email": "raubtierxxx@gmail.com",
+			"email": "luisblanco1337@gmail.com",
 			"skype": "rauber666"
 		}
 	],
-	"license": "MIT",
-	"engines": {
-		"node" : ">=8.9.4",
-		"npm" : ">=5.6.0"
-	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/raub/node-deps-qmlui"
+		"url": "https://github.com/node-3d/deps-qmlui-raub.git"
 	},
 	"dependencies": {
 		"deps-qt-qml-raub": "0.0.2",
