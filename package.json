@@ -1,18 +1,16 @@
 {
 	"author": "Luis Blanco <luisblanco1337@gmail.com>",
 	"name": "deps-qmlui-raub",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"description": "Binaries and headers for QmlUi-dependent compilation",
 	"license": "MIT",
 	"main": "index.js",
 	"keywords": [
-		"qt",
-		"qml",
-		"deps",
 		"dependency",
-		"lib",
-		"library",
-		"binary"
+		"qmlui",
+		"gui",
+		"qml",
+		"qt"
 	],
 	"engines": {
 		"node" : ">=8.11.1",
@@ -30,7 +28,7 @@
 		"url": "https://github.com/node-3d/deps-qmlui-raub.git"
 	},
 	"dependencies": {
-		"deps-qt-qml-raub": "0.0.2",
+		"deps-qt-qml-raub": "0.0.3",
 		"addon-tools-raub": "0.1.8"
 	}
 }
