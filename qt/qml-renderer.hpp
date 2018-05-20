@@ -24,8 +24,8 @@ public:
 	
 private:
 	
-	QOpenGLContext    *_openglContext;
-	QString            _directoryPath;
+	QOpenGLContext *_openglContext;
+	QString _directoryPath;
 	QOffscreenSurface *_offscreenSurface;
 	
 };

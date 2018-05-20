@@ -3,12 +3,12 @@
 #include <QDebug>
 #include <QVector>
 
+#include <qml-ui.hpp>
+
+#include "platform.hpp"
 #include "qml-renderer.hpp"
 #include "qml-cb.hpp"
 #include "qml-view.hpp"
-#include "qml-ui.hpp"
-#include "platform.hpp"
-
 #include "keyconv.hpp"
 
 
