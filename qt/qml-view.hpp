@@ -5,7 +5,7 @@
 #include <QTimer>
 #include <QQmlComponent>
 
-#include "qml-ui.hpp"
+#include <qml-ui.hpp>
 #include "platform.hpp"
 
 

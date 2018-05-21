@@ -10,3 +10,4 @@ package-lock.json
 binary/
 *.log
 *.user
+*.exp

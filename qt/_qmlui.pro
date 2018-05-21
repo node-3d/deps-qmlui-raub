@@ -8,7 +8,7 @@ CONFIG += c++11
 TEMPLATE = lib
 TARGET = qmlui
 
-INCLUDE += $$PWD/../include
+INCLUDEPATH += $$PWD/../include
 
 DEFINES += QMLUI_SHARED QT_DEPRECATED_WARNINGS
 
@@ -41,7 +41,6 @@ HEADERS += \
 	platform.hpp \
 	qml-cb.hpp \
 	keyconv.hpp \
-	qml-view.hpp \
-	qml-ui.hpp
+	qml-view.hpp
 
 RESOURCES += qml.qrc

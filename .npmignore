@@ -1,4 +1,3 @@
-*.log
 .cproject
 .eslintrc
 .gitignore
@@ -13,3 +12,6 @@ examples/
 package-lock.json
 test/
 qt/
+*.log
+*.user
+*.exp

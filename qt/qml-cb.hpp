@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QVariantMap>
 
-#include "qml-ui.hpp"
+#include <qml-ui.hpp>
 
 
 class QmlCb : public QObject {
