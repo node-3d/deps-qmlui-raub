@@ -1,5 +1,5 @@
-#ifndef QML_VIEW_HPP
-#define QML_VIEW_HPP
+#ifndef _QML_VIEW_HPP_
+#define _QML_VIEW_HPP_
 
 #include <QWindow>
 #include <QTimer>
@@ -70,20 +70,20 @@ private:
 	bool _qmlCheckErrors(const QQmlComponent *component) const;
 	
 	
-	QOpenGLContext           *_openglContext;
-	QOffscreenSurface        *_offscreenSurface;
-	QQuickRenderControl      *_renderControl;
-	QQuickWindow             *_offscreenWindow;
+	QOpenGLContext *_openglContext;
+	QOffscreenSurface *_offscreenSurface;
+	QQuickRenderControl *_renderControl;
+	QQuickWindow *_offscreenWindow;
 	QOpenGLFramebufferObject *_framebuffer;
 	
-	QQmlEngine    *_qmlEngine;
+	QQmlEngine *_qmlEngine;
 	
 	QQmlComponent *_systemComponent;
-	QQuickItem    *_systemItem;
-	QQuickItem    *_systemRoot;
+	QQuickItem *_systemItem;
+	QQuickItem *_systemRoot;
 	
 	QQmlComponent *_customComponent;
-	QQuickItem    *_customItem;
+	QQuickItem *_customItem;
 	
 	bool _hasChanged;
 	bool _isReady;
@@ -100,5 +100,5 @@ private:
 	
 };
 
-#endif // QML_VIEW_HPP
+#endif // _QML_VIEW_HPP_
 

@@ -6,8 +6,7 @@
 QmlUi::Cb QmlCb::__cb;
 
 
-void QmlCb::init(QmlUi::Cb cb)
-{
+void QmlCb::init(QmlUi::Cb cb) {
 	__cb = cb;
 }
 

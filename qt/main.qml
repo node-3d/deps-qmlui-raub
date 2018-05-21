@@ -1,37 +1,34 @@
 import QtQuick 2.7
 
+import "events.js" as Events
+
 
 MouseArea {
-
-	id: __mouse
-	anchors.fill: parent
 	
-	acceptedButtons: Qt.AllButtons
+	id : __mouse
 	
-	function eventData(action, mouse) {
-		return {
-			action   : action,
-			accepted : mouse.accepted,
-			button   : mouse.button,
-			buttons  : mouse.buttons,
-			modifiers: mouse.modifiers,
-			wasHeld  : mouse.wasHeld,
-			x        : mouse.x,
-			y        : mouse.y,
-		};
-	}
+	anchors.fill : parent
 	
-	onClicked        : cb.call('mouse', eventData('click', mouse))
-	onDoubleClicked  : cb.call('mouse', eventData('double', mouse))
-	onPositionChanged: cb.call('mouse', eventData('move', mouse))
-	onPressed        : cb.call('mouse', eventData('press', mouse))
-	onReleased       : cb.call('mouse', eventData('release', mouse))
-	onWheel          : cb.call('mouse', eventData('wheel', mouse))
+	acceptedButtons : Qt.AllButtons
+	hoverEnabled    : true
+	
+	
+	onClicked         : cb.call('_mouse', new Events.MouseEvent('click', mouse))
+	onDoubleClicked   : cb.call('_mouse', new Events.MouseEvent('dblclick', mouse))
+	onPositionChanged : cb.call('_mouse', new Events.MouseMoveEvent(mouse))
+	onPressed         : cb.call('_mouse', new Events.MouseEvent('mousedown', mouse))
+	onReleased        : cb.call('_mouse', new Events.MouseEvent('mouseup', mouse))
+	onWheel           : cb.call('_mouse', new Events.MouseWheelEvent(mouse))
+	
+	
+	Keys.onPressed  : cb.call('_key', new Events.KeyEvent('keydown', event))
+	Keys.onReleased : cb.call('_key', new Events.KeyEvent('keyup', event))
+	
 	
 	Rectangle {
-		objectName: "__root"
-		anchors.fill: parent
-		color: "transparent"
+		objectName   : "__root"
+		anchors.fill : parent
+		color        : "transparent"
 	}
 	
 }

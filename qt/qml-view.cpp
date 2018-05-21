@@ -27,15 +27,15 @@
 QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 	
 	// Initial values all zero
-	_systemItem      = nullptr;
+	_systemItem = nullptr;
 	_systemComponent = nullptr;
-	_systemRoot      = nullptr;
+	_systemRoot = nullptr;
 	
-	_customItem      = nullptr;
+	_customItem = nullptr;
 	_customComponent = nullptr;
 	
-	_hasChanged   = false;
-	_isReady      = false;
+	_hasChanged = false;
+	_isReady = false;
 	_hasConfirmed = false;
 	
 	_cb = cb;
@@ -44,14 +44,14 @@ QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 	setSurfaceType(QSurface::OpenGLSurface);
 	
 	// Grab GL context and surface from owner renderer
-	_openglContext    = renderer->context();
+	_openglContext = renderer->context();
 	
 	_offscreenSurface = renderer->surface();
 	
 	// Create a window with custom RenderControl to render offscreen
-	_renderControl   = new QQuickRenderControl();
+	_renderControl = new QQuickRenderControl();
 	_offscreenWindow = new QQuickWindow( _renderControl );
-	_framebuffer     = nullptr;
+	_framebuffer = nullptr;
 	
 	// Set window looks accordingly
 	_offscreenWindow->setGeometry(0, 0, w, h);
@@ -543,7 +543,13 @@ void QmlView::keyboard(int type, int key, char text) {
 	
 	//qDebug() << "KEY" << (type ? "KeyPress" : "KeyRelease") << seq << qtKey;
 	
-	QKeyEvent keyEvent( type ? QEvent::KeyPress : QEvent::KeyRelease, qtKey, Qt::NoModifier, QString(text), text != 0);
+	QKeyEvent keyEvent(
+		type ? QEvent::KeyPress : QEvent::KeyRelease,
+		qtKey,
+		Qt::NoModifier,
+		QString(text),
+		text != 0
+	);
 	QCoreApplication::sendEvent( _offscreenWindow, &keyEvent );
 	
 }
@@ -558,7 +564,7 @@ void QmlView::addLibsDir(const QString &dirName) {
 // Find Item by name
 QQuickItem* QmlView::_findItem(QObject* node, const QString& name, int depth) const {
 	
-	if (node && node->objectName() == name){
+	if (node && node->objectName() == name) {
 	
 		return qobject_cast<QQuickItem *>(node);
 	
