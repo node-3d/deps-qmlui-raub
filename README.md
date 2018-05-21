@@ -62,74 +62,86 @@ Contains a Qt project. Binaries are prebuilt and then used as dependencies.
 
 ## Class QmlUi
 
-
-
-
-`Window` is higher level js-wrapper around the above functions, which helps in managing window
-instances. It basically has all the functionality where in GLFW Docs `window` parameter
-is mentioned. E.g. `glfwSetWindowTitle(window, title)` -> `window.title = title`.
-
-There are few simple rules for the above transformation to become intuitive:
-
-* API is available if it has `window` parameter.
-* All props start lowercase.
-* Word "Window" is omitted.
-* Whatever could have a `get/set` interface is made so.
-
+`QmlUi` is a facade class for all operations. Instances represent separate QML scenes,
+each having a dedicated OpenGL framebuffer.
 
 Constructor:
 
-* `Window({ title, width, height, display, vsync, mode, autoIconify, msaa })`
-	* `string title $PWD` - window title, takes current directory as default.
-	* `number width 800` - window initial width.
-	* `number height 600` - window initial height.
-	* `number display undefined` - display id to open window on a specific display.
-	* `boolean vsync false` - if vsync should be used.
-	* `string mode 'windowed'` - one of `'windowed', 'borderless', 'fullscreen'`.
-	* `boolean autoIconify true` - if fullscreen windows should iconify automatically on focus loss.
-	* `number msaa 2` - multisample antialiasing level.
-	* `boolean decorated true` - if window has borders (use `false` for borderless fullscreen).
+* `QmlUi(w, h)`
+	* `int w` - initial width.
+	* `int h` - initial height.
 
 
-Properties:
+Types:
 
-* `get number handle` - window pointer.
-* `get string version` - OpenGL vendor info.
-* `get number platformWindow` - window HWND pointer.
-* `get number platformContext` - OpenGL context handle.
-* `get {width, height} framebufferSize` - the size of allocated framebuffer.
-* `get number currentContext` - what GLFW window is now current.
-* `get number samples` - number of msaa samples passed to the constructor.
+`QmlUi::Cb` - `void (*) (QmlUi *target, const char *type, const char *json)`
 
-* `get/set string mode` - one of `'windowed', 'borderless', 'fullscreen'`. Here
-`'borderless'` emulates fullscreen by a frameless, screen-sized window.
-This when this property is changed, a new window is created and the old is hidden.
-* `get/set number width|w` - window width.
-* `get/set number height|h` - window height.
-* `get/set [width, height] wh` - window width and height.
-* `get/set {width, height} size` - window width and height.
-* `get/set string title` - window title.
-* `get/set {width, height, Buffer data} icon` - window icon in RGBA format. Consider
-using [this Image implementation](https://github.com/raub/node-image).
-* `get/set boolean shouldClose` - if window is going to be closed.
-* `get/set number x` - window position X-coordinate on the screen.
-* `get/set number y` - window position Y-coordinate on the screen.
-* `get/set {x, y} pos` - where window is on the screen.
-* `get/set {x, y} cursorPos` - where mouse is relative to the window.
 
----
+Static Methods:
+
+* `void init(cwdOwn, wnd, ctx, cb)`
+	Initialize the renderer. Should be called once, before any instance is created.
+	Extra calls are ignored.
+	* `const char *cwdOwn` - "current working directory" for QML.
+	* `size_t wnd` - platform window handle.
+	* `size_t ctx` - platform OpenGL context handle.
+	* `QmlUi::Cb cb` - callback for all events.
+
+* `void plugins(path)`
+	Add more directories for `QmlEngine` to look for plugins.
+	* `const char *path` - directory path.
+
+* `void update()`
+	Poll window events. Required for async operations, including signal/slot interaction.
+
 
 Methods:
 
-* `getKey(number key)` - `glfw.getKey(window, key)`.
-* `getMouseButton(number button)` - `glfw.getMouseButton(window, button)`.
-* `getWindowAttrib(number attrib)` - `glfw.getWindowAttrib(window, attrib)`.
-* `setInputMode(number mode)` - `glfw.setInputMode(window, mode)`.
-* `swapBuffers()` - `glfw.swapBuffers(window)`.
-* `makeCurrent()` - `glfw.makeContextCurrent(window)`.
-* `destroy()` - `glfw.destroyWindow(window)`.
-* `iconify()` - `glfw.iconifyWindow(window)`.
-* `restore()` - `glfw.restoreWindow(window)`.
-* `hide()` - `glfw.hideWindow(window)`.
-* `show()` - `glfw.showWindow(window)`.
-* `on(string type, function cb)` - listen for window (GLFW) events.
+* `void resize(w, h)`
+	Change the scene size. It induces async recreation of the framebuffer.
+	* `int w` - new width.
+	* `int h` - new height.
+* `void mouse(type, button, buttons, x, y)`
+	Propagate a mouse event to the QML scene. If the event can't be handled
+	by the scene, it gets re-emitted through the callback, named '\_mouse'.
+	Re-emitted format is
+	[web MouseEvent](https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent).
+	* `int type` - 
+	* `int button` - 
+	* `int buttons` - 
+	* `int x` - 
+	* `int y` - 
+* `void keyboard(type, key, text)`
+	Propagate a keyboard event to the QML scene. If the event can't be handled
+	by the scene, it gets re-emitted through the callback, named '\_key'.
+	Re-emitted format is
+	[web KeyboardEvent](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent).
+	* `int type,` - 
+	* `int key,` - 
+	* `char text` - 
+* `void load(str, isFile)`
+	Set content of the QML scene with a file or a string.
+	* `const char *str` - if `isFile == true`, `str` is taken as a path to the
+	**.qml** file to be loaded. Otherwise, `str` itself is interpreted as QML
+	source.
+	* `bool isFile` - tells if `src` is a path to **.qml** file.
+* `void set(obj, prop, json)`
+	Set a property of some object in the QML scene.
+	* `const char *obj` - name of the object, as in `Item { objectName: "my-name" }`.
+	* `const char *prop` - property key, as in `Item { property var someProp: 10 }`.
+	* `const char *json` - the value to be set. Note: values "`10`" and "`'10'`"
+	are different here. See output of `JSON.stringify(val)`.
+* `void get(obj, prop)`
+	Get a property of some object in the QML scene.
+	* `const char *obj` - name of the object, as in `Item { objectName: "my-name" }`.
+	* `const char *prop` - property key, as in `Item { property var someProp: 10 }`.
+* `void invoke(obj, method, json)`
+	Invoke a method of some object in the QML scene.
+	* `const char *obj` - name of the object, as in `Item { objectName: "my-name" }`.
+	* `const char *method` - method key, as in `Item { function f() { return 10; } }`.
+	* `const char *json` - the argument to be passed. Only **1** argument is supported,
+	but it can be an array or an object with any number of fileds.
+* `void libs(path)`
+	Register a directory where additional QML search should be performed when
+	importing a component.
+	* `const char *path` - the directory path.

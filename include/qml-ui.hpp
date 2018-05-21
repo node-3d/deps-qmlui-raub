@@ -19,14 +19,9 @@ public:
 	
 	typedef void (*Cb) (QmlUi *target, const char *type, const char *json);
 	
-	
-public:
-	
 	static void init(const char *cwdOwn, size_t wnd, size_t ctx, QmlUi::Cb cb);
 	static void plugins(const char *path);
 	static void update();
-	
-public:
 	
 	QmlUi(int w, int h);
 	~QmlUi();
