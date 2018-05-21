@@ -81,6 +81,7 @@ each having a dedicated OpenGL framebuffer.
 ### Static Methods:
 
 * `void init(cwdOwn, wnd, ctx, cb)`
+	
 	Initialize the renderer. Should be called once, before any instance is created.
 	Extra calls are ignored.
 	* `const char *cwdOwn` - "current working directory" for QML.
@@ -90,23 +91,27 @@ each having a dedicated OpenGL framebuffer.
 
 
 * `void plugins(path)`
+	
 	Add more directories for `QmlEngine` to look for plugins.
 	* `const char *path` - directory path.
 
 
 * `void update()`
+	
 	Poll window events. Required for async operations, including signal/slot interaction.
 
 
 ### Methods:
 
 * `void resize(w, h)`
+	
 	Change the scene size. It induces async recreation of the framebuffer.
 	* `int w` - new width.
 	* `int h` - new height.
 
 
 * `void mouse(type, button, buttons, x, y)`
+	
 	Propagate a mouse event to the QML scene. If the event can't be handled
 	by the scene, it gets re-emitted through the callback, named '\_mouse'.
 	Re-emitted format is
@@ -125,6 +130,7 @@ each having a dedicated OpenGL framebuffer.
 
 
 * `void keyboard(type, key, text)`
+	
 	Propagate a keyboard event to the QML scene. If the event can't be handled
 	by the scene, it gets re-emitted through the callback, named '\_key'.
 	Re-emitted format is
@@ -137,6 +143,7 @@ each having a dedicated OpenGL framebuffer.
 
 
 * `void load(str, isFile)`
+	
 	Set content of the QML scene with a file or a string.
 	* `const char *str` - if `isFile == true`, `str` is taken as a path to the
 	**.qml** file to be loaded. Otherwise, `str` itself is interpreted as QML
@@ -145,6 +152,7 @@ each having a dedicated OpenGL framebuffer.
 
 
 * `void set(obj, prop, json)`
+	
 	Set a property of some object in the QML scene.
 	* `const char *obj` - name of the object, as in `Item { objectName: "my-name" }`.
 	* `const char *prop` - property key, as in `Item { property var someProp: 10 }`.
@@ -153,12 +161,14 @@ each having a dedicated OpenGL framebuffer.
 
 
 * `void get(obj, prop)`
+	
 	Get a property of some object in the QML scene.
 	* `const char *obj` - name of the object, as in `Item { objectName: "my-name" }`.
 	* `const char *prop` - property key, as in `Item { property var someProp: 10 }`.
 
 
 * `void invoke(obj, method, json)`
+	
 	Invoke a method of some object in the QML scene.
 	* `const char *obj` - name of the object, as in `Item { objectName: "my-name" }`.
 	* `const char *method` - method key, as in `Item { function f() { return 10; } }`.
@@ -167,6 +177,7 @@ each having a dedicated OpenGL framebuffer.
 
 
 * `void libs(path)`
+	
 	Register a directory where additional QML search should be performed when
 	importing a component.
 	* `const char *path` - the directory path.
