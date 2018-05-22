@@ -16,10 +16,10 @@ public:
 	QmlRenderer(const QString &workingDir, size_t windowHandle, size_t windowContext);
 	~QmlRenderer();
 	
-	QOpenGLContext *context() const;
-	QOffscreenSurface *surface() const;
+	QOpenGLContext *context() const { return _openglContext; }
+	QOffscreenSurface *surface() const { return _offscreenSurface; }
 	
-	QString cwd() const;
+	QString cwd() const { return _directoryPath; }
 	
 	
 private:

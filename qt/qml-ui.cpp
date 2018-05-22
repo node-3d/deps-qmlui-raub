@@ -1,7 +1,5 @@
 #include <QCoreApplication>
 #include <QGuiApplication>
-#include <QDebug>
-#include <QVector>
 
 #include <qml-ui.hpp>
 

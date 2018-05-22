@@ -13,16 +13,16 @@ MouseArea {
 	hoverEnabled    : true
 	
 	
-	onClicked         : cb.call('_mouse', new Events.MouseEvent('click', mouse))
-	onDoubleClicked   : cb.call('_mouse', new Events.MouseEvent('dblclick', mouse))
-	onPositionChanged : cb.call('_mouse', new Events.MouseMoveEvent(mouse))
-	onPressed         : cb.call('_mouse', new Events.MouseEvent('mousedown', mouse))
-	onReleased        : cb.call('_mouse', new Events.MouseEvent('mouseup', mouse))
-	onWheel           : cb.call('_mouse', new Events.MouseWheelEvent(mouse))
+	onClicked         : cb.call('_qml_mouse', new Events.MouseEvent('click', mouse))
+	onDoubleClicked   : cb.call('_qml_mouse', new Events.MouseEvent('dblclick', mouse))
+	onPositionChanged : cb.call('_qml_mouse', new Events.MouseMoveEvent(mouse))
+	onPressed         : cb.call('_qml_mouse', new Events.MouseEvent('mousedown', mouse))
+	onReleased        : cb.call('_qml_mouse', new Events.MouseEvent('mouseup', mouse))
+	onWheel           : cb.call('_qml_mouse', new Events.MouseWheelEvent(mouse))
 	
 	
-	Keys.onPressed  : cb.call('_key', new Events.KeyEvent('keydown', event))
-	Keys.onReleased : cb.call('_key', new Events.KeyEvent('keyup', event))
+	Keys.onPressed  : cb.call('_qml_key', new Events.KeyEvent('keydown', event))
+	Keys.onReleased : cb.call('_qml_key', new Events.KeyEvent('keyup', event))
 	
 	
 	Rectangle {

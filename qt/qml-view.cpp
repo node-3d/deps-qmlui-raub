@@ -162,7 +162,7 @@ void QmlView::_createFramebuffer() {
 	// Respond to JS: GL texture id of a new FBO
 	QVariantMap pmap;
 	pmap["texture"] = _framebuffer->texture();
-	_cb->call("fbo", pmap);
+	_cb->call("_qml_fbo", pmap);
 	
 }
 
@@ -246,7 +246,7 @@ void QmlView::_qmlReport(const QString &message, const QString &type) const {
 	QVariantMap pmap;
 	pmap["message"] = message;
 	pmap["type"] = type;
-	_cb->call("error", pmap);
+	_cb->call("_qml_error", pmap);
 }
 
 
@@ -312,7 +312,7 @@ void QmlView::_rootStatusUpdate(QQmlComponent::Status status) {
 	// Now system is ready to load user ui
 	_isReady = true;
 	if (_hasConfirmed) {
-		_cb->call("ready", QVariantMap());
+		_cb->call("_qml_ready", QVariantMap());
 	}
 	
 }
@@ -332,7 +332,7 @@ void QmlView::_customStatusUpdate(QQmlComponent::Status status) {
 			result["status"] = "loading";
 		}
 		
-		_cb->call("load", result);
+		_cb->call("_qml_load", result);
 		
 		return;
 		
@@ -343,14 +343,14 @@ void QmlView::_customStatusUpdate(QQmlComponent::Status status) {
 	
 	// If any errors - quit
 	if (_qmlCheckErrors(_customComponent)) {
-		_cb->call("load", result);
+		_cb->call("_qml_load", result);
 		return;
 	}
 	
 	// Instantiate user component
 	QObject *rootObject = _customComponent->create();
 	if (_qmlCheckErrors(_customComponent)) {
-		_cb->call("load", result);
+		_cb->call("_qml_load", result);
 		return;
 	}
 	
@@ -360,7 +360,7 @@ void QmlView::_customStatusUpdate(QQmlComponent::Status status) {
 		_qmlReport("Not a QQuickItem: " + _currentQml);
 		delete rootObject;
 		rootObject = nullptr;
-		_cb->call("load", result);
+		_cb->call("_qml_load", result);
 		return;
 	}
 	
@@ -369,7 +369,7 @@ void QmlView::_customStatusUpdate(QQmlComponent::Status status) {
 	
 	// Report success to JS
 	result["status"] = "success";
-	_cb->call("load", result);
+	_cb->call("_qml_load", result);
 	
 }
 
@@ -461,7 +461,7 @@ void QmlView::getProp(const QString &objname, const QByteArray &propname) {
 	e["name"] = objname;
 	e["key"] = propname;
 	e["value"] = prop;
-	_cb->call("get", e);
+	_cb->call("_qml_get", e);
 	
 }
 
