@@ -55,6 +55,7 @@ QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 	
 	// Set window looks accordingly
 	_offscreenWindow->setGeometry(0, 0, w, h);
+	_offscreenWindow->setClearBeforeRendering(true);
 	_currentSize = QSize(w, h);
 	_offscreenWindow->contentItem()->setSize( QSizeF(_offscreenWindow->size()) );
 	_offscreenWindow->setColor(Qt::transparent);
@@ -150,11 +151,17 @@ void QmlView::_createFramebuffer() {
 		return;
 	}
 	
+	// Only delete after new FBO was allocated
+	QOpenGLFramebufferObject *_oldFramebuffer = _framebuffer;
+	
 	// Get hold of a new FBO
 	_framebuffer = new QOpenGLFramebufferObject(
 		_offscreenWindow->size(),
 		QOpenGLFramebufferObject::CombinedDepthStencil
 	);
+	
+	// HACK: makes the new FBO to (CERTAINLY) have a different GL id
+	delete _oldFramebuffer;
 	
 	// Set the Window to render into it
 	_offscreenWindow->setRenderTarget(_framebuffer);
@@ -220,7 +227,6 @@ void QmlView::_applySize() {
 	
 	// Also reset render target
 	if ( _openglContext && _openglContext->makeCurrent( _offscreenSurface ) ) {
-		_destroyFramebuffer();
 		_createFramebuffer();
 	}
 	
