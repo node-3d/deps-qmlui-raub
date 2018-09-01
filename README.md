@@ -9,7 +9,7 @@ This is a part of [Node3D](https://github.com/node-3d) project.
 Contains a Qt **.pro** file and all the sources.
 Binaries are prebuilt and then used as dependency package.
 
-* Platforms: win x32/x64, linux x32/x64, mac x64.
+* Platforms: win x32/x64, linux x64, mac x64.
 * Library: QmlUi.
 * Linking: static dll-type.
 
