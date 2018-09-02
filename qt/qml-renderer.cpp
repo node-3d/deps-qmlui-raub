@@ -1,8 +1,8 @@
 #include <QOffscreenSurface>
 #include <QOpenGLContext>
 
-#include "platform.hpp"
 #include "qml-renderer.hpp"
+#include "platform.hpp"
 
 
 QmlRenderer::QmlRenderer(const QString &workingDir, size_t windowHandle, size_t windowContext) {
