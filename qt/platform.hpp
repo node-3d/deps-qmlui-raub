@@ -17,7 +17,8 @@
     #include <qcoreevent.h>
 
 	#include <X11/Xlib.h>
-	typedef VisualID CtxHandle;
+    #include <GL/glx.h>
+    typedef GLXContext CtxHandle;
 	typedef Window WndHandle;
 	
 	#include <QtPlatformHeaders/QGLXNativeContext>

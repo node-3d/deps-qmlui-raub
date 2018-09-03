@@ -11,8 +11,14 @@ QmlRenderer::QmlRenderer(const QString &workingDir, size_t windowHandle, size_t 
 	
 	NativeContext nativeContext(
 		reinterpret_cast<CtxHandle>(windowContext)
+#ifdef __linux__
+        , 0
+#endif
 #ifndef __APPLE__
 		, reinterpret_cast<WndHandle>(windowHandle)
+#endif
+#ifdef __linux__
+        , 0
 #endif
 	);
 	QOpenGLContext* extContext = new QOpenGLContext();

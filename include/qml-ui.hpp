@@ -1,13 +1,15 @@
 #ifndef _QML_UI_HPP_
 #define _QML_UI_HPP_
 
-
-#if defined QMLUI_SHARED
- #define QMLUI_DLLSPEC __declspec(dllexport)
+#ifdef __linux__
+    #define QMLUI_DLLSPEC
 #else
- #define QMLUI_DLLSPEC __declspec(dllimport)
+    #if defined QMLUI_SHARED
+     #define QMLUI_DLLSPEC __declspec(dllexport)
+    #else
+     #define QMLUI_DLLSPEC __declspec(dllimport)
+    #endif
 #endif
-
 
 class QmlView;
 class QmlCb;
