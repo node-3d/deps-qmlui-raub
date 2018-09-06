@@ -9,18 +9,19 @@ QmlRenderer::QmlRenderer(const QString &workingDir, size_t windowHandle, size_t 
 	
 	_directoryPath = workingDir;
 	
-	NativeContext nativeContext(
-		reinterpret_cast<CtxHandle>(windowContext)
 #ifdef __linux__
-        , 0
+    QGLXNativeContext nativeContext(
+        reinterpret_cast<CtxHandle>(windowContext), 0, 0, 0
+    );
+#else
+    NativeContext nativeContext(
+        reinterpret_cast<CtxHandle>(windowContext)
+    #ifndef __APPLE__
+        , reinterpret_cast<WndHandle>(windowHandle)
+    #endif
+    );
 #endif
-#ifndef __APPLE__
-		, reinterpret_cast<WndHandle>(windowHandle)
-#endif
-#ifdef __linux__
-        , 0
-#endif
-	);
+
 	QOpenGLContext* extContext = new QOpenGLContext();
 	extContext->setNativeHandle(QVariant::fromValue(nativeContext));
 	extContext->create();
