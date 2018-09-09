@@ -6,7 +6,6 @@
 #include <QQmlComponent>
 
 #include <qml-ui.hpp>
-#include "platform.hpp"
 
 
 class QOpenGLContext;
