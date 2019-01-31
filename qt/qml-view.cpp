@@ -542,7 +542,7 @@ void QmlView::mouse(int type, int button, int buttons, int x, int y) {
 
 // Apply keyboard events
 // FIXME: eliminate incorrect key codes
-void QmlView::keyboard(int type, int key, char text) {
+void QmlView::keyboard(int type, int key, unsigned text) {
 	
 	Qt::Key qtKey = keyconv(key);
 	QKeySequence seq = QKeySequence(qtKey);
@@ -553,7 +553,7 @@ void QmlView::keyboard(int type, int key, char text) {
 		type ? QEvent::KeyPress : QEvent::KeyRelease,
 		qtKey,
 		Qt::NoModifier,
-		QString(text),
+		QString(QChar(text)),
 		text != 0
 	);
 	QCoreApplication::sendEvent( _offscreenWindow, &keyEvent );

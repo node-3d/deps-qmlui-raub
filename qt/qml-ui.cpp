@@ -88,7 +88,7 @@ void QmlUi::mouse(int type, int button, int buttons, int x, int y) {
 }
 
 
-void QmlUi::keyboard(int type, int key, char text) {
+void QmlUi::keyboard(int type, int key, unsigned text) {
 	
 	_view->keyboard(type, key, text);
 	

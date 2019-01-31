@@ -32,7 +32,7 @@ public:
 	
 	void resize(const QSize& size);
 	void mouse(int type, int button, int buttons, int x, int y);
-	void keyboard(int type, int key, char text);
+	void keyboard(int type, int key, unsigned text);
 	
 	bool isReady() { return _isReady; }
 	void loadQml(const QString &fileName);

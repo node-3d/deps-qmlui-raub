@@ -30,7 +30,7 @@ public:
 	
 	void resize(int w, int h);
 	void mouse(int type, int button, int buttons, int x, int y);
-	void keyboard(int type, int key, char text);
+	void keyboard(int type, int key, unsigned text);
 	void load(const char *str, bool isFile);
 	void set(const char *obj, const char *prop, const char *json);
 	void get(const char *obj, const char *prop);
