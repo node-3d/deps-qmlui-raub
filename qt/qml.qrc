@@ -1,6 +1,6 @@
 <RCC>
-    <qresource prefix="/">
-        <file>main.qml</file>
-        <file>events.js</file>
-    </qresource>
+	<qresource prefix="/">
+		<file>main.qml</file>
+		<file>events.js</file>
+	</qresource>
 </RCC>

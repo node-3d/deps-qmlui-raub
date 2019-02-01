@@ -160,7 +160,7 @@ void QmlView::_createFramebuffer() {
 		QOpenGLFramebufferObject::CombinedDepthStencil
 	);
 	
-	// HACK: makes the new FBO to (CERTAINLY) have a different GL id
+	// HACK: forces the new FBO to (CERTAINLY) have a different GL id
 	delete _oldFramebuffer;
 	
 	// Set the Window to render into it
@@ -541,13 +541,13 @@ void QmlView::mouse(int type, int button, int buttons, int x, int y) {
 
 
 // Apply keyboard events
-// FIXME: eliminate incorrect key codes
 void QmlView::keyboard(int type, int key, unsigned text) {
 	
 	Qt::Key qtKey = keyconv(key);
 	QKeySequence seq = QKeySequence(qtKey);
 	
-	//qDebug() << "KEY" << (type ? "KeyPress" : "KeyRelease") << seq << qtKey;
+	qDebug() << "KEY" << (type ? "KeyPress" : "KeyRelease") << key << qtKey << seq;
+	qDebug() << "QChar" << QString(QChar(text)) << QString(QChar('\n')) << (unsigned)'\n';
 	
 	QKeyEvent keyEvent(
 		type ? QEvent::KeyPress : QEvent::KeyRelease,

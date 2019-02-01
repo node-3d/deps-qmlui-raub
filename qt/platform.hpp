@@ -13,16 +13,16 @@
 	
 #elif defined __linux__
 	
-    #include <QDataStream>
-    #include <qcoreevent.h>
-
+	#include <QDataStream>
+	#include <qcoreevent.h>
+	
 	#include <X11/Xlib.h>
-    #include <GL/glx.h>
-    typedef GLXContext CtxHandle;
+	#include <GL/glx.h>
+	typedef GLXContext CtxHandle;
 	typedef Window WndHandle;
 	
 	#include <QtPlatformHeaders/QGLXNativeContext>
-    // GLXContext ctx, Display *dpy = 0, Window wnd = 0, VisualID vid = 0
+	// GLXContext ctx, Display *dpy = 0, Window wnd = 0, VisualID vid = 0
 	typedef QGLXNativeContext NativeContext;
 	
 #elif defined __APPLE__

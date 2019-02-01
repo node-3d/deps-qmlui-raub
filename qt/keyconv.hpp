@@ -4,8 +4,6 @@
 #include <qnamespace.h>
 
 
-void keyfill();
-
 Qt::Key keyconv(int from);
 
 

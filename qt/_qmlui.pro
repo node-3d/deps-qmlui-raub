@@ -18,7 +18,7 @@ contains(QMAKE_TARGET.arch, x86_64):{
 }
 
 unix {
-        CONFIG += unversioned_libname unversioned_soname
+	CONFIG += unversioned_libname unversioned_soname
 	DESTDIR = $$PWD/../bin-linux64
 }
 
