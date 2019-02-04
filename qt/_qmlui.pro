@@ -20,6 +20,8 @@ contains(QMAKE_TARGET.arch, x86_64):{
 unix {
 	CONFIG += unversioned_libname unversioned_soname
 	DESTDIR = $$PWD/../bin-linux64
+	QMAKE_LFLAGS_RPATH=
+	QMAKE_LFLAGS += "-Wl,-rpath,\'\'"
 }
 
 macx {
