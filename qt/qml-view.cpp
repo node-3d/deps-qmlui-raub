@@ -554,27 +554,29 @@ void QmlView::mouse(int type, int button, int buttons, int x, int y) {
 	Qt::MouseButton qbuttons = static_cast<Qt::MouseButton>(buttons);
 	
 	if (type == 0) {
-		QCoreApplication::sendEvent(_offscreenWindow, &QMouseEvent(
-			QEvent::MouseMove,
-			mousePoint, mousePoint,
-			qbutton, qbuttons, 0
-		));
+		QMouseEvent event = QMouseEvent(
+			QEvent::MouseMove, mousePoint, mousePoint, qbutton, qbuttons, 0
+		);
+		QCoreApplication::sendEvent(_offscreenWindow, &event);
 	} else if (type == 1) {
-		QCoreApplication::sendEvent(_offscreenWindow, &QMouseEvent(
+		QMouseEvent event = QMouseEvent(
 			QEvent::MouseButtonPress,
 			mousePoint, mousePoint,
 			qbutton, qbuttons, 0
-		));
+		);
+		QCoreApplication::sendEvent(_offscreenWindow, &event);
 	} else if (type == 2) {
-		QCoreApplication::sendEvent(_offscreenWindow, &QMouseEvent(
+		QMouseEvent event = QMouseEvent(
 			QEvent::MouseButtonRelease,
 			mousePoint, mousePoint,
 			qbutton, qbuttons, 0
-		));
+		);
+		QCoreApplication::sendEvent(_offscreenWindow, &event);
 	} else if (type == 3) {
-		QCoreApplication::sendEvent(_offscreenWindow, &QWheelEvent(
+		QWheelEvent event = QWheelEvent(
 			mousePoint, button, qbuttons, static_cast<Qt::KeyboardModifiers>(0)
-		));
+		);
+		QCoreApplication::sendEvent(_offscreenWindow, &event);
 	}
 	
 }
