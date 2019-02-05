@@ -14,7 +14,7 @@ Qt::Key keyconv(int from) {
 		REPLACE(8, Qt::Key_Backspace)
 		REPLACE(13, Qt::Key_Enter)
 		REPLACE(45, Qt::Key_Insert)
-        REPLACE(46, Qt::Key_Delete)
+		REPLACE(46, Qt::Key_Delete)
 		REPLACE(36, Qt::Key_Home)
 		REPLACE(35, Qt::Key_End)
 		REPLACE(37, Qt::Key_Left)
@@ -42,7 +42,7 @@ Qt::Key keyconv(int from) {
 		REPLACE(122, Qt::Key_F11)
 		REPLACE(123, Qt::Key_F12)
 		REPLACE(91, Qt::Key_Super_L)
-        REPLACE(93, Qt::Key_Super_R)
+		REPLACE(93, Qt::Key_Super_R)
 		default: break;
 	}
 	

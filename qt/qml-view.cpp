@@ -422,7 +422,9 @@ void QmlView::unload() {
 
 
 // Set the property value on a given object, by "objectName", not "id"
-void QmlView::setProp(const QString &objname, const QByteArray &propname, const QByteArray &json) {
+void QmlView::setProp(
+	const QString &objname, const QByteArray &propname, const QByteArray &json
+) {
 	
 	if ( ! _customItem ) {
 		_qmlReport("Qml setProp() failed. Do a proper loadQml() first.", "prop");
@@ -432,14 +434,20 @@ void QmlView::setProp(const QString &objname, const QByteArray &propname, const 
 	QQuickItem *obj = _findItem(_customItem, objname);
 	
 	if ( ! obj ) {
-		_qmlReport(QString("Qml setProp() failed. Object not found: ") + objname, "prop");
+		_qmlReport(
+			QString("Qml setProp() failed. Object not found: ") + objname,
+			"prop"
+		);
 		return;
 	}
 	QByteArray enclosed = QByteArray("[") + json + QByteArray("]");
 	QList<QVariant> parsed = QJsonDocument::fromJson(enclosed).toVariant().toList();
 	
 	if ( ! parsed.size() ) {
-		_qmlReport(QString("Qml setProp() failed. Invalid value: '") + json + QString("'"), "prop");
+		_qmlReport(
+			QString("Qml setProp() failed. Invalid value: '") + json + QString("'"),
+			"prop"
+		);
 		return;
 	}
 	
@@ -451,14 +459,20 @@ void QmlView::setProp(const QString &objname, const QByteArray &propname, const 
 void QmlView::getProp(const QString &objname, const QByteArray &propname) {
 	
 	if ( ! _customItem ) {
-		_qmlReport("Qml getProp() failed. Do a proper loadQml() first.", "prop");
+		_qmlReport(
+			"Qml getProp() failed. Do a proper loadQml() first.",
+			"prop"
+		);
 		return;
 	}
 	
 	QQuickItem *obj = _findItem(_customItem, objname);
 	
 	if ( ! obj ) {
-		_qmlReport(QString("Qml getProp() failed. Object not found: ") + objname, "prop");
+		_qmlReport(
+			QString("Qml getProp() failed. Object not found: ") + objname,
+			"prop"
+		);
 		return;
 	}
 	
@@ -472,17 +486,25 @@ void QmlView::getProp(const QString &objname, const QByteArray &propname) {
 }
 
 
-void QmlView::invoke(const QString &objname, const QByteArray &method, const QByteArray &json) {
+void QmlView::invoke(
+	const QString &objname, const QByteArray &method, const QByteArray &json
+) {
 	
 	if ( ! _customItem ) {
-		_qmlReport("Qml invoke() failed. Do a proper loadQml() first.", "invoke");
+		_qmlReport(
+			"Qml invoke() failed. Do a proper loadQml() first.",
+			"invoke"
+		);
 		return;
 	}
 	
 	QQuickItem *obj = _findItem(_customItem, objname);
 	
 	if ( ! obj ) {
-		_qmlReport(QString("Qml invoke() failed. Object not found: ") + objname, "invoke");
+		_qmlReport(
+			QString("Qml invoke() failed. Object not found: ") + objname,
+			"invoke"
+		);
 		return;
 	}
 	
@@ -495,11 +517,18 @@ void QmlView::invoke(const QString &objname, const QByteArray &method, const QBy
 	QList<QVariant> parsed = QJsonDocument::fromJson(enclosed).toVariant().toList();
 	
 	if ( ! parsed.size() ) {
-		_qmlReport(QString("Qml invoke() failed. Invalid value: '") + json + QString("'"), "prop");
+		_qmlReport(
+			QString("Qml invoke() failed. Invalid value: '") + json + QString("'"),
+			"prop"
+		);
 		return;
 	}
 	
-	QMetaObject::invokeMethod(obj, method.constData(), Q_ARG(QVariant, parsed.at(0)));
+	QMetaObject::invokeMethod(
+		obj,
+		method.constData(),
+		Q_ARG(QVariant, parsed.at(0))
+	);
 	
 }
 
@@ -509,33 +538,44 @@ void QmlView::mouse(int type, int button, int buttons, int x, int y) {
 	
 	QPointF mousePoint(x, y);
 	
-	Qt::MouseButton qbutton = static_cast<Qt::MouseButton>(1 << button);
-	Qt::MouseButton qbuttons = static_cast<Qt::MouseButton>(buttons);
+	Qt::MouseButton qbutton = static_cast<Qt::MouseButton>(0);
 	
-	QMouseEvent mouseEvent = QMouseEvent(
-					QEvent::MouseMove,
-					mousePoint, mousePoint,
-					Qt::NoButton, Qt::NoButton, 0 );
-	switch (type) {
-	default:
-	case 0: mouseEvent = QMouseEvent(
-					QEvent::MouseMove,
-					mousePoint, mousePoint,
-					qbutton, qbuttons, 0 );
-			break;
-	case 1: mouseEvent = QMouseEvent(
-					QEvent::MouseButtonPress,
-					mousePoint, mousePoint,
-					qbutton, qbuttons, 0 );
-			break;
-	case 2: mouseEvent = QMouseEvent(
-					QEvent::MouseButtonRelease,
-					mousePoint, mousePoint,
-					qbutton, qbuttons, 0 );
-			break;
+	if (type != 3) {
+		// Fix button
+		if (button == 1) {
+			qbutton = Qt::MiddleButton;
+		} else if (button == 2) {
+			qbutton = Qt::RightButton;
+		} else {
+			qbutton = static_cast<Qt::MouseButton>(1 << button);
+		}
 	}
 	
-	QCoreApplication::sendEvent( _offscreenWindow, &mouseEvent );
+	Qt::MouseButton qbuttons = static_cast<Qt::MouseButton>(buttons);
+	
+	if (type == 0) {
+		QCoreApplication::sendEvent(_offscreenWindow, &QMouseEvent(
+			QEvent::MouseMove,
+			mousePoint, mousePoint,
+			qbutton, qbuttons, 0
+		));
+	} else if (type == 1) {
+		QCoreApplication::sendEvent(_offscreenWindow, &QMouseEvent(
+			QEvent::MouseButtonPress,
+			mousePoint, mousePoint,
+			qbutton, qbuttons, 0
+		));
+	} else if (type == 2) {
+		QCoreApplication::sendEvent(_offscreenWindow, &QMouseEvent(
+			QEvent::MouseButtonRelease,
+			mousePoint, mousePoint,
+			qbutton, qbuttons, 0
+		));
+	} else if (type == 3) {
+		QCoreApplication::sendEvent(_offscreenWindow, &QWheelEvent(
+			mousePoint, button, qbuttons, static_cast<Qt::KeyboardModifiers>(0)
+		));
+	}
 	
 }
 
@@ -544,16 +584,23 @@ void QmlView::mouse(int type, int button, int buttons, int x, int y) {
 void QmlView::keyboard(int type, int key, unsigned text) {
 	
 	Qt::Key qtKey = keyconv(key);
-	QKeySequence seq = QKeySequence(qtKey);
 	
-	qDebug() << "KEY" << (type ? "KeyPress" : "KeyRelease") << key << qtKey << seq;
-	qDebug() << "QChar" << QString(QChar(text)) << QString(QChar('\n')) << (unsigned)'\n';
+	unsigned finalText = text;
+	
+	if (key == 32) { // Space
+		finalText = 32;
+	} else if (key == 9) { // Tab
+		finalText = 9;
+	}
+	
+//	qDebug() << "KEY" << (type ? "KeyPress" : "KeyRelease") << key << qtKey;
+//	qDebug() << "QChar" << QString(QChar(finalText));
 	
 	QKeyEvent keyEvent(
 		type ? QEvent::KeyPress : QEvent::KeyRelease,
 		qtKey,
 		Qt::NoModifier,
-		QString(QChar(text)),
+		QString(QChar(finalText)),
 		text != 0
 	);
 	QCoreApplication::sendEvent( _offscreenWindow, &keyEvent );
@@ -567,7 +614,7 @@ void QmlView::addLibsDir(const QString &dirName) {
 }
 
 
-// Find Item by name
+// Find an Item by name
 QQuickItem* QmlView::_findItem(QObject* node, const QString& name, int depth) const {
 	
 	if (node && node->objectName() == name) {

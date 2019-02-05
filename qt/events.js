@@ -1,110 +1,162 @@
 'use strict';
 
-/* global Qt */
-
 
 var MOUSE_BUTTONS = {};
-MOUSE_BUTTONS[Qt.LeftButton] = 1;
+MOUSE_BUTTONS[Qt.LeftButton] = 0;
 MOUSE_BUTTONS[Qt.RightButton] = 2;
-MOUSE_BUTTONS[Qt.MiddleButton] = 4;
+MOUSE_BUTTONS[Qt.MiddleButton] = 1;
+
+var KEY_CODES = {};
+KEY_CODES[Qt.Key_Alt] = 18;
+KEY_CODES[Qt.Key_Backspace] = 8;
+KEY_CODES[Qt.Key_CapsLock] = 20;
+KEY_CODES[Qt.Key_Control] = 17;
+KEY_CODES[Qt.Key_Delete] = 46;
+KEY_CODES[Qt.Key_Down] = 40;
+KEY_CODES[Qt.Key_End] = 35;
+KEY_CODES[Qt.Key_Enter] = 13;
+KEY_CODES[Qt.Key_Escape] = 27;
+KEY_CODES[Qt.Key_F1] = 112;
+KEY_CODES[Qt.Key_F10] = 121;
+KEY_CODES[Qt.Key_F11] = 122;
+KEY_CODES[Qt.Key_F12] = 123;
+KEY_CODES[Qt.Key_F2] = 113;
+KEY_CODES[Qt.Key_F3] = 114;
+KEY_CODES[Qt.Key_F4] = 115;
+KEY_CODES[Qt.Key_F5] = 116;
+KEY_CODES[Qt.Key_F6] = 117;
+KEY_CODES[Qt.Key_F7] = 118;
+KEY_CODES[Qt.Key_F8] = 119;
+KEY_CODES[Qt.Key_F9] = 120;
+KEY_CODES[Qt.Key_Home] = 36;
+KEY_CODES[Qt.Key_Insert] = 45;
+KEY_CODES[Qt.Key_Left] = 37;
+KEY_CODES[Qt.Key_NumLock] = 144;
+KEY_CODES[Qt.Key_PageDown] = 34;
+KEY_CODES[Qt.Key_PageUp] = 33;
+KEY_CODES[Qt.Key_Right] = 39;
+KEY_CODES[Qt.Key_ScrollLock] = 145;
+KEY_CODES[Qt.Key_Shift] = 16;
+KEY_CODES[Qt.Key_Super_L] = 91;
+KEY_CODES[Qt.Key_Super_R] = 93;
+KEY_CODES[Qt.Key_Tab] = 9;
+KEY_CODES[Qt.Key_Up] = 38;
 
 
-function getJsMouseButton(buttons, QtMouseButton) {
-	return (buttons & QtMouseButton) && MOUSE_BUTTONS[QtMouseButton];
-}
-
-function combineJsMouseButtons(buttons) {
-	
-	return (
-		getJsMouseButton(buttons, Qt.LeftButton) |
-		getJsMouseButton(buttons, Qt.RightButton) |
-		getJsMouseButton(buttons, Qt.MiddleButton)
-	);
-	
-}
+var KEY_NAMES = {};
+KEY_NAMES[Qt.Key_Alt] = 'Alt';
+KEY_NAMES[Qt.Key_Backspace] = 'Backspace';
+KEY_NAMES[Qt.Key_CapsLock] = 'CapsLock';
+KEY_NAMES[Qt.Key_Control] = 'Control';
+KEY_NAMES[Qt.Key_Delete] = 'Delete';
+KEY_NAMES[Qt.Key_Down] = 'Down';
+KEY_NAMES[Qt.Key_End] = 'End';
+KEY_NAMES[Qt.Key_Enter] = 'Enter';
+KEY_NAMES[Qt.Key_Escape] = 'Escape';
+KEY_NAMES[Qt.Key_F1] = 'F1';
+KEY_NAMES[Qt.Key_F10] = 'F10';
+KEY_NAMES[Qt.Key_F11] = 'F11';
+KEY_NAMES[Qt.Key_F12] = 'F12';
+KEY_NAMES[Qt.Key_F2] = 'F2';
+KEY_NAMES[Qt.Key_F3] = 'F3';
+KEY_NAMES[Qt.Key_F4] = 'F4';
+KEY_NAMES[Qt.Key_F5] = 'F5';
+KEY_NAMES[Qt.Key_F6] = 'F6';
+KEY_NAMES[Qt.Key_F7] = 'F7';
+KEY_NAMES[Qt.Key_F8] = 'F8';
+KEY_NAMES[Qt.Key_F9] = 'F9';
+KEY_NAMES[Qt.Key_Home] = 'Home';
+KEY_NAMES[Qt.Key_Insert] = 'Insert';
+KEY_NAMES[Qt.Key_Left] = 'Left';
+KEY_NAMES[Qt.Key_NumLock] = 'NumLock';
+KEY_NAMES[Qt.Key_PageDown] = 'PageDown';
+KEY_NAMES[Qt.Key_PageUp] = 'PageUp';
+KEY_NAMES[Qt.Key_Right] = 'Right';
+KEY_NAMES[Qt.Key_ScrollLock] = 'ScrollLock';
+KEY_NAMES[Qt.Key_Shift] = 'Shift';
+KEY_NAMES[Qt.Key_Super_L] = 'Super_L';
+KEY_NAMES[Qt.Key_Super_R] = 'Super_R';
+KEY_NAMES[Qt.Key_Tab] = 'Tab';
+KEY_NAMES[Qt.Key_Up] = 'Up';
 
 
 function MouseEvent(type, mouse) {
 	
 	this.type = type;
 	
-	this.button = MOUSE_BUTTONS[mouse.button];
-	this.buttons = combineJsMouseButtons(mouse.buttons);
+	this.button = MOUSE_BUTTONS[mouse.button] || 0;
+	this.buttons = mouse.buttons;
 	
 	this.x = mouse.x;
 	this.y = mouse.y;
 	this.clientX = mouse.x;
 	this.clientY = mouse.y;
-	this.offsetX = mouse.x;
-	this.offsetY = mouse.y;
 	this.pageX = mouse.x;
 	this.pageY = mouse.y;
-	this.screenX = mouse.x;
-	this.screenY = mouse.y;
 	
-	this.region = null;
-	this.relatedTarget = null;
-	
-	this.altKey = mouse.modifiers & Qt.AltModifier;
-	this.ctrlKey = mouse.modifiers & Qt.ControlModifier;
-	this.metaKey = mouse.modifiers & Qt.MetaModifier;
-	this.shiftKey = mouse.modifiers & Qt.ShiftModifier;
+	this.altKey = (mouse.modifiers & Qt.AltModifier) > 0;
+	this.ctrlKey = (mouse.modifiers & Qt.ControlModifier) > 0;
+	this.metaKey = (mouse.modifiers & Qt.MetaModifier) > 0;
+	this.shiftKey = (mouse.modifiers & Qt.ShiftModifier) > 0;
 	
 }
 
+
+var prevX = 0;
+var prevY = 0;
 
 function MouseMoveEvent(mouse) {
 	
 	MouseEvent.call(this, 'mousemove', mouse);
 	
-	this.movementX = MouseMoveEvent._prevX !== null ? mouse.x - MouseMoveEvent._prevX : 0;
-	this.movementY = MouseMoveEvent._prevY !== null ? mouse.x - MouseMoveEvent._prevY : 0;
+	this.movementX = mouse.x - prevX;
+	this.movementY = mouse.x - prevY;
 	
-	MouseMoveEvent._prevX = mouse.x;
-	MouseMoveEvent._prevY = mouse.y;
+	prevX = mouse.x;
+	prevY = mouse.y;
 	
 }
-
-MouseMoveEvent._prevX = null;
-MouseMoveEvent._prevY = null;
 
 
 function normalizeDelta(dv) {
 	return dv > 0 ? 1 : (dv < 0 ? -1 : 0);
 }
 
-function MouseWheelEvent(mouse) { // eslint-disable-line no-unused-vars
+function MouseWheelEvent(mouse) {
 	
 	MouseEvent.call(this, 'wheel', mouse);
 	
-	this.deltaX = normalizeDelta(mouse.angleDelta.x);
-	this.deltaY = normalizeDelta(mouse.angleDelta.y);
+	this.wheelDeltaX = mouse.angleDelta.x > 0 ? 120 : -120;
+	this.wheelDeltaY = mouse.angleDelta.y > 0 ? 120 : -120;
+	this.wheelDelta = this.wheelDeltaY;
+	this.deltaX = mouse.angleDelta.x > 0 ? 100 : -100;
+	this.deltaY = mouse.angleDelta.y > 0 ? 100 : -100;
 	this.deltaZ = 0;
-	
-	this.deltaMode = 1;
 	
 }
 
 
-function KeyEvent(type, event) { // eslint-disable-line no-unused-vars
+function KeyEvent(type, event) {
 	
 	this.type = type;
 	
-	this.location = event.key;
-	this.keyCode = event.key;
-	this.which = event.key;
+	this.which = KEY_CODES[event.key] || event.key;
+	this.keyCode = this.which;
 	
-	this.code = event.key;
-	this.key = event.text[0] || '';
+	this.charCode = event.text.charCodeAt(0);
+	
+	this.key = event.text || KEY_NAMES[event.key] || ' ';
+	event.code = (
+		KEY_NAMES[event.key] ||
+		(event.text && ('Key' + event.text)) ||
+		'UNKNOWN'
+	);
 	
 	this.repeat = event.isAutoRepeat;
-	this.isComposing = false;
-	this.composed = true;
-	this.locale = '';
 	
-	this.altKey = event.modifiers & Qt.AltModifier;
-	this.ctrlKey = event.modifiers & Qt.ControlModifier;
-	this.metaKey = event.modifiers & Qt.MetaModifier;
-	this.shiftKey = event.modifiers & Qt.ShiftModifier;
+	this.altKey = (event.modifiers & Qt.AltModifier) > 0;
+	this.ctrlKey = (event.modifiers & Qt.ControlModifier) > 0;
+	this.metaKey = (event.modifiers & Qt.MetaModifier) > 0;
+	this.shiftKey = (event.modifiers & Qt.ShiftModifier) > 0;
 	
 }

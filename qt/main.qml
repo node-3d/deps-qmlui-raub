@@ -6,6 +6,7 @@ import "events.js" as Events
 MouseArea {
 	
 	id : __mouse
+	focus : true
 	
 	anchors.fill : parent
 	
@@ -13,12 +14,16 @@ MouseArea {
 	hoverEnabled    : true
 	
 	
-	onClicked         : cb.call('_qml_mouse', new Events.MouseEvent('click', mouse))
+	onClicked : {
+		focus = true;
+		cb.call('_qml_mouse', new Events.MouseEvent('click', mouse));
+	}
+	
 	onDoubleClicked   : cb.call('_qml_mouse', new Events.MouseEvent('dblclick', mouse))
 	onPositionChanged : cb.call('_qml_mouse', new Events.MouseMoveEvent(mouse))
 	onPressed         : cb.call('_qml_mouse', new Events.MouseEvent('mousedown', mouse))
 	onReleased        : cb.call('_qml_mouse', new Events.MouseEvent('mouseup', mouse))
-	onWheel           : cb.call('_qml_mouse', new Events.MouseWheelEvent(mouse))
+	onWheel           : cb.call('_qml_mouse', new Events.MouseWheelEvent(wheel))
 	
 	
 	Keys.onPressed  : cb.call('_qml_key', new Events.KeyEvent('keydown', event))
