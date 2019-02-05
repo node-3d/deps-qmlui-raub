@@ -118,10 +118,6 @@ function MouseMoveEvent(mouse) {
 }
 
 
-function normalizeDelta(dv) {
-	return dv > 0 ? 1 : (dv < 0 ? -1 : 0);
-}
-
 function MouseWheelEvent(mouse) {
 	
 	MouseEvent.call(this, 'wheel', mouse);
