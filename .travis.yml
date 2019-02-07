@@ -12,7 +12,26 @@ matrix:
     os: osx
   - name: "Windows"
     os: windows
-
+  - name: "OSX Build"
+    os: osx
+    if: commit_message =~ /^:hammer:/
+    language: cpp
+    compiler: clang++
+    cache:
+      directories:
+       - /Users/travis/qt-osx
+    env:
+      - OSXBUILD=true
+    script:
+      - git clone https://github.com/node-3d/reference.git
+      - cd reference
+      - if [[ ! -d /Users/travis/qt-osx/Qt ]]; then
+          chmod +x ./install-qt.sh;
+          chmod +x ./extract-qt-installer.sh;
+          export QT_CI_PACKAGES=qt.qt5.5111.clang_64;
+          ./install-qt.sh 5.11.1 /Users/travis/qt-osx;
+        fi;
+      - chmod +x src/osx.sh && src/osx.sh
 
 install:
   - cd test
