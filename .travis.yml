@@ -31,7 +31,7 @@ matrix:
         fi;
       - export PATH=/Users/travis/qt-osx/Qt/5.11.1/clang_64/bin:$PATH
     script:
-      - qmake -spec macx-clang /qt/_qmlui.pro
+      - qmake -spec macx-clang qt/_qmlui.pro
       - make
       - ls -la
 
