@@ -15,3 +15,5 @@ qt/
 *.log
 *.user
 *.exp
+extract-qt-installer.sh
+install-qt.sh

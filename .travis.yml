@@ -4,34 +4,36 @@ node_js: "10.13.0"
 
 matrix:
   include:
-  - name: "Linux"
-    os: linux
-    dist: xenial
-    sudo: false
-  - name: "OSX"
-    os: osx
-  - name: "Windows"
-    os: windows
+  # - name: "Linux"
+  #   os: linux
+  #   dist: xenial
+  #   sudo: false
+  # - name: "OSX"
+  #   os: osx
+  # - name: "Windows"
+  #   os: windows
   - name: "OSX Build"
     os: osx
+    env:
+      - OSXBUILD=true
     if: commit_message =~ /^:hammer:/
     language: cpp
     compiler: clang++
     cache:
       directories:
        - /Users/travis/qt-osx
-    env:
-      - OSXBUILD=true
-    script:
-      - git clone https://github.com/node-3d/reference.git
-      - cd reference
+    install:
       - if [[ ! -d /Users/travis/qt-osx/Qt ]]; then
           chmod +x ./install-qt.sh;
           chmod +x ./extract-qt-installer.sh;
           export QT_CI_PACKAGES=qt.qt5.5111.clang_64;
           ./install-qt.sh 5.11.1 /Users/travis/qt-osx;
         fi;
-      - chmod +x src/osx.sh && src/osx.sh
+      - export PATH=/Users/travis/qt-osx/Qt/5.11.1/clang_64/bin:$PATH
+    script:
+      - qmake -spec macx-clang /qt/_qmlui.pro
+      - make
+      - ls -la
 
 install:
   - cd test
