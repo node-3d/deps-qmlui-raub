@@ -28,7 +28,7 @@
 #elif defined __APPLE__
 	
 	#import <Cocoa/Cocoa.h>
-	typedef NSOpenGLContext CtxHandle;
+	typedef NSOpenGLContext *CtxHandle;
 	typedef int WndHandle;
 	
 	#include <QtPlatformHeaders/QCocoaNativeContext>
