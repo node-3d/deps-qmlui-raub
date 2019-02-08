@@ -31,7 +31,7 @@
 	typedef NSOpenGLContext CtxHandle;
 	typedef int WndHandle;
 	
-	#include <QCocoaNativeContext>
+	#include <QtPlatformHeaders/QCocoaNativeContext>
 	typedef QCocoaNativeContext NativeContext;
 	
 #endif
