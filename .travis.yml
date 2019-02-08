@@ -31,10 +31,24 @@ matrix:
         fi;
       - export PATH=/Users/travis/qt-osx/Qt/5.11.1/clang_64/bin:$PATH
     script:
-      - qmake -spec macx-clang qt/_qmlui.pro
+      - qmake -spec macx-clang "QMAKE_CXXFLAGS+=-ObjC++" qt/_qmlui.pro
       - make
       - ls -la
 
 install:
   - cd test
   - npm i
+
+deploy:
+  on:
+    all_branches: true
+    condition: $OSXBUILD = true
+  provider: releases
+  name: "Binary for OSX"
+  body: $TRAVIS_COMMIT_MESSAGE
+  api_key: $GITHUB_TOKEN
+  skip_cleanup: true
+  overwrite: true
+  draft: true
+  file:
+    - Makefile
