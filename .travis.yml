@@ -16,7 +16,7 @@ matrix:
     os: osx
     env:
       - OSXBUILD=true
-    if: commit_message =~ /^:hammer:/
+    # if: commit_message =~ /^:hammer:/
     language: cpp
     compiler: clang++
     cache:
