@@ -10,15 +10,15 @@ matrix:
     sudo: false
   - name: "OSX Test"
     os: osx
-  - name: "Windows Test"
-    os: windows
+  # TRAVIS BUG: SETTINGS VAR
+  # - name: "Windows Test"
+  #   os: windows
   - name: "Linux Build"
     os: osx
     env:
       - NEEDS_UPLOAD=true
     if: commit_message =~ /^:hammer:/
     language: cpp
-    compiler: clang++
     cache:
       directories:
        - /Users/travis/qt-linux
@@ -29,9 +29,9 @@ matrix:
           export QT_CI_PACKAGES=qt.qt5.5111.gcc_64;
           ./install-qt.sh 5.11.1 /Users/travis/qt-linux;
         fi;
-      - export PATH=/Users/travis/qt-linux/Qt/5.11.1/clang_64/bin:$PATH
+      - export PATH=/Users/travis/qt-linux/Qt/5.11.1/gcc_64/bin:$PATH
     script:
-      - qmake -spec macx-clang "INCLUDEPATH+=/Users/travis/qt-linux/Qt/5.11.1/clang_64/include" qt/_qmlui.pro
+      - qmake -spec linux-g++-64 "INCLUDEPATH+=/Users/travis/qt-linux/Qt/5.11.1/gcc_64/include" qt/_qmlui.pro
       - make
   - name: "OSX Build"
     os: osx
