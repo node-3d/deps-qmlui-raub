@@ -4,12 +4,12 @@ node_js: "10.13.0"
 
 matrix:
   include:
-  # - name: "Linux Test"
-  #   os: linux
-  #   dist: xenial
-  #   sudo: false
-  # - name: "OSX Test"
-  #   os: osx
+  - name: "Linux Test"
+    os: linux
+    dist: xenial
+    sudo: false
+  - name: "OSX Test"
+    os: osx
   # TRAVIS BUG: SETTINGS VAR
   # - name: "Windows Test"
   #   os: windows
@@ -34,27 +34,27 @@ matrix:
     script:
       - qmake -spec linux-g++-64 "INCLUDEPATH+=/home/travis/qt-linux/Qt/5.11.1/gcc_64/include" qt/_qmlui.pro
       - make
-  # - name: "OSX Build"
-  #   os: osx
-  #   env:
-  #     - NEEDS_UPLOAD=true
-  #   if: commit_message =~ /^:hammer:/
-  #   language: cpp
-  #   compiler: clang++
-  #   cache:
-  #     directories:
-  #      - /Users/travis/qt-osx
-  #   install:
-  #     - if [[ ! -d /Users/travis/qt-osx/Qt ]]; then
-  #         chmod +x ./install-qt.sh;
-  #         chmod +x ./extract-qt-installer.sh;
-  #         export QT_CI_PACKAGES=qt.qt5.5111.clang_64;
-  #         ./install-qt.sh 5.11.1 /Users/travis/qt-osx;
-  #       fi;
-  #     - export PATH=/Users/travis/qt-osx/Qt/5.11.1/clang_64/bin:$PATH
-  #   script:
-  #     - qmake -spec macx-clang "QMAKE_CXXFLAGS+=-ObjC++" "INCLUDEPATH+=/Users/travis/qt-osx/Qt/5.11.1/clang_64/include" qt/_qmlui.pro
-  #     - make
+  - name: "OSX Build"
+    os: osx
+    env:
+      - NEEDS_UPLOAD=true
+    if: commit_message =~ /^:hammer:/
+    language: cpp
+    compiler: clang++
+    cache:
+      directories:
+       - /Users/travis/qt-osx
+    install:
+      - if [[ ! -d /Users/travis/qt-osx/Qt ]]; then
+          chmod +x ./install-qt.sh;
+          chmod +x ./extract-qt-installer.sh;
+          export QT_CI_PACKAGES=qt.qt5.5111.clang_64;
+          ./install-qt.sh 5.11.1 /Users/travis/qt-osx;
+        fi;
+      - export PATH=/Users/travis/qt-osx/Qt/5.11.1/clang_64/bin:$PATH
+    script:
+      - qmake -spec macx-clang "QMAKE_CXXFLAGS+=-ObjC++" "INCLUDEPATH+=/Users/travis/qt-osx/Qt/5.11.1/clang_64/include" qt/_qmlui.pro
+      - make
 
 install:
   - cd test
@@ -65,7 +65,7 @@ deploy:
     all_branches: true
     condition: $NEEDS_UPLOAD = true
   provider: releases
-  name: "Binary for OSX"
+  name: "Binaries"
   body: $TRAVIS_COMMIT_MESSAGE
   api_key: $GITHUB_TOKEN
   skip_cleanup: true
