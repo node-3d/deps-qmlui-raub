@@ -1,6 +1,7 @@
 'use strict';
 
-/* global Qt MouseMoveEvent MouseWheelEvent KeyEvent */
+/* global Qt */
+/* exported MouseMoveEvent MouseWheelEvent KeyEvent */
 
 
 var MOUSE_BUTTONS = {};
