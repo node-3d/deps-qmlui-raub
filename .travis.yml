@@ -32,8 +32,11 @@ matrix:
       - export PATH=/Users/travis/qt-osx/Qt/5.11.1/clang_64/bin:$PATH
     script:
       - qmake -spec macx-clang "QMAKE_CXXFLAGS+=-ObjC++" "INCLUDEPATH+=/Users/travis/qt-osx/Qt/5.11.1/clang_64/include" qt/_qmlui.pro
-      - make
-      - ls -la
+      # - echo =====================
+      # - cat Makefile
+      # - echo =====================
+      # - make
+      # - ls -la
 
 install:
   - cd test
