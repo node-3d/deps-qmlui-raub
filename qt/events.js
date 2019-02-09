@@ -1,7 +1,5 @@
 'use strict';
 
-/* eslint-env browser  */
-/* global Qt */
 /* exported MouseMoveEvent MouseWheelEvent KeyEvent */
 
 

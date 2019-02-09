@@ -1,0 +1,14 @@
+{
+	"env": {
+		"browser": true,
+	},
+	"globals": {
+		"Qt": false,
+	},
+	"parserOptions": {
+		"sourceType": "script",
+		"ecmaFeatures": {
+			"globalReturn ": false
+		}
+	}
+}
