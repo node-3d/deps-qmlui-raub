@@ -14,7 +14,7 @@ matrix:
   # - name: "Windows Test"
   #   os: windows
   - name: "Linux Build"
-    os: osx
+    os: linux
     env:
       - NEEDS_UPLOAD=true
     if: commit_message =~ /^:hammer:/
