@@ -32,10 +32,8 @@ matrix:
       - export PATH=/Users/travis/qt-osx/Qt/5.11.1/clang_64/bin:$PATH
     script:
       - qmake -spec macx-clang "QMAKE_CXXFLAGS+=-ObjC++" "INCLUDEPATH+=/Users/travis/qt-osx/Qt/5.11.1/clang_64/include" qt/_qmlui.pro
-      # - echo =====================
-      # - cat Makefile
-      # - echo =====================
-      # - make
+      - make
+      - /Applications/Xcode-9.4.1.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ -v -stdlib=libc++ -Wl,-rpath,'' -headerpad_max_install_names -Wl,-syslibroot,/Applications/Xcode-9.4.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk -mmacosx-version-min=10.11 -single_module -dynamiclib -compatibility_version 1.0 -current_version  1.0.0 -install_name libqmlui.dylib -o libqmlui.dylib qml-renderer.o qml-cb.o keyconv.o qml-view.o qml-ui.o qrc_qml.o moc_qml-renderer.o moc_qml-cb.o moc_qml-view.o  -F/Users/travis/qt-osx/Qt/5.11.1/clang_64/lib -framework QtQuick -framework QtQml -framework QtNetwork -framework QtCore -framework DiskArbitration -framework IOKit -framework QtGui -framework OpenGL -framework AGL  
       # - ls -la
 
 install:
@@ -54,4 +52,4 @@ deploy:
   overwrite: true
   draft: true
   file:
-    - Makefile
+    - bin-mac64/libqmlui.dylib
