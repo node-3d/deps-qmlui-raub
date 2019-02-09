@@ -1,6 +1,6 @@
 'use strict';
 
-/* exported MouseMoveEvent MouseWheelEvent KeyEvent */
+/* global Qt */
 
 
 var MOUSE_BUTTONS = {};
@@ -107,6 +107,7 @@ function MouseEvent(type, mouse) {
 var prevX = 0;
 var prevY = 0;
 
+// eslint-disable-next-line no-unused-vars
 function MouseMoveEvent(mouse) {
 	
 	MouseEvent.call(this, 'mousemove', mouse);
@@ -120,6 +121,7 @@ function MouseMoveEvent(mouse) {
 }
 
 
+// eslint-disable-next-line no-unused-vars
 function MouseWheelEvent(mouse) {
 	
 	MouseEvent.call(this, 'wheel', mouse);
@@ -134,6 +136,7 @@ function MouseWheelEvent(mouse) {
 }
 
 
+// eslint-disable-next-line no-unused-vars
 function KeyEvent(type, event) {
 	
 	this.type = type;
