@@ -21,17 +21,18 @@ matrix:
     language: cpp
     cache:
       directories:
-       - /Users/travis/qt-linux
+       - /home/travis/qt-linux
     install:
-      - if [[ ! -d /Users/travis/qt-linux/Qt ]]; then
+      - if [[ ! -d /home/travis/qt-linux/Qt ]]; then
           chmod +x ./install-qt.sh;
           chmod +x ./extract-qt-installer.sh;
           export QT_CI_PACKAGES=qt.qt5.5111.gcc_64;
-          ./install-qt.sh 5.11.1 /Users/travis/qt-linux;
+          ./install-qt.sh 5.11.1 /home/travis/qt-linux;
         fi;
-      - export PATH=/Users/travis/qt-linux/Qt/5.11.1/gcc_64/bin:$PATH
+      - ls /home/travis/qt-linux/Qt/5.11.1/gcc_64/bin
+      - export PATH=/home/travis/qt-linux/Qt/5.11.1/gcc_64/bin:$PATH
     script:
-      - qmake -spec linux-g++-64 "INCLUDEPATH+=/Users/travis/qt-linux/Qt/5.11.1/gcc_64/include" qt/_qmlui.pro
+      - qmake -spec linux-g++-64 "INCLUDEPATH+=/home/travis/qt-linux/Qt/5.11.1/gcc_64/include" qt/_qmlui.pro
       - make
   - name: "OSX Build"
     os: osx
