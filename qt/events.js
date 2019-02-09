@@ -1,5 +1,7 @@
 'use strict';
 
+/* global Qt MouseMoveEvent MouseWheelEvent KeyEvent */
+
 
 var MOUSE_BUTTONS = {};
 MOUSE_BUTTONS[Qt.LeftButton] = 0;
