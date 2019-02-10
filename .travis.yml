@@ -55,6 +55,16 @@ matrix:
     script:
       - qmake -spec macx-clang "QMAKE_CXXFLAGS+=-ObjC++" "QMAKE_LFLAGS_SONAME=-Wl,-install_name,@rpath/" "INCLUDEPATH+=/Users/travis/qt-osx/Qt/5.11.1/clang_64/include" qt/_qmlui.pro
       - make
+      - install_name_tool -change @rpath/QtCore.framework/Versions/5/QtCore @rpath/QtCore bin-mac64/libqmlui.dylib
+      - install_name_tool -change @rpath/QtNetwork.framework/Versions/5/QtNetwork @rpath/QtNetwork bin-mac64/libqmlui.dylib
+      - install_name_tool -change @rpath/QtDBus.framework/Versions/5/QtDBus @rpath/QtDBus bin-mac64/libqmlui.dylib
+      - install_name_tool -change @rpath/QtGui.framework/Versions/5/QtGui @rpath/QtGui bin-mac64/libqmlui.dylib
+      - install_name_tool -change @rpath/QtWidgets.framework/Versions/5/QtWidgets @rpath/QtWidgets bin-mac64/libqmlui.dylib
+      - install_name_tool -change @rpath/QtQml.framework/Versions/5/QtQml @rpath/QtQml bin-mac64/libqmlui.dylib
+      - install_name_tool -change @rpath/QtQuick.framework/Versions/5/QtQuick @rpath/QtQuick bin-mac64/libqmlui.dylib
+      - install_name_tool -change @rpath/QtQuickControls2.framework/Versions/5/QtQuickControls2 @rpath/QtQuickControls2 bin-mac64/libqmlui.dylib
+      - install_name_tool -change @rpath/QtQuickTemplates2.framework/Versions/5/QtQuickTemplates2 @rpath/QtQuickTemplates2 bin-mac64/libqmlui.dylib
+      - install_name_tool -change @rpath/QtQuickWidgets.framework/Versions/5/QtQuickWidgets @rpath/QtQuickWidgets bin-mac64/libqmlui.dylib
 
 install:
   - cd test
