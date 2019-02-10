@@ -53,7 +53,7 @@ matrix:
         fi;
       - export PATH=/Users/travis/qt-osx/Qt/5.11.1/clang_64/bin:$PATH
     script:
-      - qmake -spec macx-clang "QMAKE_CXXFLAGS+=-ObjC++" "QMAKE_LFLAGS_SONAME=-Wl,-install_name,@rpath/libqmlui.dylib" "INCLUDEPATH+=/Users/travis/qt-osx/Qt/5.11.1/clang_64/include" qt/_qmlui.pro
+      - qmake -spec macx-clang "QMAKE_CXXFLAGS+=-ObjC++" "QMAKE_LFLAGS_SONAME=-Wl,-install_name,@rpath/" "INCLUDEPATH+=/Users/travis/qt-osx/Qt/5.11.1/clang_64/include" qt/_qmlui.pro
       - make
 
 install:
