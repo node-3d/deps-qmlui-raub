@@ -71,7 +71,7 @@ QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 	foreach (const QString &dir, QCoreApplication::libraryPaths()) {
 		QString replaced = dir;
 		replaced = replaced.replace(QRegExp("plugins$"), "qml");
-		qDebug() "IPATH" << replaced;
+		qDebug() << "IPATH" << replaced;
 		_qmlEngine->addImportPath(replaced);
 	}
 	
