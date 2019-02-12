@@ -1,5 +1,6 @@
 #include <QByteArray>
 #include <QCoreApplication>
+#include <QDebug>
 #include <QJsonDocument>
 #include <QMap>
 #include <QOffscreenSurface>
@@ -70,6 +71,7 @@ QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 	foreach (const QString &dir, QCoreApplication::libraryPaths()) {
 		QString replaced = dir;
 		replaced = replaced.replace(QRegExp("plugins$"), "qml");
+		qDebug() "IPATH" << replaced;
 		_qmlEngine->addImportPath(replaced);
 	}
 	
