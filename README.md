@@ -23,6 +23,12 @@ Binaries are prebuilt and then used as dependency package.
 
 ## Usage
 
+Before any import of Qt-dependent module, there should be `require('deps-qt-qml-raub')`.
+On Windows it adds Qt's DLL location to ENV PATH.
+On Unix, **special** runtime library directories are not in ENV PATH. The paths
+to such directories have to be compiled into the node-addon with `rpath` option.
+
+
 **binding.gyp**
 
 ```javascript
@@ -48,12 +54,18 @@ Binaries are prebuilt and then used as dependency package.
 			'conditions': [
 				[
 					'OS=="linux" or OS=="mac"', {
-						'libraries': ['-Wl,-rpath,<(qt_core_bin):<(qt_gui_bin):<(qt_qml_bin):<(qmlui_bin)'],
+						'libraries': [
+							'-Wl,-rpath,<(qmlui_bin)',
+							'-Wl,-rpath,<(qt_core_bin)',
+							'-Wl,-rpath,<(qt_gui_bin)',
+							'-Wl,-rpath,<(qt_qml_bin)',
+						],
 					}
 				],
 				[
 					'OS=="linux"', {
 						'libraries': [
+							'<(qmlui_bin)/libqmlui.so',
 							'<(qt_core_bin)/libicui18n.so.56',
 							'<(qt_core_bin)/libicuuc.so.56',
 							'<(qt_core_bin)/libicudata.so.56',
@@ -77,19 +89,13 @@ Binaries are prebuilt and then used as dependency package.
 				],
 				[
 					'OS=="mac"', {
-						'libraries': [
-							'<(qt_core_bin)/QtCore',
-							'<(qt_core_bin)/QtNetwork',
-							'<(qt_core_bin)/QtDBus',
-							'<(qt_gui_bin)/QtGui',
-							'<(qt_gui_bin)/QtWidgets',
-							'<(qt_qml_bin)/QtQml',
-							'<(qt_qml_bin)/QtQuick',
-							'<(qt_qml_bin)/QtQuickControls2',
-							'<(qt_qml_bin)/QtQuickTemplates2',
-							'<(qt_qml_bin)/QtQuickWidgets',
-						],
+						'libraries': ['<(qmlui_bin)/libqmlui.dylib'],
 					}
+				],
+				[
+					'OS=="win"', {
+						'libraries'     : [ '-lqmlui' ],
+					},
 				],
 			],
 		},
@@ -99,9 +105,7 @@ Binaries are prebuilt and then used as dependency package.
 Preload libraries:
 
 ```cpp
-#include <qml-ui.hpp>
-
-#ifndef WIN32
+#ifdef __linux__
 	#include <dlfcn.h>
 #endif
 
@@ -125,17 +129,6 @@ Preload libraries:
 	dlopen("libQt5QuickControls2.so.5", RTLD_LAZY);
 	dlopen("libQt5QuickTemplates2.so.5", RTLD_LAZY);
 	dlopen("libQt5QuickWidgets.so.5", RTLD_LAZY);
-	#elif __APPLE__
-	dlopen("QtCore", RTLD_LAZY);
-	dlopen("QtNetwork", RTLD_LAZY);
-	dlopen("QtDBus", RTLD_LAZY);
-	dlopen("QtGui", RTLD_LAZY);
-	dlopen("QtWidgets", RTLD_LAZY);
-	dlopen("QtQml", RTLD_LAZY);
-	dlopen("QtQuick", RTLD_LAZY);
-	dlopen("QtQuickControls2", RTLD_LAZY);
-	dlopen("QtQuickTemplates2", RTLD_LAZY);
-	dlopen("QtQuickWidgets", RTLD_LAZY);
 	#endif
 ```
 
