@@ -5,23 +5,22 @@
 #include "platform.hpp"
 
 
-QmlRenderer::QmlRenderer(const QString &workingDir, size_t windowHandle, size_t windowContext) {
+QmlRenderer::QmlRenderer(
+	const QString &workingDir, size_t windowHandle, size_t windowContext
+) {
 	
 	_directoryPath = workingDir;
 	
-#ifdef __linux__
-	QGLXNativeContext nativeContext(
-		reinterpret_cast<CtxHandle>(windowContext), 0, 0, 0
-	);
-#else
+	// Native context takes different argument sets per platform
 	NativeContext nativeContext(
 		reinterpret_cast<CtxHandle>(windowContext)
-	#ifndef __APPLE__
+		#if defined __linux__
+		, 0, 0, 0
+		#elif defined WIN32
 		, reinterpret_cast<WndHandle>(windowHandle)
-	#endif
+		#endif
 	);
-#endif
-
+	
 	QOpenGLContext* extContext = new QOpenGLContext();
 	extContext->setNativeHandle(QVariant::fromValue(nativeContext));
 	extContext->create();
@@ -31,8 +30,8 @@ QmlRenderer::QmlRenderer(const QString &workingDir, size_t windowHandle, size_t 
 	format.setStencilBufferSize(8);
 	
 	_openglContext = new QOpenGLContext();
-	_openglContext->setFormat( format );
-	_openglContext->setShareContext( extContext );
+	_openglContext->setFormat(format);
+	_openglContext->setShareContext(extContext);
 	_openglContext->create();
 	
 	_offscreenSurface = new QOffscreenSurface();

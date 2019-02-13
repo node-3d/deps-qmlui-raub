@@ -247,7 +247,6 @@ void QmlView::_requestUpdate() {
 void QmlView::_syncScene() { _hasChanged = true; _requestUpdate(); }
 
 
-// Report an error message to JS
 void QmlView::_qmlReport(const QString &message, const QString &type) const {
 	QVariantMap pmap;
 	pmap["message"] = message;
@@ -256,7 +255,6 @@ void QmlView::_qmlReport(const QString &message, const QString &type) const {
 }
 
 
-// Check if the given component has some errors. Report if any.
 bool QmlView::_qmlCheckErrors(const QQmlComponent *component) const {
 	
 	// If there are errors, report each of them
@@ -582,7 +580,6 @@ void QmlView::mouse(int type, int button, int buttons, int x, int y) {
 }
 
 
-// Apply keyboard events
 void QmlView::keyboard(int type, int key, unsigned text) {
 	
 	Qt::Key qtKey = keyconv(key);
@@ -595,9 +592,6 @@ void QmlView::keyboard(int type, int key, unsigned text) {
 		finalText = 9;
 	}
 	
-//	qDebug() << "KEY" << (type ? "KeyPress" : "KeyRelease") << key << qtKey;
-//	qDebug() << "QChar" << QString(QChar(finalText));
-	
 	QKeyEvent keyEvent(
 		type ? QEvent::KeyPress : QEvent::KeyRelease,
 		qtKey,
@@ -605,18 +599,16 @@ void QmlView::keyboard(int type, int key, unsigned text) {
 		QString(QChar(finalText)),
 		text != 0
 	);
-	QCoreApplication::sendEvent( _offscreenWindow, &keyEvent );
+	QCoreApplication::sendEvent(_offscreenWindow, &keyEvent);
 	
 }
 
 
-// Tell QML Engine where extra files are
 void QmlView::addLibsDir(const QString &dirName) {
 	_qmlEngine->addImportPath(dirName);
 }
 
 
-// Find an Item by name
 QQuickItem* QmlView::_findItem(QObject* node, const QString& name, int depth) const {
 	
 	if (node && node->objectName() == name) {
