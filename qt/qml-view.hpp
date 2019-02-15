@@ -131,6 +131,7 @@ private:
 	QQmlComponent *_systemComponent;
 	QQuickItem *_systemItem;
 	QQuickItem *_systemRoot;
+	QQuickItem *_systemError;
 	QQmlComponent *_customComponent;
 	QQuickItem *_customItem;
 	

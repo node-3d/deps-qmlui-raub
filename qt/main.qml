@@ -36,4 +36,33 @@ MouseArea {
 		color        : "transparent"
 	}
 	
+	Rectangle {
+		
+		property alias text: errorText.text
+		
+		objectName    : "__error"
+		visible       : false
+		anchors.top   : parent.top
+		anchors.left  : parent.left
+		anchors.right : parent.right
+		height        : errorText.height + 60
+		color         : "#ccffffff"
+		
+		Text {
+			id: errorText
+			anchors.top     : parent.top
+			anchors.left    : parent.left
+			anchors.right   : parent.right
+			wrapMode        : Text.WordWrap
+			color           : "#ff002e"
+			font.family     : "Courier New"
+			font.bold       : true
+			style           : Text.Outline
+			font.pointSize  : 16
+			styleColor      : "#5c1d00"
+			anchors.margins : 30
+		}
+		
+	}
+	
 }

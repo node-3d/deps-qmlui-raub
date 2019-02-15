@@ -30,6 +30,7 @@ QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 	_systemItem = nullptr;
 	_systemComponent = nullptr;
 	_systemRoot = nullptr;
+	_systemError = nullptr;
 	
 	_customItem = nullptr;
 	_customComponent = nullptr;
@@ -247,11 +248,23 @@ void QmlView::_requestUpdate() {
 void QmlView::_syncScene() { _hasChanged = true; _requestUpdate(); }
 
 
+// Reports the error as an event and shows it on the screen if possible
 void QmlView::_qmlReport(const QString &message, const QString &type) const {
+	
+	if (_systemError) {
+		_systemError->setVisible(true);
+		QString currentMessage = _systemError->property("text").toString();
+		_systemError->setProperty(
+			"text",
+			currentMessage + (currentMessage.length() ? "\n" : "") + message
+		);
+	}
+	
 	QVariantMap pmap;
 	pmap["message"] = message;
 	pmap["type"] = type;
 	_cb->call("_qml_error", pmap);
+	
 }
 
 
@@ -308,6 +321,7 @@ void QmlView::_rootStatusUpdate(QQmlComponent::Status status) {
 	
 	// Find the mounting point
 	_systemRoot = qobject_cast<QQuickItem *>(_systemItem->findChild<QObject*>("__root"));
+	_systemError = qobject_cast<QQuickItem *>(_systemItem->findChild<QObject*>("__error"));
 	
 	// Initialize the render control and our OpenGL resources.
 	_openglContext->makeCurrent( _offscreenSurface );
@@ -408,6 +422,9 @@ void QmlView::loadText(const QString &source) {
 
 // If something is currently loaded, disregard that
 void QmlView::unload() {
+	if (_systemError) {
+		_systemError->setVisible(false);
+	}
 	if (_customComponent) {
 		if (_customItem) {
 			_customItem->deleteLater();
