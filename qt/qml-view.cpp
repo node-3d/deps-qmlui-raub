@@ -208,7 +208,7 @@ void QmlView::_render() {
 
 // Activate/reactivate resize timer for debounce
 void QmlView::resize(const QSize &size) {
-	
+	qDebug() << ">>>> resize";
 	_currentSize = size;
 	
 	if ( _resizeTimer.isActive() ) {
@@ -222,7 +222,7 @@ void QmlView::resize(const QSize &size) {
 
 // Update the size of the Window
 void QmlView::_applySize() {
-	
+	qDebug() << ">>>> _applySize";
 	// Both window and content
 	_offscreenWindow->setGeometry(0, 0, _currentSize.width(), _currentSize.height());
 	_offscreenWindow->contentItem()->setSize( QSizeF(_currentSize) );
@@ -237,7 +237,7 @@ void QmlView::_applySize() {
 
 // Call for render if not called yet
 void QmlView::_requestUpdate() {
-	
+	qDebug() << ">>>> _requestUpdate";
 	if ( ! _renderTimer.isActive() ) {
 		_renderTimer.start();
 	}
@@ -246,12 +246,12 @@ void QmlView::_requestUpdate() {
 
 
 // Scene changed, set changed flag and call for render
-void QmlView::_syncScene() { _hasChanged = true; _requestUpdate(); }
+void QmlView::_syncScene() { qDebug() << ">>>> _syncScene";_hasChanged = true; _requestUpdate(); }
 
 
 // Reports the error as an event and shows it on the screen if possible
 void QmlView::_qmlReport(const QString &message, const QString &type) const {
-	
+	qDebug() << ">>>> _qmlReport";
 	if (_systemError) {
 		_systemError->setVisible(true);
 		QString currentMessage = _systemError->property("text").toString();
@@ -270,7 +270,7 @@ void QmlView::_qmlReport(const QString &message, const QString &type) const {
 
 
 bool QmlView::_qmlCheckErrors(const QQmlComponent *component) const {
-	
+	qDebug() << ">>>> _qmlCheckErrors";
 	// If there are errors, report each of them
 	if (component->isError()) {
 		QList<QQmlError> errorList = component->errors();
@@ -287,7 +287,7 @@ bool QmlView::_qmlCheckErrors(const QQmlComponent *component) const {
 
 // Status listener for System Component
 void QmlView::_rootStatusUpdate(QQmlComponent::Status status) {
-	
+	qDebug() << ">>>> _rootStatusUpdate";
 	// If not ready yet, then only check for errors
 	if( QQmlComponent::Ready != status ) {
 		_qmlCheckErrors(_systemComponent);
@@ -339,7 +339,7 @@ void QmlView::_rootStatusUpdate(QQmlComponent::Status status) {
 
 // Status listener for User UI Component
 void QmlView::_customStatusUpdate(QQmlComponent::Status status) {
-	
+	qDebug() << ">>>> _customStatusUpdate";
 	QVariantMap result;
 	result["source"] = _currentQml;
 	result["status"] = "error";

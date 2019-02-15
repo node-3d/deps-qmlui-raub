@@ -1,4 +1,5 @@
 #include <QCoreApplication>
+#include <QDebug>
 #include <QGuiApplication>
 
 #include <qml-ui.hpp>
@@ -24,7 +25,11 @@ void QmlUi::init(const char *cwdOwn, size_t wnd, size_t ctx, QmlUi::Cb cb) {
 	}
 	
 	QmlCb::init(cb);
-
+	
+	QCoreApplication::setAttribute(Qt::AA_PluginApplication);
+	QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
+	QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
+	QCoreApplication::setAttribute(Qt::AA_DontCheckOpenGLContextThreadAffinity);
 	app = new QGuiApplication(argc, &argv);
 	
 	renderer = new QmlRenderer(QString(cwdOwn), wnd, ctx);
@@ -38,6 +43,7 @@ void QmlUi::plugins(const char *plugins) {
 
 
 void QmlUi::update() {
+	qDebug() << ">>>> update";
 	QCoreApplication::processEvents();
 }
 
