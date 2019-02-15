@@ -1,5 +1,6 @@
 #include <QByteArray>
 #include <QCoreApplication>
+#include <QDebug>
 #include <QJsonDocument>
 #include <QMap>
 #include <QOffscreenSurface>
@@ -111,7 +112,7 @@ QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 	_systemComponent = new QQmlComponent( _qmlEngine );
 	connect( _systemComponent, &QQmlComponent::statusChanged, this, &QmlView::_rootStatusUpdate );
 	_systemComponent->loadUrl(QString("qrc:/main.qml"), QQmlComponent::Asynchronous);
-	
+	qDebug() << ">>>> VIEW CTOR done";
 }
 
 QmlView::~QmlView() {
@@ -147,11 +148,11 @@ QmlView::~QmlView() {
 
 // Create a new FBO
 void QmlView::_createFramebuffer() {
-	
+	qDebug() << ">>>> VIEW _createFramebuffer 1";
 	if ( ! _openglContext->makeCurrent(_offscreenSurface) ) {
 		return;
 	}
-	
+	qDebug() << ">>>> VIEW _createFramebuffer 2";
 	// Only delete after new FBO was allocated
 	QOpenGLFramebufferObject *_oldFramebuffer = _framebuffer;
 	
@@ -160,18 +161,18 @@ void QmlView::_createFramebuffer() {
 		_offscreenWindow->size(),
 		QOpenGLFramebufferObject::CombinedDepthStencil
 	);
-	
+	qDebug() << ">>>> VIEW _createFramebuffer 3";
 	// HACK: forces the new FBO to (CERTAINLY) have a different GL id
 	delete _oldFramebuffer;
 	
 	// Set the Window to render into it
 	_offscreenWindow->setRenderTarget(_framebuffer);
-	
+	qDebug() << ">>>> VIEW _createFramebuffer 4";
 	// Respond to JS: GL texture id of a new FBO
 	QVariantMap pmap;
 	pmap["texture"] = _framebuffer->texture();
 	_cb->call("_qml_fbo", pmap);
-	
+	qDebug() << ">>>> VIEW _createFramebuffer 5";
 }
 
 
@@ -184,24 +185,24 @@ void QmlView::_destroyFramebuffer() {
 
 // Update and render the scene
 void QmlView::_render() {
-	
+	qDebug() << ">>>> VIEW _render 1";
 	if ( ! _openglContext->makeCurrent(_offscreenSurface) ) {
 		return;
 	}
-	
+	qDebug() << ">>>> VIEW _render 2";
 	// Only sync scene content if it has some changes
 	if (_hasChanged) {
 		_hasChanged = false;
 		_renderControl->polishItems();
 		_renderControl->sync();
 	}
-	
+	qDebug() << ">>>> VIEW _render 3";
 	_renderControl->render();
-	
+	qDebug() << ">>>> VIEW _render 4";
 	// Finish OpenGL business
 	_offscreenWindow->resetOpenGLState();
 	_openglContext->functions()->glFlush();
-	
+	qDebug() << ">>>> VIEW _render 5";
 }
 
 
