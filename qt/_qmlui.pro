@@ -34,13 +34,15 @@ SOURCES += \
 	qml-cb.cpp \
 	keyconv.cpp \
 	qml-view.cpp \
-	qml-ui.cpp
+	qml-ui.cpp \
+	event-filter.cpp
 
 HEADERS += \
 	qml-renderer.hpp \
 	platform.hpp \
 	qml-cb.hpp \
 	keyconv.hpp \
-	qml-view.hpp
+	qml-view.hpp \
+	event-filter.h
 
 RESOURCES += qml.qrc

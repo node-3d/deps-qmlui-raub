@@ -23,6 +23,7 @@
 #include "qml-view.hpp"
 #include "qml-cb.hpp"
 #include "keyconv.hpp"
+#include "event-filter.h"
 
 
 QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
@@ -55,6 +56,15 @@ QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 	_offscreenWindow = new QQuickWindow( _renderControl );
 	_framebuffer = nullptr;
 	
+	EventFilter *filter = new EventFilter(this);
+	QCoreApplication::instance()->installEventFilter(filter);
+	this->installEventFilter(filter);
+	_renderControl->installEventFilter(filter);
+	_offscreenWindow->installEventFilter(filter);
+	_openglContext->installEventFilter(filter);
+	_offscreenSurface->installEventFilter(filter);
+	_offscreenSurface->installEventFilter(filter);
+	
 	// Set window looks accordingly
 	_offscreenWindow->setGeometry(0, 0, w, h);
 	_offscreenWindow->setClearBeforeRendering(true);
@@ -63,10 +73,12 @@ QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 	_offscreenWindow->setColor(Qt::transparent);
 	
 	// Create a separate instance of QML Engine for this window
-	_qmlEngine = new QQmlEngine;
+	_qmlEngine = new QQmlEngine();
 	if ( ! _qmlEngine->incubationController() ) {
 		_qmlEngine->setIncubationController(_offscreenWindow->incubationController());
 	}
+	
+	_qmlEngine->installEventFilter(filter);
 	
 	// Apply additional library paths
 	foreach (const QString &dir, QCoreApplication::libraryPaths()) {
@@ -237,7 +249,7 @@ void QmlView::_applySize() {
 
 // Call for render if not called yet
 void QmlView::_requestUpdate() {
-	qDebug() << ">>>> _requestUpdate";
+	
 	if ( ! _renderTimer.isActive() ) {
 		_renderTimer.start();
 	}
@@ -246,7 +258,7 @@ void QmlView::_requestUpdate() {
 
 
 // Scene changed, set changed flag and call for render
-void QmlView::_syncScene() { qDebug() << ">>>> _syncScene";_hasChanged = true; _requestUpdate(); }
+void QmlView::_syncScene() { _hasChanged = true; _requestUpdate(); }
 
 
 // Reports the error as an event and shows it on the screen if possible
