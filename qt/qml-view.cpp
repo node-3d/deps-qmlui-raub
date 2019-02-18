@@ -27,7 +27,7 @@
 
 
 QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
-	
+	qDebug() << "CTOR 1";
 	// Initial values all zero
 	_systemItem = nullptr;
 	_systemComponent = nullptr;
@@ -42,7 +42,7 @@ QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 	_hasConfirmed = false;
 	
 	_cb = cb;
-	
+	qDebug() << "CTOR 2";
 	// Tell window it's gonna be OpenGL based
 	setSurfaceType(QSurface::OpenGLSurface);
 	
@@ -55,15 +55,15 @@ QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 	_renderControl = new QQuickRenderControl();
 	_offscreenWindow = new QQuickWindow( _renderControl );
 	_framebuffer = nullptr;
-	
+	qDebug() << "CTOR 3";
 	EventFilter *filter = new EventFilter(this);
 	QCoreApplication::instance()->installEventFilter(filter);
-	this->installEventFilter(filter);
-	_renderControl->installEventFilter(filter);
-	_offscreenWindow->installEventFilter(filter);
-	_openglContext->installEventFilter(filter);
-	_offscreenSurface->installEventFilter(filter);
-	_offscreenSurface->installEventFilter(filter);
+//	this->installEventFilter(filter);
+//	_renderControl->installEventFilter(filter);
+//	_offscreenWindow->installEventFilter(filter);
+//	_openglContext->installEventFilter(filter);
+//	_offscreenSurface->installEventFilter(filter);
+//	_offscreenSurface->installEventFilter(filter);
 	
 	// Set window looks accordingly
 	_offscreenWindow->setGeometry(0, 0, w, h);
@@ -71,15 +71,14 @@ QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 	_currentSize = QSize(w, h);
 	_offscreenWindow->contentItem()->setSize( QSizeF(_offscreenWindow->size()) );
 	_offscreenWindow->setColor(Qt::transparent);
-	
+	qDebug() << "CTOR 4";
 	// Create a separate instance of QML Engine for this window
 	_qmlEngine = new QQmlEngine();
+//	_qmlEngine->installEventFilter(filter);
 	if ( ! _qmlEngine->incubationController() ) {
 		_qmlEngine->setIncubationController(_offscreenWindow->incubationController());
 	}
-	
-	_qmlEngine->installEventFilter(filter);
-	
+	qDebug() << "CTOR 5";
 	// Apply additional library paths
 	foreach (const QString &dir, QCoreApplication::libraryPaths()) {
 		QString replaced = dir;
@@ -90,7 +89,7 @@ QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 	// Provide globals for QML to be on the same page with us
 	_qmlEngine->rootContext()->setContextProperty("CWD", renderer->cwd());
 	_qmlEngine->rootContext()->setContextProperty("cb", _cb);
-	
+	qDebug() << "CTOR 6";
 	// Debounced rendering with singleshot timer
 	_renderTimer.setSingleShot(true);
 	_renderTimer.setInterval(5);
