@@ -10,9 +10,6 @@ matrix:
     sudo: false
   - name: "OSX Test"
     os: osx
-  # TRAVIS BUG: SETTINGS VAR
-  # - name: "Windows Test"
-  #   os: windows
   - name: "Linux Build"
     os: linux
     env:
