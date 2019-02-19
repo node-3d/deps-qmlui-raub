@@ -112,7 +112,7 @@ QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 	_systemComponent = new QQmlComponent( _qmlEngine );
 	connect( _systemComponent, &QQmlComponent::statusChanged, this, &QmlView::_rootStatusUpdate );
 	_systemComponent->loadUrl(QString("qrc:/main.qml"), QQmlComponent::Asynchronous);
-	qDebug() << ">>>> VIEW CTOR done";
+	
 }
 
 QmlView::~QmlView() {

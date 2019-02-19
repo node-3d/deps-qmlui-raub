@@ -1,5 +1,5 @@
 #include <QCoreApplication>
-#include <QDebug>
+//#include <QDebug>
 #include <QGuiApplication>
 
 #include <qml-ui.hpp>
@@ -43,13 +43,7 @@ void QmlUi::plugins(const char *plugins) {
 
 
 void QmlUi::update() {
-	
-	if (QCoreApplication::hasPendingEvents()) {
-		qDebug() << ">>>> processEvents 1";
-		QCoreApplication::processEvents(QEventLoop::AllEvents, 10);
-		qDebug() << ">>>> processEvents 2";
-	}
-	
+	QCoreApplication::processEvents();
 }
 
 
