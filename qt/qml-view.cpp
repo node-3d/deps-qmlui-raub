@@ -23,7 +23,6 @@
 #include "qml-view.hpp"
 #include "qml-cb.hpp"
 #include "keyconv.hpp"
-#include "event-filter.h"
 
 
 QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
