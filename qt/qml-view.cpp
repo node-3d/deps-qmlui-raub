@@ -1,6 +1,6 @@
 #include <QByteArray>
 #include <QCoreApplication>
-#include <QDebug>
+//#include <QDebug>
 #include <QJsonDocument>
 #include <QMap>
 #include <QOffscreenSurface>
@@ -27,7 +27,7 @@
 
 
 QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
-	qDebug() << "CTOR 1";
+	
 	// Initial values all zero
 	_systemItem = nullptr;
 	_systemComponent = nullptr;
@@ -42,7 +42,7 @@ QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 	_hasConfirmed = false;
 	
 	_cb = cb;
-	qDebug() << "CTOR 2";
+	
 	// Tell window it's gonna be OpenGL based
 	setSurfaceType(QSurface::OpenGLSurface);
 	
@@ -55,15 +55,6 @@ QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 	_renderControl = new QQuickRenderControl();
 	_offscreenWindow = new QQuickWindow( _renderControl );
 	_framebuffer = nullptr;
-	qDebug() << "CTOR 3";
-	EventFilter *filter = new EventFilter(this);
-	QCoreApplication::instance()->installEventFilter(filter);
-//	this->installEventFilter(filter);
-//	_renderControl->installEventFilter(filter);
-//	_offscreenWindow->installEventFilter(filter);
-//	_openglContext->installEventFilter(filter);
-//	_offscreenSurface->installEventFilter(filter);
-//	_offscreenSurface->installEventFilter(filter);
 	
 	// Set window looks accordingly
 	_offscreenWindow->setGeometry(0, 0, w, h);
@@ -71,15 +62,13 @@ QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 	_currentSize = QSize(w, h);
 	_offscreenWindow->contentItem()->setSize( QSizeF(_offscreenWindow->size()) );
 	_offscreenWindow->setColor(Qt::transparent);
-//	_offscreenWindow->show();
-	qDebug() << "CTOR 4";
+	
 	// Create a separate instance of QML Engine for this window
 	_qmlEngine = new QQmlEngine();
-//	_qmlEngine->installEventFilter(filter);
 	if ( ! _qmlEngine->incubationController() ) {
 		_qmlEngine->setIncubationController(_offscreenWindow->incubationController());
 	}
-	qDebug() << "CTOR 5";
+	
 	// Apply additional library paths
 	foreach (const QString &dir, QCoreApplication::libraryPaths()) {
 		QString replaced = dir;
@@ -90,7 +79,7 @@ QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 	// Provide globals for QML to be on the same page with us
 	_qmlEngine->rootContext()->setContextProperty("CWD", renderer->cwd());
 	_qmlEngine->rootContext()->setContextProperty("cb", _cb);
-	qDebug() << "CTOR 6";
+	
 	// Debounced rendering with singleshot timer
 	_renderTimer.setSingleShot(true);
 	_renderTimer.setInterval(5);
@@ -160,11 +149,11 @@ QmlView::~QmlView() {
 
 // Create a new FBO
 void QmlView::_createFramebuffer() {
-	qDebug() << ">>>> VIEW _createFramebuffer 1";
+	
 	if ( ! _openglContext->makeCurrent(_offscreenSurface) ) {
 		return;
 	}
-	qDebug() << ">>>> VIEW _createFramebuffer 2";
+	
 	// Only delete after new FBO was allocated
 	QOpenGLFramebufferObject *_oldFramebuffer = _framebuffer;
 	
@@ -173,18 +162,18 @@ void QmlView::_createFramebuffer() {
 		_offscreenWindow->size(),
 		QOpenGLFramebufferObject::CombinedDepthStencil
 	);
-	qDebug() << ">>>> VIEW _createFramebuffer 3";
+	
 	// HACK: forces the new FBO to (CERTAINLY) have a different GL id
 	delete _oldFramebuffer;
 	
 	// Set the Window to render into it
 	_offscreenWindow->setRenderTarget(_framebuffer);
-	qDebug() << ">>>> VIEW _createFramebuffer 4";
+	
 	// Respond to JS: GL texture id of a new FBO
 	QVariantMap pmap;
 	pmap["texture"] = _framebuffer->texture();
 	_cb->call("_qml_fbo", pmap);
-	qDebug() << ">>>> VIEW _createFramebuffer 5";
+	
 }
 
 
@@ -197,30 +186,30 @@ void QmlView::_destroyFramebuffer() {
 
 // Update and render the scene
 void QmlView::_render() {
-	qDebug() << ">>>> VIEW _render 1";
+	
 	if ( ! _openglContext->makeCurrent(_offscreenSurface) ) {
 		return;
 	}
-	qDebug() << ">>>> VIEW _render 2";
+	
 	// Only sync scene content if it has some changes
 	if (_hasChanged) {
 		_hasChanged = false;
 		_renderControl->polishItems();
 		_renderControl->sync();
 	}
-	qDebug() << ">>>> VIEW _render 3";
+	
 	_renderControl->render();
-	qDebug() << ">>>> VIEW _render 4";
+	
 	// Finish OpenGL business
 	_offscreenWindow->resetOpenGLState();
 	_openglContext->functions()->glFlush();
-	qDebug() << ">>>> VIEW _render 5";
+	
 }
 
 
 // Activate/reactivate resize timer for debounce
 void QmlView::resize(const QSize &size) {
-	qDebug() << ">>>> resize";
+	
 	_currentSize = size;
 	
 	if ( _resizeTimer.isActive() ) {
@@ -234,7 +223,7 @@ void QmlView::resize(const QSize &size) {
 
 // Update the size of the Window
 void QmlView::_applySize() {
-	qDebug() << ">>>> _applySize";
+	
 	// Both window and content
 	_offscreenWindow->setGeometry(0, 0, _currentSize.width(), _currentSize.height());
 	_offscreenWindow->contentItem()->setSize( QSizeF(_currentSize) );
@@ -263,7 +252,7 @@ void QmlView::_syncScene() { _hasChanged = true; _requestUpdate(); }
 
 // Reports the error as an event and shows it on the screen if possible
 void QmlView::_qmlReport(const QString &message, const QString &type) const {
-	qDebug() << ">>>> _qmlReport";
+	
 	if (_systemError) {
 		_systemError->setVisible(true);
 		QString currentMessage = _systemError->property("text").toString();
@@ -282,7 +271,7 @@ void QmlView::_qmlReport(const QString &message, const QString &type) const {
 
 
 bool QmlView::_qmlCheckErrors(const QQmlComponent *component) const {
-	qDebug() << ">>>> _qmlCheckErrors";
+	
 	// If there are errors, report each of them
 	if (component->isError()) {
 		QList<QQmlError> errorList = component->errors();
@@ -299,7 +288,7 @@ bool QmlView::_qmlCheckErrors(const QQmlComponent *component) const {
 
 // Status listener for System Component
 void QmlView::_rootStatusUpdate(QQmlComponent::Status status) {
-	qDebug() << ">>>> _rootStatusUpdate";
+	
 	// If not ready yet, then only check for errors
 	if( QQmlComponent::Ready != status ) {
 		_qmlCheckErrors(_systemComponent);
@@ -351,7 +340,7 @@ void QmlView::_rootStatusUpdate(QQmlComponent::Status status) {
 
 // Status listener for User UI Component
 void QmlView::_customStatusUpdate(QQmlComponent::Status status) {
-	qDebug() << ">>>> _customStatusUpdate";
+	
 	QVariantMap result;
 	result["source"] = _currentQml;
 	result["status"] = "error";
