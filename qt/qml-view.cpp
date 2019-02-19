@@ -71,6 +71,7 @@ QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 	_currentSize = QSize(w, h);
 	_offscreenWindow->contentItem()->setSize( QSizeF(_offscreenWindow->size()) );
 	_offscreenWindow->setColor(Qt::transparent);
+//	_offscreenWindow->show();
 	qDebug() << "CTOR 4";
 	// Create a separate instance of QML Engine for this window
 	_qmlEngine = new QQmlEngine();
