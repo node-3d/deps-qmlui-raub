@@ -250,9 +250,9 @@ void QmlView::_syncScene() { _hasChanged = true; _requestUpdate(); }
 
 
 // Reports the error as an event and shows it on the screen if possible
-void QmlView::_qmlReport(const QString &message, const QString &type) const {
+void QmlView::_qmlReport(const QString &message, const QString &type, bool critical) const {
 	
-	if (_systemError) {
+	if (critical && _systemError) {
 		_systemError->setVisible(true);
 		QString currentMessage = _systemError->property("text").toString();
 		_systemError->setProperty(
@@ -443,7 +443,7 @@ void QmlView::setProp(
 ) {
 	
 	if ( ! _customItem ) {
-		_qmlReport("Qml setProp() failed. Do a proper loadQml() first.", "prop");
+		_qmlReport("Qml setProp() failed. Do a proper loadQml() first.", "prop", false);
 		return;
 	}
 	
@@ -452,7 +452,8 @@ void QmlView::setProp(
 	if ( ! obj ) {
 		_qmlReport(
 			QString("Qml setProp() failed. Object not found: ") + objname,
-			"prop"
+			"prop",
+			false
 		);
 		return;
 	}
@@ -462,7 +463,8 @@ void QmlView::setProp(
 	if ( ! parsed.size() ) {
 		_qmlReport(
 			QString("Qml setProp() failed. Invalid value: '") + json + QString("'"),
-			"prop"
+			"prop",
+			false
 		);
 		return;
 	}
@@ -477,7 +479,8 @@ void QmlView::getProp(const QString &objname, const QByteArray &propname) {
 	if ( ! _customItem ) {
 		_qmlReport(
 			"Qml getProp() failed. Do a proper loadQml() first.",
-			"prop"
+			"prop",
+			false
 		);
 		return;
 	}
@@ -487,7 +490,8 @@ void QmlView::getProp(const QString &objname, const QByteArray &propname) {
 	if ( ! obj ) {
 		_qmlReport(
 			QString("Qml getProp() failed. Object not found: ") + objname,
-			"prop"
+			"prop",
+			false
 		);
 		return;
 	}
@@ -509,7 +513,8 @@ void QmlView::invoke(
 	if ( ! _customItem ) {
 		_qmlReport(
 			"Qml invoke() failed. Do a proper loadQml() first.",
-			"invoke"
+			"invoke",
+			false
 		);
 		return;
 	}
@@ -519,7 +524,8 @@ void QmlView::invoke(
 	if ( ! obj ) {
 		_qmlReport(
 			QString("Qml invoke() failed. Object not found: ") + objname,
-			"invoke"
+			"invoke",
+			false
 		);
 		return;
 	}
@@ -535,7 +541,8 @@ void QmlView::invoke(
 	if ( ! parsed.size() ) {
 		_qmlReport(
 			QString("Qml invoke() failed. Invalid value: '") + json + QString("'"),
-			"prop"
+			"prop",
+			false
 		);
 		return;
 	}

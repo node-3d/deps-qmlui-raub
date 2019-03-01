@@ -110,7 +110,8 @@ private:
 	// Report an error message to JS
 	void _qmlReport(
 		const QString &message,
-		const QString &type = QString("qml")
+		const QString &type = QString("qml"),
+		bool critical = true
 	) const;
 	
 	
