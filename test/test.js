@@ -3,7 +3,7 @@
 const { expect } = require('chai');
 const { stub, spy } = require('sinon');
 
-const deps = require('deps-qmlui-raub');
+const deps = require('..');
 
 
 const pathsMethods = ['bin', 'rem', 'include'];
