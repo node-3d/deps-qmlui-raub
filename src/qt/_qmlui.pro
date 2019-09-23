@@ -8,26 +8,22 @@ CONFIG += c++11
 TEMPLATE = lib
 TARGET = qmlui
 
-INCLUDEPATH += $$PWD/../include
+INCLUDEPATH += $$PWD/../../include
 
 
 DEFINES += QMLUI_SHARED QT_DEPRECATED_WARNINGS
 
-DESTDIR = $$PWD/../bin-win32
-contains(QMAKE_TARGET.arch, x86_64):{
-	DESTDIR = $$PWD/../bin-win64
-}
+DESTDIR = $$PWD/../../bin-windows
 
 unix {
 	CONFIG += unversioned_libname unversioned_soname
-	DESTDIR = $$PWD/../bin-linux64
+	DESTDIR = $$PWD/../../bin-linux
 	QMAKE_LFLAGS_RPATH=
 }
 
 macx {
-	DESTDIR = $$PWD/../bin-mac64
+	DESTDIR = $$PWD/../../bin-osx
 }
-
 
 SOURCES += \
 	qml-renderer.cpp \

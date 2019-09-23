@@ -20,7 +20,7 @@ describe('Paths', () => {
 	afterEach(() => stubbed.restore());
 	
 	
-	it(`exports an object`, () => {
+	it('exports an object', () => {
 		expect(deps).to.be.an('object');
 	});
 	
