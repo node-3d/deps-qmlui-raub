@@ -1,4 +1,5 @@
 #include <QJsonDocument>
+#include <QList>
 
 #include "qml-cb.hpp"
 
@@ -20,8 +21,10 @@ QmlCb::QmlCb(QmlUi *owner) {
 }
 
 
-void QmlCb::call(const QString &type, QVariantMap props) const {
+void QmlCb::call(const QString &type, QVariant props) const {
 	
-	__cb(_owner, type.toLatin1(), QJsonDocument::fromVariant(props).toJson());
+	QList<QVariant> vlist;
+	vlist.push_back(props);
+	__cb(_owner, type.toLatin1(), QJsonDocument::fromVariant(vlist).toJson());
 	
 }

@@ -20,7 +20,7 @@ public:
 	explicit QmlCb(QmlUi *owner);
 	
 	// Callable within QML code
-	Q_INVOKABLE void call(const QString &type, QVariantMap props = QVariantMap()) const;
+	Q_INVOKABLE void call(const QString &type, QVariant props = QVariant()) const;
 	
 	
 private:
