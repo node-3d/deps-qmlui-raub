@@ -1,7 +1,7 @@
 CONFIG(debug, debug|release): CONFIG -= release
 else: CONFIG -= debug
 
-QT += core gui qml quick
+QT += core gui qml quick opengl
 CONFIG += c++11
 #CONFIG += qml_debug
 
