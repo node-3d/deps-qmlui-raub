@@ -32,16 +32,14 @@ matrix:
         directories:
           - /home/travis/qt-linux
       install:
-        - if [[ ! -d /Users/travis/qt-osx/Qt ]]; then
+        - if [[ ! -d /Users/travis/qt-linux/Qt ]]; then
             chmod +x ./install-qt.sh;
             chmod +x ./extract-qt-installer.sh;
             export QT_CI_PACKAGES=qt.qt5.5130.clang_64;
-            ./install-qt.sh 5.13.0 /Users/travis/qt-osx;
+            ./install-qt.sh 5.13.0 /Users/travis/qt-linux;
           fi;
-        - ls /home/travis/qt-linux/Qt
         - export PATH=/home/travis/qt-linux/Qt/5.13.0/gcc_64/bin:$PATH
       script:
-        - chmod +x src/unpack.sh && src/unpack.sh
         - qmake -spec linux-g++-64 "INCLUDEPATH+=/home/travis/qt-linux/Qt/5.13.0/gcc_64/include" src/qt/_qmlui.pro
         - make
     - name: "OSX Build"
@@ -65,7 +63,6 @@ matrix:
           fi;
         - export PATH=/Users/travis/qt-osx/Qt/5.13.0/clang_64/bin:$PATH
       script:
-        - chmod +x src/unpack.sh && src/unpack.sh
         - qmake -spec macx-clang "QMAKE_CXXFLAGS+=-ObjC++" "QMAKE_LFLAGS_SONAME=-Wl,-install_name,@rpath/" "INCLUDEPATH+=/Users/travis/qt-osx/Qt/5.13.0/clang_64/include" src/qt/_qmlui.pro
         - make
 
