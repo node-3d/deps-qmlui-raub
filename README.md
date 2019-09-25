@@ -175,6 +175,10 @@ each having a dedicated OpenGL framebuffer.
 * `void update()`
 	
 	Poll window events. Required for async operations, including signal/slot interaction.
+	If this method is not called at all, the QML scene won't ever load. It is preferred
+	to call it regularly.
+	> NOTE: It is at this point, that the QML render may happen, causing GL context
+	switch. Make sure to return your original GL context (if any), after calling this.
 
 
 ### Methods:
