@@ -40,7 +40,7 @@ matrix:
           fi;
         - export PATH=/home/travis/qt-linux/Qt/5.13.0/gcc_64/bin:$PATH
       script:
-        - qmake -spec linux-g++-64 "INCLUDEPATH+=/home/travis/qt-linux/Qt/5.13.0/gcc_64/include" src/qt/_qmlui.pro
+        - /home/travis/qt-linux/Qt/5.13.0/gcc_64/bin/qmake -spec linux-g++-64 "INCLUDEPATH+=/home/travis/qt-linux/Qt/5.13.0/gcc_64/include" src/qt/_qmlui.pro
         - make
     - name: "OSX Build"
       os: osx
@@ -63,7 +63,7 @@ matrix:
           fi;
         - export PATH=/Users/travis/qt-osx/Qt/5.13.0/clang_64/bin:$PATH
       script:
-        - qmake -spec macx-clang "QMAKE_CXXFLAGS+=-ObjC++" "QMAKE_LFLAGS_SONAME=-Wl,-install_name,@rpath/" "INCLUDEPATH+=/Users/travis/qt-osx/Qt/5.13.0/clang_64/include" src/qt/_qmlui.pro
+        - /Users/travis/qt-osx/Qt/5.13.0/clang_64/bin/qmake -spec macx-clang "QMAKE_CXXFLAGS+=-ObjC++" "QMAKE_LFLAGS_SONAME=-Wl,-install_name,@rpath/" "INCLUDEPATH+=/Users/travis/qt-osx/Qt/5.13.0/clang_64/include" src/qt/_qmlui.pro
         - make
 
 
