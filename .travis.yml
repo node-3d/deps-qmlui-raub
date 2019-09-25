@@ -35,9 +35,10 @@ matrix:
         - if [[ ! -d /Users/travis/qt-linux/Qt ]]; then
             chmod +x ./install-qt.sh;
             chmod +x ./extract-qt-installer.sh;
-            export QT_CI_PACKAGES=qt.qt5.5130.clang_64;
+            export QT_CI_PACKAGES=qt.qt5.5130.gcc_64;
             ./install-qt.sh 5.13.0 /Users/travis/qt-linux;
           fi;
+        - ls
         - export PATH=/home/travis/qt-linux/Qt/5.13.0/gcc_64/bin:$PATH
       script:
         - /home/travis/qt-linux/Qt/5.13.0/gcc_64/bin/qmake -spec linux-g++-64 "INCLUDEPATH+=/home/travis/qt-linux/Qt/5.13.0/gcc_64/include" src/qt/_qmlui.pro
