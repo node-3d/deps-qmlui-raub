@@ -32,11 +32,11 @@ matrix:
         directories:
           - /home/travis/qt-linux
       install:
-        - if [[ ! -d /Users/travis/qt-linux/Qt ]]; then
+        - if [[ ! -d /home/travis/qt-linux/Qt ]]; then
             chmod +x ./install-qt.sh;
             chmod +x ./extract-qt-installer.sh;
             export QT_CI_PACKAGES=qt.qt5.5130.gcc_64;
-            ./install-qt.sh 5.13.0 /Users/travis/qt-linux;
+            ./install-qt.sh 5.13.0 /home/travis/qt-linux;
           fi;
         - ls
         - export PATH=/home/travis/qt-linux/Qt/5.13.0/gcc_64/bin:$PATH
