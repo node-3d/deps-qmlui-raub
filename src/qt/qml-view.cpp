@@ -77,7 +77,11 @@ QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 	
 	// Provide globals for QML to be on the same page with us
 	_qmlEngine->rootContext()->setContextProperty("CWD", renderer->cwd());
-	_qmlEngine->rootContext()->setContextProperty("cb", _cb);
+	QJSValue wrapobj = _qmlEngine->newQObject(_cb);
+	_qmlEngine->globalObject().setProperty(
+		"eventEmit",
+		wrapobj.property("eventEmit")
+	);
 	
 	// Debounced rendering with singleshot timer
 	_renderTimer.setSingleShot(true);
@@ -171,7 +175,7 @@ void QmlView::_createFramebuffer() {
 	// Respond to JS: GL texture id of a new FBO
 	QVariantMap pmap;
 	pmap["texture"] = _framebuffer->texture();
-	_cb->call("_qml_fbo", pmap);
+	_cb->eventEmit("_qml_fbo", pmap);
 	
 }
 
@@ -264,7 +268,7 @@ void QmlView::_qmlReport(const QString &message, const QString &type, bool criti
 	QVariantMap pmap;
 	pmap["message"] = message;
 	pmap["type"] = type;
-	_cb->call("_qml_error", pmap);
+	_cb->eventEmit("_qml_error", pmap);
 	
 }
 
@@ -331,7 +335,7 @@ void QmlView::_rootStatusUpdate(QQmlComponent::Status status) {
 	// Now system is ready to load user ui
 	_isReady = true;
 	if (_hasConfirmed) {
-		_cb->call("_qml_ready", QVariantMap());
+		_cb->eventEmit("_qml_ready", QVariantMap());
 	}
 	
 }
@@ -351,7 +355,7 @@ void QmlView::_customStatusUpdate(QQmlComponent::Status status) {
 			result["status"] = "loading";
 		}
 		
-		_cb->call("_qml_load", result);
+		_cb->eventEmit("_qml_load", result);
 		
 		return;
 		
@@ -362,14 +366,14 @@ void QmlView::_customStatusUpdate(QQmlComponent::Status status) {
 	
 	// If any errors - quit
 	if (_qmlCheckErrors(_customComponent)) {
-		_cb->call("_qml_load", result);
+		_cb->eventEmit("_qml_load", result);
 		return;
 	}
 	
 	// Instantiate user component
 	QObject *rootObject = _customComponent->create();
 	if (_qmlCheckErrors(_customComponent)) {
-		_cb->call("_qml_load", result);
+		_cb->eventEmit("_qml_load", result);
 		return;
 	}
 	
@@ -379,7 +383,7 @@ void QmlView::_customStatusUpdate(QQmlComponent::Status status) {
 		_qmlReport("Not a QQuickItem: " + _currentQml);
 		delete rootObject;
 		rootObject = nullptr;
-		_cb->call("_qml_load", result);
+		_cb->eventEmit("_qml_load", result);
 		return;
 	}
 	
@@ -388,7 +392,7 @@ void QmlView::_customStatusUpdate(QQmlComponent::Status status) {
 	
 	// Report success to JS
 	result["status"] = "success";
-	_cb->call("_qml_load", result);
+	_cb->eventEmit("_qml_load", result);
 	
 }
 
@@ -501,7 +505,7 @@ void QmlView::getProp(const QString &objname, const QByteArray &propname) {
 	e["name"] = objname;
 	e["key"] = propname;
 	e["value"] = prop;
-	_cb->call("_qml_get", e);
+	_cb->eventEmit("_qml_get", e);
 	
 }
 
@@ -575,29 +579,30 @@ void QmlView::mouse(int type, int button, int buttons, int x, int y) {
 	}
 	
 	Qt::MouseButton qbuttons = static_cast<Qt::MouseButton>(buttons);
+	Qt::KeyboardModifiers modifiers = Qt::NoModifier;
 	
 	if (type == 0) {
 		QMouseEvent event = QMouseEvent(
-			QEvent::MouseMove, mousePoint, mousePoint, qbutton, qbuttons, 0
+			QEvent::MouseMove, mousePoint, qbutton, qbuttons, modifiers
 		);
 		QCoreApplication::sendEvent(_offscreenWindow, &event);
 	} else if (type == 1) {
 		QMouseEvent event = QMouseEvent(
 			QEvent::MouseButtonPress,
-			mousePoint, mousePoint,
-			qbutton, qbuttons, 0
+			mousePoint,
+			qbutton, qbuttons, modifiers
 		);
 		QCoreApplication::sendEvent(_offscreenWindow, &event);
 	} else if (type == 2) {
 		QMouseEvent event = QMouseEvent(
 			QEvent::MouseButtonRelease,
-			mousePoint, mousePoint,
-			qbutton, qbuttons, 0
+			mousePoint,
+			qbutton, qbuttons, modifiers
 		);
 		QCoreApplication::sendEvent(_offscreenWindow, &event);
 	} else if (type == 3) {
 		QWheelEvent event = QWheelEvent(
-			mousePoint, button, qbuttons, static_cast<Qt::KeyboardModifiers>(0)
+			mousePoint, button, qbuttons, modifiers
 		);
 		QCoreApplication::sendEvent(_offscreenWindow, &event);
 	}

@@ -13,21 +13,20 @@ MouseArea {
 	acceptedButtons : Qt.AllButtons
 	hoverEnabled    : true
 	
-	
 	onClicked : {
 		focus = true;
-		cb.call('_qml_mouse', new Events.MouseEvent('click', mouse));
+		eventEmit('_qml_mouse', new Events.MouseEvent('click', mouse));
 	}
 	
-	onDoubleClicked   : cb.call('_qml_mouse', new Events.MouseEvent('dblclick', mouse))
-	onPositionChanged : cb.call('_qml_mouse', new Events.MouseMoveEvent(mouse))
-	onPressed         : cb.call('_qml_mouse', new Events.MouseEvent('mousedown', mouse))
-	onReleased        : cb.call('_qml_mouse', new Events.MouseEvent('mouseup', mouse))
-	onWheel           : cb.call('_qml_mouse', new Events.MouseWheelEvent(wheel))
+	onDoubleClicked   : eventEmit('_qml_mouse', new Events.MouseEvent('dblclick', mouse))
+	onPositionChanged : eventEmit('_qml_mouse', new Events.MouseMoveEvent(mouse))
+	onPressed         : eventEmit('_qml_mouse', new Events.MouseEvent('mousedown', mouse))
+	onReleased        : eventEmit('_qml_mouse', new Events.MouseEvent('mouseup', mouse))
+	onWheel           : eventEmit('_qml_mouse', new Events.MouseWheelEvent(wheel))
 	
 	
-	Keys.onPressed  : cb.call('_qml_key', new Events.KeyEvent('keydown', event))
-	Keys.onReleased : cb.call('_qml_key', new Events.KeyEvent('keyup', event))
+	Keys.onPressed  : eventEmit('_qml_key', new Events.KeyEvent('keydown', event))
+	Keys.onReleased : eventEmit('_qml_key', new Events.KeyEvent('keyup', event))
 	
 	
 	Rectangle {

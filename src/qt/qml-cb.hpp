@@ -2,8 +2,7 @@
 #define _QML_CB_HPP_
 
 #include <QObject>
-#include <QVariantMap>
-
+#include <QVariant>
 #include <qml-ui.hpp>
 
 
@@ -20,8 +19,9 @@ public:
 	explicit QmlCb(QmlUi *owner);
 	
 	// Callable within QML code
-	Q_INVOKABLE void call(const QString &type, QVariant props = QVariant()) const;
-	
+	Q_INVOKABLE void eventEmit(const QByteArray &name,
+		QVariant data = QVariant()
+	) const;
 	
 private:
 	
