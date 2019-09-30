@@ -18,7 +18,6 @@ class QmlCb;
 class QMLUI_DLLSPEC QmlUi {
 	
 public:
-	
 	typedef void (*Cb) (QmlUi *target, const char *type, const char *json);
 	
 	static void init(const char *cwdOwn, size_t wnd, size_t ctx, QmlUi::Cb cb);
@@ -37,9 +36,7 @@ public:
 	void invoke(const char *obj, const char *method, const char *json);
 	void libs(const char *path);
 	
-	
 private:
-	
 	// Instance-specific callback
 	QmlCb *_qmlCb;
 	// Aggregation hides implementation and disregards Qt headers
