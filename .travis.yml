@@ -2,7 +2,7 @@ matrix:
   include:
     - name: "Linux Test"
       language: node_js
-      node_js: "10.16.1"
+      node_js: "12.13.0"
       os: linux
       if: NOT commit_message =~ /^:hammer:/
       dist: xenial
@@ -12,7 +12,7 @@ matrix:
         - npm ci
     - name: "OSX Test"
       language: node_js
-      node_js: "10.16.1"
+      node_js: "12.13.0"
       os: osx
       if: NOT commit_message =~ /^:hammer:/
       install:
