@@ -23,7 +23,7 @@ matrix:
       dist: xenial
       env:
         - NEEDS_UPLOAD=true
-        - UPLOAD_FILE=bin-linux/libqmlui.so
+        - UPLOAD_FILE=src/libqmlui.so
         - UPLOAD_NAME=Linux
       if: commit_message =~ /^:hammer:/
       language: cpp
@@ -47,7 +47,7 @@ matrix:
       os: osx
       env:
         - NEEDS_UPLOAD=true
-        - UPLOAD_FILE=bin-osx/libqmlui.dylib
+        - UPLOAD_FILE=src/libqmlui.dylib
         - UPLOAD_NAME=OSX
       if: commit_message =~ /^:hammer:/
       language: cpp

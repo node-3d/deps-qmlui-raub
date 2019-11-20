@@ -8,7 +8,7 @@ CONFIG += c++11
 TEMPLATE = lib
 TARGET = qmlui
 
-DESTDIR = $$PWD/../../bin-windows
+DESTDIR = $$PWD/..
 
 INCLUDEPATH += $$PWD/../../include
 
@@ -16,13 +16,13 @@ DEFINES += QMLUI_SHARED QT_DEPRECATED_WARNINGS
 
 unix {
 	CONFIG += unversioned_libname unversioned_soname
-	DESTDIR = $$PWD/../../bin-linux
+	DESTDIR = $$PWD/..
 	QMAKE_LFLAGS_RPATH=
 	LIBS += -L$$PWD
 }
 
 macx {
-	DESTDIR = $$PWD/../../bin-osx
+	DESTDIR = $$PWD/..
 }
 
 SOURCES += \

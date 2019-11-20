@@ -8,6 +8,7 @@
 node_modules/
 src/node_modules/
 src/build-*
+src/qmlui.*
 bin-*/
 *.log
 *.user
