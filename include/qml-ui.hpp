@@ -1,5 +1,5 @@
-#ifndef _QML_UI_HPP_
-#define _QML_UI_HPP_
+#ifndef QML_UI_HPP
+#define QML_UI_HPP
 
 #ifdef WIN32
 	#if defined QMLUI_SHARED
@@ -10,6 +10,8 @@
 #else
 	#define QMLUI_DLLSPEC
 #endif
+
+#include <string>
 
 class QmlView;
 class QmlCb;
@@ -24,6 +26,7 @@ public:
 	static void plugins(const char *path);
 	static void update();
 	
+	
 	QmlUi(int w, int h);
 	~QmlUi();
 	
@@ -32,11 +35,15 @@ public:
 	void keyboard(int type, int key, unsigned text);
 	void load(const char *str, bool isFile);
 	void set(const char *obj, const char *prop, const char *json);
-	void get(const char *obj, const char *prop);
-	void invoke(const char *obj, const char *method, const char *json);
+	std::string get(const char *obj, const char *prop);
+	std::string invoke(const char *obj, const char *method, const char *json);
 	void libs(const char *path);
+	void style(const char *name, const char *fallback);
 	
 private:
+	QmlUi() {}
+	void operator =(const QmlUi &v) { (void)v; }
+	
 	// Instance-specific callback
 	QmlCb *_qmlCb;
 	// Aggregation hides implementation and disregards Qt headers
@@ -45,4 +52,4 @@ private:
 };
 
 
-#endif // _QML_UI_HPP_
+#endif // QML_UI_HPP

@@ -1,5 +1,5 @@
-#ifndef _QML_VIEW_HPP_
-#define _QML_VIEW_HPP_
+#ifndef QML_VIEW_HPP
+#define QML_VIEW_HPP
 
 #include <QWindow>
 #include <QTimer>
@@ -54,22 +54,22 @@ public:
 	
 	// Assign the value to a nested property
 	void setProp(
-		const QString &objname,
-		const QByteArray &propname,
-		const QByteArray &json
+		const char *objname,
+		const char *propname,
+		const char *json
 	);
 	
 	// Request the value of a nested property
-	void getProp(
-		const QString &objname,
-		const QByteArray &propname
+	std::string getProp(
+		const char *objname,
+		const char *propname
 	);
 	
 	// Invoke a nested method
-	void invoke(
-		const QString &objname,
-		const QByteArray &method,
-		const QByteArray &json
+	std::string invoke(
+		const char *objname,
+		const char *method,
+		const char *json
 	);
 	
 	
@@ -140,7 +140,6 @@ private:
 	// States
 	bool _hasChanged;
 	bool _isReady;
-	bool _hasConfirmed;
 	
 	
 	// Timers
@@ -158,5 +157,5 @@ private:
 	
 };
 
-#endif // _QML_VIEW_HPP_
+#endif // QML_VIEW_HPP
 

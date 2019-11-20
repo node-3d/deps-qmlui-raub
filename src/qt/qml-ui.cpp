@@ -1,6 +1,5 @@
-#include <QCoreApplication>
-//#include <QDebug>
 #include <QGuiApplication>
+#include <QQuickStyle>
 
 #include <qml-ui.hpp>
 
@@ -10,12 +9,12 @@
 
 
 // Main static objects
-int argc = 1;
-char argvData[] = "qmlui";
-char *argv = &argvData[0];
+static int argc = 1;
+static char argvData[] = "qmlui";
+static char *argv = &argvData[0];
 
-QGuiApplication *app  = nullptr;
-QmlRenderer *renderer = nullptr;
+static QGuiApplication *app  = nullptr;
+static QmlRenderer *renderer = nullptr;
 
 
 void QmlUi::init(const char *cwdOwn, size_t wnd, size_t ctx, QmlUi::Cb cb) {
@@ -90,20 +89,28 @@ void QmlUi::load(const char *str, bool isFile) {
 
 
 void QmlUi::set(const char *obj, const char *prop, const char *json) {
-	_view->setProp(QString(obj), QByteArray(prop), QByteArray(json));
+	_view->setProp(obj, prop, json);
 }
 
 
-void QmlUi::get(const char *obj, const char *prop) {
-	_view->getProp(QString(obj), QByteArray(prop));
+std::string QmlUi::get(const char *obj, const char *prop) {
+	return _view->getProp(obj, prop);
 }
 
 
-void QmlUi::invoke(const char *obj, const char *method, const char *json) {
-	_view->invoke(QString(obj), QByteArray(method), QByteArray(json));
+std::string QmlUi::invoke(const char *obj, const char *method, const char *json) {
+	return _view->invoke(obj, method, json);
 }
 
 
 void QmlUi::libs(const char *libs) {
 	_view->addLibsDir(QString(libs));
+}
+
+
+void QmlUi::style(const char *name, const char *fallback) {
+	QQuickStyle::setStyle(QString(name));
+	if (fallback) {
+		QQuickStyle::setFallbackStyle(QString(fallback));
+	}
 }

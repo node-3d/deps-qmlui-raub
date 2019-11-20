@@ -1,5 +1,5 @@
-#ifndef _PLATFORM_HPP_
-#define _PLATFORM_HPP_
+#ifndef PLATFORM_HPP
+#define PLATFORM_HPP
 
 
 #if defined WIN32
@@ -37,4 +37,4 @@
 #endif
 
 
-#endif // _PLATFORM_HPP_
+#endif // PLATFORM_HPP

@@ -1,5 +1,5 @@
-#ifndef _QML_CB_HPP_
-#define _QML_CB_HPP_
+#ifndef QML_CB_HPP
+#define QML_CB_HPP
 
 #include <QObject>
 #include <QVariant>
@@ -37,4 +37,4 @@ private:
 };
 
 
-#endif // _QML_CB_HPP_
+#endif // QML_CB_HPP

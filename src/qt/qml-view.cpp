@@ -22,7 +22,9 @@
 #include "qml-renderer.hpp"
 #include "qml-view.hpp"
 #include "qml-cb.hpp"
-#include "keyconv.hpp"
+
+
+static std::string undefined = std::string("undefined");
 
 
 QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
@@ -38,7 +40,6 @@ QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 	
 	_hasChanged = false;
 	_isReady = false;
-	_hasConfirmed = false;
 	
 	_cb = cb;
 	
@@ -334,9 +335,7 @@ void QmlView::_rootStatusUpdate(QQmlComponent::Status status) {
 	
 	// Now system is ready to load user ui
 	_isReady = true;
-	if (_hasConfirmed) {
-		_cb->eventEmit("_qml_ready", QVariantMap());
-	}
+	_cb->eventEmit("_qml_ready", QVariantMap());
 	
 }
 
@@ -443,42 +442,53 @@ void QmlView::unload() {
 
 // Set the property value on a given object, by "objectName", not "id"
 void QmlView::setProp(
-	const QString &objname, const QByteArray &propname, const QByteArray &json
+	const char *objname,
+	const char *propname,
+	const char *json
 ) {
 	
 	if ( ! _customItem ) {
-		_qmlReport("Qml setProp() failed. Do a proper loadQml() first.", "prop", false);
-		return;
-	}
-	
-	QQuickItem *obj = _findItem(_customItem, objname);
-	
-	if ( ! obj ) {
 		_qmlReport(
-			QString("Qml setProp() failed. Object not found: ") + objname,
+			"Qml setProp() failed. Do a proper loadQml() first.",
 			"prop",
 			false
 		);
 		return;
 	}
-	QByteArray enclosed = QByteArray("[") + json + QByteArray("]");
+	
+	QString strName = QString(objname);
+	QQuickItem *obj = _findItem(_customItem, strName);
+	
+	if ( ! obj ) {
+		_qmlReport(
+			QString("Qml setProp() failed. Object not found: ") + strName,
+			"prop",
+			false
+		);
+		return;
+	}
+	QByteArray enclosed = QByteArray("[") + QByteArray(json) + QByteArray("]");
 	QList<QVariant> parsed = QJsonDocument::fromJson(enclosed).toVariant().toList();
 	
 	if ( ! parsed.size() ) {
 		_qmlReport(
-			QString("Qml setProp() failed. Invalid value: '") + json + QString("'"),
+			QString(
+				"Qml setProp() failed. Invalid value: '%1'"
+			).arg(
+				json
+			),
 			"prop",
 			false
 		);
 		return;
 	}
 	
-	obj->setProperty(propname.constData(), parsed.at(0));
+	obj->setProperty(propname, parsed.at(0));
 	
 }
 
 
-void QmlView::getProp(const QString &objname, const QByteArray &propname) {
+std::string QmlView::getProp(const char *objname, const char *propname) {
 	
 	if ( ! _customItem ) {
 		_qmlReport(
@@ -486,32 +496,43 @@ void QmlView::getProp(const QString &objname, const QByteArray &propname) {
 			"prop",
 			false
 		);
-		return;
+		return undefined;
 	}
 	
-	QQuickItem *obj = _findItem(_customItem, objname);
+	QString strName = QString(objname);
+	QQuickItem *object = _findItem(_customItem, strName);
 	
-	if ( ! obj ) {
+	if ( ! object ) {
 		_qmlReport(
-			QString("Qml getProp() failed. Object not found: ") + objname,
+			QString("Qml getProp() failed. Object not found: ") + strName,
 			"prop",
 			false
 		);
-		return;
+		return undefined;
 	}
 	
-	QVariant prop = obj->property(propname.constData());
-	QVariantMap e;
-	e["name"] = objname;
-	e["key"] = propname;
-	e["value"] = prop;
-	_cb->eventEmit("_qml_get", e);
+	QVariant prop = object->property(propname);
+	
+	if ( ! prop.isValid() ) {
+		_qmlReport(
+			QString("Qml getProp() failed. Can't get: ") + QString(propname),
+			"prop",
+			false
+		);
+		return undefined;
+	}
+	
+	return std::string(
+		QJsonDocument::fromVariant(prop).toJson().constData()
+	);
 	
 }
 
 
-void QmlView::invoke(
-	const QString &objname, const QByteArray &method, const QByteArray &json
+std::string QmlView::invoke(
+	const char *objname,
+	const char *method,
+	const char *json
 ) {
 	
 	if ( ! _customItem ) {
@@ -520,41 +541,86 @@ void QmlView::invoke(
 			"invoke",
 			false
 		);
-		return;
+		return undefined;
 	}
 	
-	QQuickItem *obj = _findItem(_customItem, objname);
+	QString strName = QString(objname);
+	QQuickItem *object = _findItem(_customItem, strName);
 	
-	if ( ! obj ) {
+	if ( ! object ) {
 		_qmlReport(
-			QString("Qml invoke() failed. Object not found: ") + objname,
+			QString("Qml invoke() failed. Object not found: ") + strName,
 			"invoke",
 			false
 		);
-		return;
+		return undefined;
 	}
 	
-	if (json.size() == 0) {
-		QMetaObject::invokeMethod(obj, method.constData());
-		return;
-	}
+	QByteArray baJson = QByteArray(json);
+	QVariant parsed = QJsonDocument::fromJson(baJson).toVariant();
 	
-	QByteArray enclosed = QByteArray("[") + json + QByteArray("]");
-	QList<QVariant> parsed = QJsonDocument::fromJson(enclosed).toVariant().toList();
-	
-	if ( ! parsed.size() ) {
+	if ( ! parsed.isValid() ) {
 		_qmlReport(
-			QString("Qml invoke() failed. Invalid value: '") + json + QString("'"),
-			"prop",
+			QString(
+				"Qml invoke() failed. Invalid value: '%1'"
+			).arg(
+				baJson.constData()
+			),
+			"invoke",
 			false
 		);
-		return;
+		return undefined;
 	}
 	
-	QMetaObject::invokeMethod(
-		obj,
-		method.constData(),
-		Q_ARG(QVariant, parsed.at(0))
+	
+	const QMetaObject *meta = object->metaObject();
+	QMetaMethod metaMethod = meta->method(
+		meta->indexOfMethod(method)
+	);
+	
+	QVariant returnValue(
+		QMetaType::type(metaMethod.typeName()),
+		static_cast<void*>(nullptr)
+	);
+	QGenericReturnArgument returnArgument(
+		metaMethod.typeName(),
+		const_cast<void*>(returnValue.constData())
+	);
+	
+	QVariantList args = parsed.toList();
+	bool ok = metaMethod.invoke(
+		object,
+		Qt::DirectConnection,
+		returnArgument,
+		Q_ARG(QVariant, args.value(0)),
+		Q_ARG(QVariant, args.value(1)),
+		Q_ARG(QVariant, args.value(2)),
+		Q_ARG(QVariant, args.value(3)),
+		Q_ARG(QVariant, args.value(4)),
+		Q_ARG(QVariant, args.value(5)),
+		Q_ARG(QVariant, args.value(6)),
+		Q_ARG(QVariant, args.value(7)),
+		Q_ARG(QVariant, args.value(8)),
+		Q_ARG(QVariant, args.value(9))
+	);
+	
+	if ( ! ok ) {
+		_qmlReport(
+			QString(
+				"Qml invoke() failed. Invalid call to %1 with %2"
+			).arg(
+				metaMethod.methodSignature().constData()
+			).arg(
+				baJson.constData()
+			),
+			"invoke",
+			false
+		);
+		return undefined;
+	}
+	
+	return std::string(
+		QJsonDocument::fromVariant(returnValue).toJson().constData()
 	);
 	
 }
@@ -612,7 +678,46 @@ void QmlView::mouse(int type, int button, int buttons, int x, int y) {
 
 void QmlView::keyboard(int type, int key, unsigned text) {
 	
-	Qt::Key qtKey = keyconv(key);
+	Qt::Key qtKey = static_cast<Qt::Key>(key);
+	
+	#define REPLACE(FROM, RESULT) case FROM: qtKey = RESULT; break;
+	switch (key) {
+		REPLACE(27, Qt::Key_Escape)
+		REPLACE(9, Qt::Key_Tab)
+		REPLACE(8, Qt::Key_Backspace)
+		REPLACE(13, Qt::Key_Enter)
+		REPLACE(45, Qt::Key_Insert)
+		REPLACE(46, Qt::Key_Delete)
+		REPLACE(36, Qt::Key_Home)
+		REPLACE(35, Qt::Key_End)
+		REPLACE(37, Qt::Key_Left)
+		REPLACE(38, Qt::Key_Up)
+		REPLACE(39, Qt::Key_Right)
+		REPLACE(40, Qt::Key_Down)
+		REPLACE(33, Qt::Key_PageUp)
+		REPLACE(34, Qt::Key_PageDown)
+		REPLACE(16, Qt::Key_Shift)
+		REPLACE(17, Qt::Key_Control)
+		REPLACE(18, Qt::Key_Alt)
+		REPLACE(20, Qt::Key_CapsLock)
+		REPLACE(144, Qt::Key_NumLock)
+		REPLACE(145, Qt::Key_ScrollLock)
+		REPLACE(112, Qt::Key_F1)
+		REPLACE(113, Qt::Key_F2)
+		REPLACE(114, Qt::Key_F3)
+		REPLACE(115, Qt::Key_F4)
+		REPLACE(116, Qt::Key_F5)
+		REPLACE(117, Qt::Key_F6)
+		REPLACE(118, Qt::Key_F7)
+		REPLACE(119, Qt::Key_F8)
+		REPLACE(120, Qt::Key_F9)
+		REPLACE(121, Qt::Key_F10)
+		REPLACE(122, Qt::Key_F11)
+		REPLACE(123, Qt::Key_F12)
+		REPLACE(91, Qt::Key_Super_L)
+		REPLACE(93, Qt::Key_Super_R)
+		default: break;
+	}
 	
 	unsigned finalText = text;
 	

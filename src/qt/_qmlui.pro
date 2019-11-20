@@ -1,7 +1,7 @@
 CONFIG(debug, debug|release): CONFIG -= release
 else: CONFIG -= debug
 
-QT += core gui qml quick opengl
+QT += core gui qml quick opengl quickcontrols2
 CONFIG += c++11
 #CONFIG += qml_debug
 
@@ -28,7 +28,6 @@ macx {
 SOURCES += \
 	qml-renderer.cpp \
 	qml-cb.cpp \
-	keyconv.cpp \
 	qml-view.cpp \
 	qml-ui.cpp
 
@@ -36,7 +35,7 @@ HEADERS += \
 	qml-renderer.hpp \
 	platform.hpp \
 	qml-cb.hpp \
-	keyconv.hpp \
-	qml-view.hpp
+	qml-view.hpp \
+	../../include/qml-ui.hpp
 
 RESOURCES += qml.qrc

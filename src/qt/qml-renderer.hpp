@@ -1,5 +1,5 @@
-#ifndef _QML_RENDERER_HPP_
-#define _QML_RENDERER_HPP_
+#ifndef QML_RENDERER_HPP
+#define QML_RENDERER_HPP
 
 #include <QWindow>
 
@@ -31,4 +31,4 @@ private:
 };
 
 
-#endif // _QML_RENDERER_HPP_
+#endif // QML_RENDERER_HPP
