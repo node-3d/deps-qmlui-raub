@@ -25,7 +25,7 @@ public:
 	static void init(const char *cwdOwn, size_t wnd, size_t ctx, QmlUi::Cb cb);
 	static void plugins(const char *path);
 	static void update();
-	
+	static void style(const char *name, const char *fallback);
 	
 	QmlUi(int w, int h);
 	~QmlUi();
@@ -38,7 +38,6 @@ public:
 	std::string get(const char *obj, const char *prop);
 	std::string invoke(const char *obj, const char *method, const char *json);
 	void libs(const char *path);
-	void style(const char *name, const char *fallback);
 	
 private:
 	QmlUi() {}

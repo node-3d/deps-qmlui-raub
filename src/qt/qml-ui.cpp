@@ -46,6 +46,14 @@ void QmlUi::update() {
 }
 
 
+void QmlUi::style(const char *name, const char *fallback) {
+	QQuickStyle::setStyle(QString(name));
+	if (fallback) {
+		QQuickStyle::setFallbackStyle(QString(fallback));
+	}
+}
+
+
 QmlUi::QmlUi(int w, int h) {
 	if ( renderer == nullptr ) {
 		throw "QmlUi: not inited.";
@@ -105,12 +113,4 @@ std::string QmlUi::invoke(const char *obj, const char *method, const char *json)
 
 void QmlUi::libs(const char *libs) {
 	_view->addLibsDir(QString(libs));
-}
-
-
-void QmlUi::style(const char *name, const char *fallback) {
-	QQuickStyle::setStyle(QString(name));
-	if (fallback) {
-		QQuickStyle::setFallbackStyle(QString(fallback));
-	}
 }
