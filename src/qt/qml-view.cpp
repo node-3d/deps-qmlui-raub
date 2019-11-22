@@ -1,6 +1,5 @@
 #include <QByteArray>
 #include <QCoreApplication>
-//#include <QDebug>
 #include <QJsonDocument>
 #include <QMap>
 #include <QOffscreenSurface>
@@ -467,8 +466,10 @@ void QmlView::setProp(
 		);
 		return;
 	}
-	QByteArray enclosed = QByteArray("[") + QByteArray(json) + QByteArray("]");
-	QList<QVariant> parsed = QJsonDocument::fromJson(enclosed).toVariant().toList();
+	
+	QList<QVariant> parsed = QJsonDocument::fromJson(json)
+		.toVariant()
+		.toList();
 	
 	if ( ! parsed.size() ) {
 		_qmlReport(
@@ -522,8 +523,12 @@ std::string QmlView::getProp(const char *objname, const char *propname) {
 		return undefined;
 	}
 	
+	QVariantList listHelper;
+	listHelper.push_back(prop);
 	return std::string(
-		QJsonDocument::fromVariant(prop).toJson().constData()
+		QJsonDocument::fromVariant(listHelper)
+			.toJson(QJsonDocument::Compact)
+			.constData()
 	);
 	
 }
@@ -564,7 +569,7 @@ std::string QmlView::invoke(
 			QString(
 				"Qml invoke() failed. Invalid value: '%1'"
 			).arg(
-				baJson.constData()
+				json
 			),
 			"invoke",
 			false
@@ -572,11 +577,34 @@ std::string QmlView::invoke(
 		return undefined;
 	}
 	
-	
 	const QMetaObject *meta = object->metaObject();
-	QMetaMethod metaMethod = meta->method(
-		meta->indexOfMethod(method)
-	);
+	
+	QVariantList args = parsed.toList();
+	QByteArray signature = QByteArray(method) + "(";
+	for (int i = args.size() - 1; i >= 0; i--) {
+		signature.append("QVariant");
+		if (i > 0) {
+			signature.append(",");
+		}
+	}
+	signature.append(")");
+	
+	int index = meta->indexOfMethod(signature.constData());
+	
+	if (index < 0) {
+		_qmlReport(
+			QString(
+				"Qml invoke() failed. Method not found: '%1'"
+			).arg(
+				signature.constData()
+			),
+			"invoke",
+			false
+		);
+		return undefined;
+	}
+	
+	QMetaMethod metaMethod = meta->method(index);
 	
 	QVariant returnValue(
 		QMetaType::type(metaMethod.typeName()),
@@ -587,7 +615,7 @@ std::string QmlView::invoke(
 		const_cast<void*>(returnValue.constData())
 	);
 	
-	QVariantList args = parsed.toList();
+	
 	bool ok = metaMethod.invoke(
 		object,
 		Qt::DirectConnection,
@@ -609,9 +637,9 @@ std::string QmlView::invoke(
 			QString(
 				"Qml invoke() failed. Invalid call to %1 with %2"
 			).arg(
-				metaMethod.methodSignature().constData()
+				signature.constData()
 			).arg(
-				baJson.constData()
+				json
 			),
 			"invoke",
 			false
@@ -619,8 +647,12 @@ std::string QmlView::invoke(
 		return undefined;
 	}
 	
+	QVariantList listHelper;
+	listHelper.push_back(returnValue);
 	return std::string(
-		QJsonDocument::fromVariant(returnValue).toJson().constData()
+		QJsonDocument::fromVariant(listHelper)
+			.toJson(QJsonDocument::Compact)
+			.constData()
 	);
 	
 }

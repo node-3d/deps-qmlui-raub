@@ -4,7 +4,7 @@
 
 #if defined WIN32
 	
-	#include <windows.h>
+	#include <Windows.h>
 	typedef HGLRC CtxHandle;
 	typedef HWND WndHandle;
 	
