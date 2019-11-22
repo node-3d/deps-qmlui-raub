@@ -154,16 +154,11 @@ an instance represents a hidden `QWindow` being
 `QmlUi` is a facade class for all operations. Instances represent separate QML scenes,
 each having a dedicated OpenGL framebuffer.
 
-### Constructor:
+### Constructor
 
 * `QmlUi(w, h)`
 	* `int w` - initial width.
 	* `int h` - initial height.
-
-
-### Types:
-
-`QmlUi::Cb` - `void (*) (QmlUi *target, const char *type, const char *json)`
 
 
 ### Static Methods:
@@ -176,6 +171,8 @@ each having a dedicated OpenGL framebuffer.
 	* `size_t wnd` - platform window handle.
 	* `size_t ctx` - platform OpenGL context handle.
 	* `QmlUi::Cb cb` - callback for all events.
+	`QmlUi::Cb` = `void (*) (QmlUi *target, const char *type, const char *json)`.
+	This callback will later receive all the asynchronous events, for all the instances.
 
 
 * `void plugins(path)`
@@ -249,6 +246,10 @@ each having a dedicated OpenGL framebuffer.
 	**.qml** file to be loaded. Otherwise, `str` itself is interpreted as QML
 	source.
 	* `bool isFile` - tells if `src` is a path to **.qml** file.
+	
+	This operation is asynchronous. An event of type `'_qml_load'` will be emited, when
+	loading a QML scene is finished. Until then, QML methods and properties will
+	return `[null]` JSON.
 
 
 * `std::string get(obj, prop)`
@@ -263,6 +264,9 @@ each having a dedicated OpenGL framebuffer.
 	
 	Example: `Item { objectName: "my-name", property var x: 10 }`, to get `x`,
 	call `std:string json = ui.get("my-name", "x"); // "[10]"`.
+	
+	> NOTE: properties can't be fetched (returns `[null]` JSON)
+	until `'_qml_load'` event is fired.
 
 
 * `void set(obj, prop, json)`
@@ -274,6 +278,8 @@ each having a dedicated OpenGL framebuffer.
 	
 	Example: `Item { objectName: "my-name", property var x: 10 }`, to make `x`
 	become `11`, call `ui.set("my-name", "x", "[11]")`.
+	
+	> NOTE: properties can't be set (does nothing) until `'_qml_load'` event is fired.
 
 
 * `std::string invoke(obj, method, json)`
@@ -293,9 +299,12 @@ each having a dedicated OpenGL framebuffer.
 	> NOTE: `invoke()` will look for a function receiving the same number of arguments
 	you pass within the JSON array. So these must match, otherwise the call will fail.
 	
+	> NOTE: methods can't be invoked (returns `[null]` JSON, does nothing)
+	until `'_qml_load'` event is fired.
+
 
 * `void libs(path)`
 	
 	Register a directory where additional QML search should be performed when
-	importing a component.
+	importing a component. Better do it before the `load()`
 	* `const char *path` - the directory path.
