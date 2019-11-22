@@ -28,8 +28,9 @@ On Windows it adds Qt's DLL location to ENV PATH.
 On Unix, **special** runtime library directories are not in ENV PATH. The paths
 to such directories have to be compiled into the node-addon with `rpath` option.
 
+<details>
 
-**binding.gyp**
+<summary><b>binding.gyp</b></summary>
 
 ```javascript
 	'variables': {
@@ -105,8 +106,11 @@ to such directories have to be compiled into the node-addon with `rpath` option.
 		},
 ```
 
+</details>
 
-Preload libraries:
+<details>
+
+<summary><b>Preload libraries</b></summary>
 
 ```cpp
 #ifdef __linux__
@@ -135,6 +139,14 @@ Preload libraries:
 	dlopen("libQt5QuickWidgets.so.5", RTLD_LAZY);
 	#endif
 ```
+
+</details>
+
+Static`QmlUi::init(const char *cwdOwn, size_t wnd, size_t ctx, QmlUi::Cb cb)`
+must be called before any other method.
+Then instances of `QmlUi` can be created and operated on. Each such
+an instance represents a hidden `QWindow` being
+[rendered to texture](http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-14-render-to-texture/).
 
 
 ## Class QmlUi
@@ -179,6 +191,14 @@ each having a dedicated OpenGL framebuffer.
 	to call it regularly.
 	> NOTE: It is at this point, that the QML render may happen, causing GL context
 	switch. Make sure to return your original GL context (if any), after calling this.
+
+
+* `void style(name, fallback)`
+	
+	Set the QML [style](https://doc.qt.io/qt-5/qquickstyle.html#setStyle).
+	Optionally set a fallback style.
+	* `const char *name` - the name of the style to be [used](https://doc.qt.io/qt-5/qtquickcontrols2-styles.html#using-styles-in-qt-quick-controls).
+	* `const char *fallback` - the name of the fallback style, or `nullptr`.
 
 
 ### Methods:
@@ -231,30 +251,48 @@ each having a dedicated OpenGL framebuffer.
 	* `bool isFile` - tells if `src` is a path to **.qml** file.
 
 
+* `std::string get(obj, prop)`
+	
+	Get a property of some object in the QML scene.
+	* `const char *obj` - name of the object, as in `Item { objectName: "my-name" }`.
+	* `const char *prop` - property key, as in `Item { property var someProp: 10 }`.
+	
+	The property will be returned as a string containing a JSON array. The only
+	element in this array is the value of the property. If anything went wrong
+	the JSON will be `[null]`.
+	
+	Example: `Item { objectName: "my-name", property var x: 10 }`, to get `x`,
+	call `std:string json = ui.get("my-name", "x"); // "[10]"`.
+
+
 * `void set(obj, prop, json)`
 	
 	Set a property of some object in the QML scene.
 	* `const char *obj` - name of the object, as in `Item { objectName: "my-name" }`.
 	* `const char *prop` - property key, as in `Item { property var someProp: 10 }`.
-	* `const char *json` - the value to be set. Note: values "`10`" and "`'10'`"
-	are different here. See output of `JSON.stringify(val)`.
-
-
-* `void get(obj, prop)`
+	* `const char *json` - the value to be set. Must be a JSON array, i.e. enclosed in "[]".
 	
-	Get a property of some object in the QML scene.
-	* `const char *obj` - name of the object, as in `Item { objectName: "my-name" }`.
-	* `const char *prop` - property key, as in `Item { property var someProp: 10 }`.
+	Example: `Item { objectName: "my-name", property var x: 10 }`, to make `x`
+	become `11`, call `ui.set("my-name", "x", "[11]")`.
 
 
-* `void invoke(obj, method, json)`
+* `std::string invoke(obj, method, json)`
 	
 	Invoke a method of some object in the QML scene.
 	* `const char *obj` - name of the object, as in `Item { objectName: "my-name" }`.
 	* `const char *method` - method key, as in `Item { function f() { return 10; } }`.
-	* `const char *json` - the argument to be passed. Only **1** argument is supported,
-	but it can be an array or an object with any number of fileds.
-
+	* `const char *json` - arguments to be passed. Must be a JSON array, up to 10 elements.
+	
+	The result will be returned as a string containing a JSON array. The only
+	element in this array is the return value of the function. If anything went wrong
+	the JSON will be `[null]`.
+	
+	Example: `Item { objectName: "my-name", function f() { return 10; } }`, to call `f`,
+	call `std:string json = ui.invoke("my-name", "f", "[]"); // "[10]"`.
+	
+	> NOTE: `invoke()` will look for a function receiving the same number of arguments
+	you pass within the JSON array. So these must match, otherwise the call will fail.
+	
 
 * `void libs(path)`
 	

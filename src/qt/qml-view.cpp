@@ -1,7 +1,6 @@
 #include <QByteArray>
 #include <QCoreApplication>
 #include <QJsonDocument>
-#include <QMap>
 #include <QOffscreenSurface>
 #include <QOpenGLBuffer>
 #include <QOpenGLContext>
@@ -15,7 +14,6 @@
 #include <QQuickItem>
 #include <QQuickRenderControl>
 #include <QQuickWindow>
-#include <QScreen>
 #include <QThread>
 
 #include "qml-renderer.hpp"
@@ -23,7 +21,7 @@
 #include "qml-cb.hpp"
 
 
-static std::string undefined = std::string("undefined");
+static std::string undefined = std::string("[null]");
 
 
 QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
