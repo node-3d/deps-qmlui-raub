@@ -25,10 +25,11 @@ void QmlUi::init(const char *cwdOwn, size_t wnd, size_t ctx, QmlUi::Cb cb) {
 	
 	QmlCb::init(cb);
 	
-	QCoreApplication::setAttribute(Qt::AA_PluginApplication);
-	QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
-	QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
-	QCoreApplication::setAttribute(Qt::AA_DontCheckOpenGLContextThreadAffinity);
+	QGuiApplication::setAttribute(Qt::AA_PluginApplication);
+	QGuiApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
+	QGuiApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
+	QGuiApplication::setAttribute(Qt::AA_DontCheckOpenGLContextThreadAffinity);
+	QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 	app = new QGuiApplication(argc, &argv);
 	
 	renderer = new QmlRenderer(QString(cwdOwn), wnd, ctx);
