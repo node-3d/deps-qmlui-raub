@@ -77,6 +77,10 @@ QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 	_qmlEngine->rootContext()->setContextProperty("CWD", renderer->cwd());
 	QJSValue wrapobj = _qmlEngine->newQObject(_cb);
 	_qmlEngine->globalObject().setProperty(
+		"__eventWrapper",
+		wrapobj
+	);
+	_qmlEngine->globalObject().setProperty(
 		"eventEmit",
 		wrapobj.property("eventEmit")
 	);
