@@ -100,7 +100,7 @@ private slots:
 private:
 	
 	// Find an Item by name
-	QQuickItem* _findItem(
+	QObject* _findItem(
 		QObject* node,
 		const QString& name,
 		int depth = 0

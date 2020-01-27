@@ -15,6 +15,7 @@
 #include <QQuickRenderControl>
 #include <QQuickWindow>
 #include <QThread>
+#include <QDebug>
 
 #include "qml-renderer.hpp"
 #include "qml-view.hpp"
@@ -458,7 +459,7 @@ void QmlView::setProp(
 	}
 	
 	QString strName = QString(objname);
-	QQuickItem *obj = _findItem(_customItem, strName);
+	QObject *obj = _findItem(_customItem, strName);
 	
 	if ( ! obj ) {
 		_qmlReport(
@@ -503,7 +504,7 @@ std::string QmlView::getProp(const char *objname, const char *propname) {
 	}
 	
 	QString strName = QString(objname);
-	QQuickItem *object = _findItem(_customItem, strName);
+	QObject *object = _findItem(_customItem, strName);
 	
 	if ( ! object ) {
 		_qmlReport(
@@ -552,7 +553,7 @@ std::string QmlView::invoke(
 	}
 	
 	QString strName = QString(objname);
-	QQuickItem *object = _findItem(_customItem, strName);
+	QObject *object = _findItem(_customItem, strName);
 	
 	if ( ! object ) {
 		_qmlReport(
@@ -778,21 +779,21 @@ void QmlView::addLibsDir(const QString &dirName) {
 }
 
 
-QQuickItem* QmlView::_findItem(QObject* node, const QString& name, int depth) const {
+QObject* QmlView::_findItem(QObject* node, const QString& name, int depth) const {
 	
 	if (node && node->objectName() == name) {
-	
-		return qobject_cast<QQuickItem *>(node);
-	
+		
+		return node;//qobject_cast<QQuickItem *>(node);
+		
 	} else if (node && node->children().size() > 0) {
-	
+		
 		for (int i = node->children().size() - 1; i >= 0; i--) {
-			QQuickItem* item = _findItem(node->children().at(i), name, depth + 1);
+			QObject* item = _findItem(node->children().at(i), name, depth + 1);
 			if (item) {
 				return item;
 			}
 		}
-	
+		
 	}
 	
 	// not found
