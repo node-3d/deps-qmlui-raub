@@ -5,6 +5,7 @@ This is a part of [Node3D](https://github.com/node-3d) project.
 [![NPM](https://badge.fury.io/js/deps-qmlui-raub.svg)](https://badge.fury.io/js/deps-qmlui-raub)
 [![ESLint](https://github.com/node-3d/deps-qmlui-raub/actions/workflows/eslint.yml/badge.svg)](https://github.com/node-3d/deps-qmlui-raub/actions/workflows/eslint.yml)
 [![Test](https://github.com/node-3d/deps-qmlui-raub/actions/workflows/test.yml/badge.svg)](https://github.com/node-3d/deps-qmlui-raub/actions/workflows/test.yml)
+[![Cpplint](https://github.com/node-3d/deps-qmlui-raub/actions/workflows/cpplint.yml/badge.svg)](https://github.com/node-3d/deps-qmlui-raub/actions/workflows/cpplint.yml)
 
 ```console
 npm i -s deps-qmlui-raub
