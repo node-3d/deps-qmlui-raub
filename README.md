@@ -2,15 +2,13 @@
 
 This is a part of [Node3D](https://github.com/node-3d) project.
 
-[![NPM](https://nodei.co/npm/deps-qmlui-raub.png?compact=true)](https://www.npmjs.com/package/deps-qmlui-raub)
+[![NPM](https://badge.fury.io/js/deps-qmlui-raub.svg)](https://badge.fury.io/js/deps-qmlui-raub)
+[![ESLint](https://github.com/node-3d/deps-qmlui-raub/actions/workflows/eslint.yml/badge.svg)](https://github.com/node-3d/deps-qmlui-raub/actions/workflows/eslint.yml)
+[![Test](https://github.com/node-3d/deps-qmlui-raub/actions/workflows/test.yml/badge.svg)](https://github.com/node-3d/deps-qmlui-raub/actions/workflows/test.yml)
 
-[![Build Status](https://api.travis-ci.com/node-3d/deps-qmlui-raub.svg?branch=master)](https://travis-ci.com/node-3d/deps-qmlui-raub)
-[![CodeFactor](https://www.codefactor.io/repository/github/node-3d/deps-qmlui-raub/badge)](https://www.codefactor.io/repository/github/node-3d/deps-qmlui-raub)
-
-> npm i deps-qmlui-raub
-
-
-## Synopsis
+```console
+npm i -s deps-qmlui-raub
+```
 
 **OpenGL QML offscreen** renderer with **non-Qt C++ API**.
 Contains a Qt **.pro** file and all the sources.
@@ -20,8 +18,6 @@ Binaries are prebuilt and then used as dependency package.
 * Libraries: QmlUi.
 * Linking: static dll-type.
 
-
-## Usage
 
 Before any import of Qt-dependent module, there should be `require('deps-qt-qml-raub')`.
 On Windows it adds Qt's DLL location to ENV PATH.
@@ -33,77 +29,77 @@ to such directories have to be compiled into the node-addon with `rpath` option.
 <summary><b>binding.gyp</b></summary>
 
 ```javascript
-	'variables': {
-		'qt_core_bin'   : '<!(node -p "require(\'deps-qmlui-raub\').core.bin")',
-		'qt_gui_bin'    : '<!(node -p "require(\'deps-qmlui-raub\').gui.bin")',
-		'qt_qml_bin'    : '<!(node -p "require(\'deps-qmlui-raub\').qml.bin")',
-		'qmlui_include' : '<!(node -p "require(\'deps-qmlui-raub\').include")',
-		'qmlui_bin'     : '<!(node -p "require(\'deps-qmlui-raub\').bin")',
-	},
-	...
-	'targets': [
-		{
-			'target_name': '...',
-			
-			'include_dirs': [
-				'<(qmlui_include)',
-			],
-			
-			'library_dirs': [ '<(qmlui_bin)' ],
-			'libraries'    : [ '-lqmlui' ],
-			
-			'conditions': [
-				
-				['OS=="linux"', {
-					'libraries': [
-						'<(qmlui_bin)/libqmlui.so',
-						"-Wl,-rpath,'$$ORIGIN'",
-						"-Wl,-rpath,'$$ORIGIN/../node_modules/deps-qt-core-raub/<(bin)'",
-						"-Wl,-rpath,'$$ORIGIN/../node_modules/deps-qt-gui-raub/<(bin)'",
-						"-Wl,-rpath,'$$ORIGIN/../node_modules/deps-qt-qml-raub/<(bin)'",
-						"-Wl,-rpath,'$$ORIGIN/../../deps-qt-core-raub/<(bin)'",
-						"-Wl,-rpath,'$$ORIGIN/../../deps-qt-gui-raub/<(bin)'",
-						"-Wl,-rpath,'$$ORIGIN/../../deps-qt-qml-raub/<(bin)'",
-						'<(qt_core_bin)/libicui18n.so.56',
-						'<(qt_core_bin)/libicuuc.so.56',
-						'<(qt_core_bin)/libicudata.so.56',
-						'<(qt_core_bin)/libicuio.so.56',
-						'<(qt_core_bin)/libicule.so.56',
-						'<(qt_core_bin)/libicutu.so.56',
-						'<(qt_core_bin)/libQt5Core.so.5',
-						'<(qt_core_bin)/libQt5Network.so.5',
-						'<(qt_core_bin)/libQt5DBus.so.5',
-						'<(qt_gui_bin)/libQt5Gui.so.5',
-						'<(qt_gui_bin)/libQt5OpenGL.so.5',
-						'<(qt_gui_bin)/libQt5Widgets.so.5',
-						'<(qt_gui_bin)/libQt5XcbQpa.so.5',
-						'<(qt_qml_bin)/libQt5Qml.so.5',
-						'<(qt_qml_bin)/libQt5Quick.so.5',
-						'<(qt_qml_bin)/libQt5QuickControls2.so.5',
-						'<(qt_qml_bin)/libQt5QuickTemplates2.so.5',
-						'<(qt_qml_bin)/libQt5QuickWidgets.so.5',
-					],
-				}],
-				
-				['OS=="mac"', {
-					'libraries': [
-						'<(qmlui_bin)/libqmlui.dylib',
-						'-Wl,-rpath,@loader_path',
-						'-Wl,-rpath,@loader_path/../node_modules/deps-qt-core-raub/<(bin)',
-						'-Wl,-rpath,@loader_path/../node_modules/deps-qt-gui-raub/<(bin)',
-						'-Wl,-rpath,@loader_path/../node_modules/deps-qt-qml-raub/<(bin)',
-						'-Wl,-rpath,@loader_path/../../deps-qt-core-raub/<(bin)',
-						'-Wl,-rpath,@loader_path/../../deps-qt-gui-raub/<(bin)',
-						'-Wl,-rpath,@loader_path/../../deps-qt-qml-raub/<(bin)',
-					],
-				}],
-				
-				['OS=="win"', {
-					'libraries'     : [ '-lqmlui' ],
-				}],
-				
-			],
-		},
+  'variables': {
+    'qt_core_bin': '<!(node -p "require(\'deps-qmlui-raub\').core.bin")',
+    'qt_gui_bin': '<!(node -p "require(\'deps-qmlui-raub\').gui.bin")',
+    'qt_qml_bin': '<!(node -p "require(\'deps-qmlui-raub\').qml.bin")',
+    'qmlui_include': '<!(node -p "require(\'deps-qmlui-raub\').include")',
+    'qmlui_bin': '<!(node -p "require(\'deps-qmlui-raub\').bin")',
+  },
+  ...
+  'targets': [
+    {
+      'target_name': '...',
+      
+      'include_dirs': [
+        '<(qmlui_include)',
+      ],
+      
+      'library_dirs': [ '<(qmlui_bin)' ],
+      'libraries'    : [ '-lqmlui' ],
+      
+      'conditions': [
+        
+        ['OS=="linux"', {
+          'libraries': [
+            '<(qmlui_bin)/libqmlui.so',
+            "-Wl,-rpath,'$$ORIGIN'",
+            "-Wl,-rpath,'$$ORIGIN/../node_modules/deps-qt-core-raub/<(bin)'",
+            "-Wl,-rpath,'$$ORIGIN/../node_modules/deps-qt-gui-raub/<(bin)'",
+            "-Wl,-rpath,'$$ORIGIN/../node_modules/deps-qt-qml-raub/<(bin)'",
+            "-Wl,-rpath,'$$ORIGIN/../../deps-qt-core-raub/<(bin)'",
+            "-Wl,-rpath,'$$ORIGIN/../../deps-qt-gui-raub/<(bin)'",
+            "-Wl,-rpath,'$$ORIGIN/../../deps-qt-qml-raub/<(bin)'",
+            '<(qt_core_bin)/libicui18n.so.56',
+            '<(qt_core_bin)/libicuuc.so.56',
+            '<(qt_core_bin)/libicudata.so.56',
+            '<(qt_core_bin)/libicuio.so.56',
+            '<(qt_core_bin)/libicule.so.56',
+            '<(qt_core_bin)/libicutu.so.56',
+            '<(qt_core_bin)/libQt5Core.so.5',
+            '<(qt_core_bin)/libQt5Network.so.5',
+            '<(qt_core_bin)/libQt5DBus.so.5',
+            '<(qt_gui_bin)/libQt5Gui.so.5',
+            '<(qt_gui_bin)/libQt5OpenGL.so.5',
+            '<(qt_gui_bin)/libQt5Widgets.so.5',
+            '<(qt_gui_bin)/libQt5XcbQpa.so.5',
+            '<(qt_qml_bin)/libQt5Qml.so.5',
+            '<(qt_qml_bin)/libQt5Quick.so.5',
+            '<(qt_qml_bin)/libQt5QuickControls2.so.5',
+            '<(qt_qml_bin)/libQt5QuickTemplates2.so.5',
+            '<(qt_qml_bin)/libQt5QuickWidgets.so.5',
+          ],
+        }],
+        
+        ['OS=="mac"', {
+          'libraries': [
+            '<(qmlui_bin)/libqmlui.dylib',
+            '-Wl,-rpath,@loader_path',
+            '-Wl,-rpath,@loader_path/../node_modules/deps-qt-core-raub/<(bin)',
+            '-Wl,-rpath,@loader_path/../node_modules/deps-qt-gui-raub/<(bin)',
+            '-Wl,-rpath,@loader_path/../node_modules/deps-qt-qml-raub/<(bin)',
+            '-Wl,-rpath,@loader_path/../../deps-qt-core-raub/<(bin)',
+            '-Wl,-rpath,@loader_path/../../deps-qt-gui-raub/<(bin)',
+            '-Wl,-rpath,@loader_path/../../deps-qt-qml-raub/<(bin)',
+          ],
+        }],
+        
+        ['OS=="win"', {
+          'libraries'     : [ '-lqmlui' ],
+        }],
+        
+      ],
+    },
 ```
 
 </details>
