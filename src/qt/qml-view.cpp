@@ -22,7 +22,7 @@
 #include "qml-cb.hpp"
 
 
-static std::string undefined = std::string("[null]");
+const std::string undefined = std::string("[null]");
 
 
 QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
