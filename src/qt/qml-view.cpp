@@ -22,11 +22,7 @@
 #include "qml-cb.hpp"
 
 
-const std::string undefined = std::string("[null]");
-
-
 QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
-	
 	// Initial values all zero
 	_systemItem = nullptr;
 	_systemComponent = nullptr;
@@ -40,6 +36,8 @@ QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 	_isReady = false;
 	
 	_cb = cb;
+	
+	_undefined = std::string("[null]");
 	
 	// Tell window it's gonna be OpenGL based
 	setSurfaceType(QSurface::OpenGLSurface);
@@ -149,13 +147,11 @@ QmlView::~QmlView() {
 	delete _framebuffer;
 	
 	_openglContext->doneCurrent();
-	
 }
 
 
 // Create a new FBO
 void QmlView::_createFramebuffer() {
-	
 	if ( ! _openglContext->makeCurrent(_offscreenSurface) ) {
 		return;
 	}
@@ -179,7 +175,6 @@ void QmlView::_createFramebuffer() {
 	QVariantMap pmap;
 	pmap["texture"] = _framebuffer->texture();
 	_cb->eventEmit("_qml_fbo", pmap);
-	
 }
 
 
@@ -192,7 +187,6 @@ void QmlView::_destroyFramebuffer() {
 
 // Update and render the scene
 void QmlView::_render() {
-	
 	if ( ! _openglContext->makeCurrent(_offscreenSurface) ) {
 		return;
 	}
@@ -209,13 +203,11 @@ void QmlView::_render() {
 	// Finish OpenGL business
 	_offscreenWindow->resetOpenGLState();
 	_openglContext->functions()->glFlush();
-	
 }
 
 
 // Activate/reactivate resize timer for debounce
 void QmlView::resize(const QSize &size) {
-	
 	_currentSize = size;
 	
 	if ( _resizeTimer.isActive() ) {
@@ -223,13 +215,11 @@ void QmlView::resize(const QSize &size) {
 	}
 	
 	_resizeTimer.start();
-	
 }
 
 
 // Update the size of the Window
 void QmlView::_applySize() {
-	
 	// Both window and content
 	_offscreenWindow->setGeometry(0, 0, _currentSize.width(), _currentSize.height());
 	_offscreenWindow->contentItem()->setSize( QSizeF(_currentSize) );
@@ -238,17 +228,14 @@ void QmlView::_applySize() {
 	if ( _openglContext && _openglContext->makeCurrent( _offscreenSurface ) ) {
 		_createFramebuffer();
 	}
-	
 }
 
 
 // Call for render if not called yet
 void QmlView::_requestUpdate() {
-	
 	if ( ! _renderTimer.isActive() ) {
 		_renderTimer.start();
 	}
-	
 }
 
 
@@ -258,7 +245,6 @@ void QmlView::_syncScene() { _hasChanged = true; _requestUpdate(); }
 
 // Reports the error as an event and shows it on the screen if possible
 void QmlView::_qmlReport(const QString &message, const QString &type, bool critical) const {
-	
 	if (critical && _systemError) {
 		_systemError->setVisible(true);
 		QString currentMessage = _systemError->property("text").toString();
@@ -272,12 +258,10 @@ void QmlView::_qmlReport(const QString &message, const QString &type, bool criti
 	pmap["message"] = message;
 	pmap["type"] = type;
 	_cb->eventEmit("_qml_error", pmap);
-	
 }
 
 
 bool QmlView::_qmlCheckErrors(const QQmlComponent *component) const {
-	
 	// If there are errors, report each of them
 	if (component->isError()) {
 		QList<QQmlError> errorList = component->errors();
@@ -288,13 +272,11 @@ bool QmlView::_qmlCheckErrors(const QQmlComponent *component) const {
 	}
 	
 	return false;
-	
 }
 
 
 // Status listener for System Component
 void QmlView::_rootStatusUpdate(QQmlComponent::Status status) {
-	
 	// If not ready yet, then only check for errors
 	if( QQmlComponent::Ready != status ) {
 		_qmlCheckErrors(_systemComponent);
@@ -338,13 +320,11 @@ void QmlView::_rootStatusUpdate(QQmlComponent::Status status) {
 	// Now system is ready to load user ui
 	_isReady = true;
 	_cb->eventEmit("_qml_ready", QVariantMap());
-	
 }
 
 
 // Status listener for User UI Component
 void QmlView::_customStatusUpdate(QQmlComponent::Status status) {
-	
 	QVariantMap result;
 	result["source"] = _currentQml;
 	result["status"] = "error";
@@ -394,13 +374,11 @@ void QmlView::_customStatusUpdate(QQmlComponent::Status status) {
 	// Report success to JS
 	result["status"] = "success";
 	_cb->eventEmit("_qml_load", result);
-	
 }
 
 
 // Load a QML file from the given source. Source must have an absolute path.
 void QmlView::loadQml(const QString &fileName) {
-	
 	unload();
 	
 	// Setup the new component
@@ -408,13 +386,11 @@ void QmlView::loadQml(const QString &fileName) {
 	_customComponent = new QQmlComponent( _qmlEngine );
 	connect( _customComponent, &QQmlComponent::statusChanged, this, &QmlView::_customStatusUpdate );
 	_customComponent->loadUrl(QUrl::fromLocalFile(_currentQml), QQmlComponent::Asynchronous);
-	
 }
 
 
 // Parse the given text as QML file
 void QmlView::loadText(const QString &source) {
-	
 	unload();
 	
 	// Setup the new component
@@ -422,7 +398,6 @@ void QmlView::loadText(const QString &source) {
 	_customComponent = new QQmlComponent( _qmlEngine );
 	connect( _customComponent, &QQmlComponent::statusChanged, this, &QmlView::_customStatusUpdate );
 	_customComponent->setData( source.toUtf8(), QString("loadText") );
-	
 }
 
 
@@ -448,7 +423,6 @@ void QmlView::setProp(
 	const char *propname,
 	const char *json
 ) {
-	
 	if ( ! _customItem ) {
 		_qmlReport(
 			"Qml setProp() failed. Do a proper loadQml() first.",
@@ -488,19 +462,17 @@ void QmlView::setProp(
 	}
 	
 	obj->setProperty(propname, parsed.at(0));
-	
 }
 
 
 std::string QmlView::getProp(const char *objname, const char *propname) {
-	
 	if ( ! _customItem ) {
 		_qmlReport(
 			"Qml getProp() failed. Do a proper loadQml() first.",
 			"prop",
 			false
 		);
-		return undefined;
+		return _undefined;
 	}
 	
 	QString strName = QString(objname);
@@ -512,7 +484,7 @@ std::string QmlView::getProp(const char *objname, const char *propname) {
 			"prop",
 			false
 		);
-		return undefined;
+		return _undefined;
 	}
 	
 	QVariant prop = object->property(propname);
@@ -523,7 +495,7 @@ std::string QmlView::getProp(const char *objname, const char *propname) {
 			"prop",
 			false
 		);
-		return undefined;
+		return _undefined;
 	}
 	
 	QVariantList listHelper;
@@ -533,7 +505,6 @@ std::string QmlView::getProp(const char *objname, const char *propname) {
 			.toJson(QJsonDocument::Compact)
 			.constData()
 	);
-	
 }
 
 
@@ -542,14 +513,13 @@ std::string QmlView::invoke(
 	const char *method,
 	const char *json
 ) {
-	
 	if ( ! _customItem ) {
 		_qmlReport(
 			"Qml invoke() failed. Do a proper loadQml() first.",
 			"invoke",
 			false
 		);
-		return undefined;
+		return _undefined;
 	}
 	
 	QString strName = QString(objname);
@@ -561,7 +531,7 @@ std::string QmlView::invoke(
 			"invoke",
 			false
 		);
-		return undefined;
+		return _undefined;
 	}
 	
 	QByteArray baJson = QByteArray(json);
@@ -577,7 +547,7 @@ std::string QmlView::invoke(
 			"invoke",
 			false
 		);
-		return undefined;
+		return _undefined;
 	}
 	
 	const QMetaObject *meta = object->metaObject();
@@ -604,7 +574,7 @@ std::string QmlView::invoke(
 			"invoke",
 			false
 		);
-		return undefined;
+		return _undefined;
 	}
 	
 	QMetaMethod metaMethod = meta->method(index);
@@ -647,7 +617,7 @@ std::string QmlView::invoke(
 			"invoke",
 			false
 		);
-		return undefined;
+		return _undefined;
 	}
 	
 	QVariantList listHelper;
@@ -657,13 +627,11 @@ std::string QmlView::invoke(
 			.toJson(QJsonDocument::Compact)
 			.constData()
 	);
-	
 }
 
 
 // Apply mouse event
 void QmlView::mouse(int type, int button, int buttons, int x, int y) {
-	
 	QPointF mousePoint(x, y);
 	
 	Qt::MouseButton qbutton = static_cast<Qt::MouseButton>(0);
@@ -707,12 +675,10 @@ void QmlView::mouse(int type, int button, int buttons, int x, int y) {
 		);
 		QCoreApplication::sendEvent(_offscreenWindow, &event);
 	}
-	
 }
 
 
 void QmlView::keyboard(int type, int key, unsigned text) {
-	
 	Qt::Key qtKey = static_cast<Qt::Key>(key);
 	
 	#define REPLACE(FROM, RESULT) case FROM: qtKey = RESULT; break;
@@ -770,7 +736,6 @@ void QmlView::keyboard(int type, int key, unsigned text) {
 		text != 0
 	);
 	QCoreApplication::sendEvent(_offscreenWindow, &keyEvent);
-	
 }
 
 
@@ -780,7 +745,6 @@ void QmlView::addLibsDir(const QString &dirName) {
 
 
 QObject* QmlView::_findItem(QObject* node, const QString& name, int depth) const {
-	
 	if (node && node->objectName() == name) {
 		
 		return node;//qobject_cast<QQuickItem *>(node);
@@ -798,5 +762,4 @@ QObject* QmlView::_findItem(QObject* node, const QString& name, int depth) const
 	
 	// not found
 	return nullptr;
-	
 }

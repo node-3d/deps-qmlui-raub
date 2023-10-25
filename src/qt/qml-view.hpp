@@ -154,7 +154,7 @@ private:
 	// Cache
 	QString _currentQml;
 	QSize _currentSize;
-	
+	std::string _undefined;
 };
 
 #endif // QML_VIEW_HPP
