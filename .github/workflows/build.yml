@@ -97,6 +97,8 @@ jobs:
       - name: Build Current Binary Osx
         if: matrix.os == 'macos-11'
         run: |
+          echo $Qt5_Dir
+          echo $QT_ROOT_DIR
           qmake -spec macx-clang "QMAKE_CXXFLAGS+=-ObjC++" "QMAKE_LFLAGS_SONAME=-Wl,-install_name,@rpath/" "INCLUDEPATH+=/Users/runner/work/deps-qmlui-raub/Qt/5.13.0/clang_64/include" src/qt/_qmlui.pro
           make
           mkdir bin-osx
