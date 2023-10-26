@@ -82,6 +82,7 @@ jobs:
         if: matrix.os == 'windows-2022'
         run: |
           qmake src/qt/_qmlui.pro
+          cat -e -t -v Makefile.Release
           make
           mkdir bin-windows
           cp src/qmlui.dll bin-windows
@@ -94,11 +95,15 @@ jobs:
           mkdir bin-linux
           cp src/libqmlui.so bin-linux
 
-      - name: Build Current Binary Osx
+      - name: Echo Osx
         if: matrix.os == 'macos-11'
         run: |
           echo $Qt5_Dir
           echo $QT_ROOT_DIR
+
+      - name: Build Current Binary Osx
+        if: matrix.os == 'macos-11'
+        run: |
           qmake -spec macx-clang "QMAKE_CXXFLAGS+=-ObjC++" "QMAKE_LFLAGS_SONAME=-Wl,-install_name,@rpath/" "INCLUDEPATH+=/Users/runner/work/deps-qmlui-raub/Qt/5.13.0/clang_64/include" src/qt/_qmlui.pro
           make
           mkdir bin-osx
