@@ -6,6 +6,7 @@ This is a part of [Node3D](https://github.com/node-3d) project.
 [![ESLint](https://github.com/node-3d/deps-qmlui-raub/actions/workflows/eslint.yml/badge.svg)](https://github.com/node-3d/deps-qmlui-raub/actions/workflows/eslint.yml)
 [![Test](https://github.com/node-3d/deps-qmlui-raub/actions/workflows/test.yml/badge.svg)](https://github.com/node-3d/deps-qmlui-raub/actions/workflows/test.yml)
 [![Cpplint](https://github.com/node-3d/deps-qmlui-raub/actions/workflows/cpplint.yml/badge.svg)](https://github.com/node-3d/deps-qmlui-raub/actions/workflows/cpplint.yml)
+[![Build](https://github.com/node-3d/deps-qmlui-raub/actions/workflows/build.yml/badge.svg)](https://github.com/node-3d/deps-qmlui-raub/actions/workflows/build.yml)
 
 ```console
 npm i -s deps-qmlui-raub
@@ -20,7 +21,7 @@ Binaries are prebuilt and then used as dependency package.
 * Linking: static dll-type.
 
 
-Before any import of Qt-dependent module, there should be `require('deps-qt-qml-raub')`.
+Before any import of Qt-dependent module, there should be `require('deps-qmlui-raub')`.
 On Windows it adds Qt's DLL location to ENV PATH.
 On Unix, **special** runtime library directories are not in ENV PATH. The paths
 to such directories have to be compiled into the node-addon with `rpath` option.

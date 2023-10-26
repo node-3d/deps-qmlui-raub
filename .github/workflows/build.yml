@@ -74,6 +74,10 @@ jobs:
       - name: Install Modules
         run: npm ci
 
+      - name: Install MSVC
+        if: matrix.os == 'windows-2022'
+        uses: ilammy/msvc-dev-cmd@v1
+
       - name: Build Current Binary Windows
         if: matrix.os == 'windows-2022'
         run: |
