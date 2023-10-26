@@ -97,7 +97,7 @@ jobs:
       - name: Build Current Binary Osx
         if: matrix.os == 'macos-11'
         run: |
-          qmake -spec macx-clang "QMAKE_CXXFLAGS+=-ObjC++" "QMAKE_LFLAGS_SONAME=-Wl,-install_name,@rpath/" src/qt/_qmlui.pro
+          qmake -spec macx-clang "QMAKE_CXXFLAGS+=-ObjC++" "QMAKE_LFLAGS_SONAME=-Wl,-install_name,@rpath/" "INCLUDEPATH+=$QT_ROOT_DIR/include" src/qt/_qmlui.pro
           make
           mkdir bin-osx
           cp src/libqmlui.dylib bin-osx
