@@ -83,7 +83,7 @@ jobs:
         run: |
           qmake -spec win32-msvc src/qt/_qmlui.pro
           cat -e -t -v Makefile.Release
-          make
+          nmake
           mkdir bin-windows
           cp src/qmlui.dll bin-windows
 
