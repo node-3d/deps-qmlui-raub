@@ -1,4 +1,4 @@
-name: Build Binaries
+name: Build
 defaults:
   run:
     shell: bash
@@ -87,6 +87,7 @@ jobs:
           mv /usr/bin/1link.exe /usr/bin/link.exe
           mkdir bin-windows
           cp src/qmlui.dll bin-windows
+          cp src/qmlui.lib bin-windows
 
       - name: Build Current Binary Linux
         if: matrix.os == 'ubuntu-20.04'
@@ -95,12 +96,6 @@ jobs:
           make
           mkdir bin-linux
           cp src/libqmlui.so bin-linux
-
-      - name: Echo Osx
-        if: matrix.os == 'macos-11'
-        run: |
-          echo $Qt5_Dir
-          echo $QT_ROOT_DIR
 
       - name: Build Current Binary Osx
         if: matrix.os == 'macos-11'
