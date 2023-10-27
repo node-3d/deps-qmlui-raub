@@ -85,6 +85,7 @@ jobs:
           mv /usr/bin/link.exe /usr/bin/1link.exe
           nmake
           mv /usr/bin/1link.exe /usr/bin/link.exe
+          rm -rf bin-windows
           mkdir bin-windows
           cp src/qmlui.dll bin-windows
           cp src/qmlui.lib bin-windows
@@ -94,6 +95,7 @@ jobs:
         run: |
           qmake -spec linux-g++-64 src/qt/_qmlui.pro
           make
+          rm -rf bin-linux
           mkdir bin-linux
           cp src/libqmlui.so bin-linux
 
@@ -102,6 +104,7 @@ jobs:
         run: |
           qmake -spec macx-clang "QMAKE_CXXFLAGS+=-ObjC++" "QMAKE_LFLAGS_SONAME=-Wl,-install_name,@rpath/" "INCLUDEPATH+=/Users/runner/work/deps-qmlui-raub/Qt/5.13.0/clang_64/include" src/qt/_qmlui.pro
           make
+          rm -rf bin-osx
           mkdir bin-osx
           cp src/libqmlui.dylib bin-osx
 
