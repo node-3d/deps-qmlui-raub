@@ -82,8 +82,9 @@ jobs:
         if: matrix.os == 'windows-2022'
         run: |
           qmake -spec win32-msvc src/qt/_qmlui.pro
-          cat -e -t -v Makefile.Release
+          mv /usr/bin/link.exe /usr/bin/1link.exe
           nmake
+          mv /usr/bin/1link.exe /usr/bin/link.exe
           mkdir bin-windows
           cp src/qmlui.dll bin-windows
 
