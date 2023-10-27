@@ -81,7 +81,7 @@ jobs:
       - name: Build Current Binary Windows
         if: matrix.os == 'windows-2022'
         run: |
-          qmake src/qt/_qmlui.pro
+          qmake -spec win32-msvc src/qt/_qmlui.pro
           cat -e -t -v Makefile.Release
           make
           mkdir bin-windows
