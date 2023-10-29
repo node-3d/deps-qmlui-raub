@@ -1,6 +1,6 @@
 #include <QOffscreenSurface>
 #include <QOpenGLContext>
-//#include <QDebug>
+#include <QDebug>
 
 #include "qml-renderer.hpp"
 #include "platform.hpp"
