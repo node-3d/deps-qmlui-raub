@@ -23,27 +23,24 @@ QmlRenderer::QmlRenderer(
 	);
 	qDebug() << "extContext 0";
 	QOpenGLContext* extContext = new QOpenGLContext();
-	extContext->setNativeHandle(QVariant::fromValue(nativeContext));
-	extContext->create();
-	
 	qDebug() << "extContext 1";
+	extContext->setNativeHandle(QVariant::fromValue(nativeContext));
+	qDebug() << "extContext 2";
+	extContext->create();
+	qDebug() << "extContext 3";
+	
 	QSurfaceFormat format;
 	format.setDepthBufferSize(16);
 	format.setStencilBufferSize(8);
 	
-	qDebug() << "_openglContext 0";
 	_openglContext = new QOpenGLContext();
 	_openglContext->setFormat(format);
 	_openglContext->setShareContext(extContext);
 	_openglContext->create();
-	qDebug() << "_openglContext 1";
 	
-	qDebug() << "_offscreenSurface 0";
 	_offscreenSurface = new QOffscreenSurface();
 	_offscreenSurface->setFormat(_openglContext->format());
 	_offscreenSurface->create();
-	qDebug() << "_offscreenSurface 1";
-	
 }
 
 
