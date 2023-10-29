@@ -16,7 +16,7 @@ QmlRenderer::QmlRenderer(
 	NativeContext nativeContext(
 		reinterpret_cast<CtxHandle>(windowContext)
 		#if defined __linux__
-		, 0, 0, 0
+		, nullptr, reinterpret_cast<WndHandle>(windowHandle), 0
 		#elif defined WIN32
 		, reinterpret_cast<WndHandle>(windowHandle)
 		#endif
