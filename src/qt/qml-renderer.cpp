@@ -9,8 +9,8 @@
 QmlRenderer::QmlRenderer(
 	const QString &workingDir, size_t windowHandle, size_t windowContext, size_t display
 ) {
-	
 	_directoryPath = workingDir;
+	qDebug() << "QmlRenderer" << windowHandle << windowContext << display;
 	
 	// Native context takes different argument sets per platform
 	NativeContext nativeContext(
@@ -43,7 +43,6 @@ QmlRenderer::QmlRenderer(
 
 
 QmlRenderer::~QmlRenderer() {
-	
 	_openglContext->makeCurrent(_offscreenSurface);
 	
 	delete _offscreenSurface;
@@ -51,5 +50,4 @@ QmlRenderer::~QmlRenderer() {
 	
 	delete _openglContext;
 	_openglContext = nullptr;
-	
 }
