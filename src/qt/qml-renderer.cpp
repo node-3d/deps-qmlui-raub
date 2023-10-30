@@ -32,7 +32,9 @@ QmlRenderer::QmlRenderer(
 	_openglContext = new QOpenGLContext();
 	_openglContext->setFormat(format);
 	_openglContext->setShareContext(extContext);
+	qDebug() << "_openglContext 0";
 	_openglContext->create();
+	qDebug() << "_openglContext 1";
 	
 	_offscreenSurface = new QOffscreenSurface();
 	_offscreenSurface->setFormat(_openglContext->format());
