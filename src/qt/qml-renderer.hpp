@@ -12,8 +12,7 @@ class QmlRenderer : public QWindow {
 	Q_OBJECT
 	
 public:
-	
-	QmlRenderer(const QString &workingDir, size_t windowHandle, size_t windowContext);
+	QmlRenderer(const QString &workingDir, size_t windowHandle, size_t windowContext, size_t display);
 	~QmlRenderer();
 	
 	QOpenGLContext *context() const { return _openglContext; }
@@ -21,13 +20,10 @@ public:
 	
 	QString cwd() const { return _directoryPath; }
 	
-	
 private:
-	
 	QOpenGLContext *_openglContext;
 	QString _directoryPath;
 	QOffscreenSurface *_offscreenSurface;
-	
 };
 
 

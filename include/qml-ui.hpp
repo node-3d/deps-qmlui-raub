@@ -23,6 +23,7 @@ public:
 	typedef void (*Cb) (QmlUi *target, const char *type, const char *json);
 	
 	static void init(const char *cwdOwn, size_t wnd, size_t ctx, QmlUi::Cb cb);
+	static void init2(const char *cwdOwn, size_t wnd, size_t ctx, size_t device, QmlUi::Cb cb);
 	static void plugins(const char *path);
 	static void update();
 	static void style(const char *name, const char *fallback);
