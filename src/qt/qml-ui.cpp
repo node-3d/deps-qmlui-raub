@@ -18,20 +18,7 @@ static QmlRenderer *renderer = nullptr;
 
 
 void QmlUi::init(const char *cwdOwn, size_t wnd, size_t ctx, QmlUi::Cb cb) {
-	if (renderer) {
-		return;
-	}
-	
-	QmlCb::init(cb);
-	
-	QGuiApplication::setAttribute(Qt::AA_PluginApplication);
-	QGuiApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
-	QGuiApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
-	QGuiApplication::setAttribute(Qt::AA_DontCheckOpenGLContextThreadAffinity);
-	QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-	app = new QGuiApplication(argc, &argv);
-	
-	renderer = new QmlRenderer(QString(cwdOwn), wnd, ctx, 0);
+	QmlUi::init2(cwdOwn, wnd, ctx, 0, cb);
 }
 
 void QmlUi::init2(const char *cwdOwn, size_t wnd, size_t ctx, size_t device, QmlUi::Cb cb) {

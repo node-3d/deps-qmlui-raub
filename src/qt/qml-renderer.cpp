@@ -1,6 +1,6 @@
 #include <QOffscreenSurface>
 #include <QOpenGLContext>
-#include <QDebug>
+// #include <QDebug>
 
 #include "qml-renderer.hpp"
 #include "platform.hpp"
@@ -10,7 +10,6 @@ QmlRenderer::QmlRenderer(
 	const QString &workingDir, size_t windowHandle, size_t windowContext, size_t display
 ) {
 	_directoryPath = workingDir;
-	qDebug() << "QmlRenderer" << windowHandle << windowContext << display;
 	
 	// Native context takes different argument sets per platform
 	NativeContext nativeContext(
@@ -32,9 +31,7 @@ QmlRenderer::QmlRenderer(
 	_openglContext = new QOpenGLContext();
 	_openglContext->setFormat(format);
 	_openglContext->setShareContext(extContext);
-	qDebug() << "_openglContext 0";
 	_openglContext->create();
-	qDebug() << "_openglContext 1";
 	
 	_offscreenSurface = new QOffscreenSurface();
 	_offscreenSurface->setFormat(_openglContext->format());
