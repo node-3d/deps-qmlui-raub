@@ -18,14 +18,14 @@ jobs:
     steps:
 
       - name: Fetch Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
 
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 18.16.0
+          node-version: 22.9.0
           cache: 'npm'
 
       - name: Get Package Version
@@ -47,28 +47,29 @@ jobs:
     name: Build
     strategy:
         matrix:
-          os: [ubuntu-20.04, windows-2022, macos-11]
+          os: [ubuntu-22.04, windows-2022, macos-14]
 
     runs-on: ${{ matrix.os }}
 
     steps:
 
       - name: Fetch Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
 
       - name: Install Qt
-        uses: jurplel/install-qt-action@v3
+        if: matrix.os == 'ubuntu-22.04' || matrix.os == 'macos-14' || matrix.os == 'windows-2022'
+        uses: jurplel/install-qt-action@v4
         with:
-          version: '5.13.0'
+          version: '6.8.0'
           cache: 'true'
-          cache-key-prefix: 'install-qt-action-${{ matrix.os }}'
+          cache-key-prefix: 'install-qt-${{ matrix.os }}'
 
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 18.16.0
+          node-version: 22.9.0
           cache: 'npm'
 
       - name: Install Modules
@@ -78,9 +79,10 @@ jobs:
         if: matrix.os == 'windows-2022'
         uses: ilammy/msvc-dev-cmd@v1
 
-      - name: Build Current Binary Windows
+      - name: Build - Windows
         if: matrix.os == 'windows-2022'
         run: |
+          echo "OS_NAME=windows" >> $GITHUB_ENV
           qmake -spec win32-msvc src/qt/_qmlui.pro
           mv /usr/bin/link.exe /usr/bin/1link.exe
           nmake
@@ -90,38 +92,51 @@ jobs:
           cp src/qmlui.dll bin-windows
           cp src/qmlui.lib bin-windows
 
-      - name: Build Current Binary Linux
-        if: matrix.os == 'ubuntu-20.04'
+      - name: Build - Linux ARM
+        if: matrix.os != 'ubuntu-22.04' && matrix.os != 'macos-14' && matrix.os != 'windows-2022'
         run: |
+          echo "OS_NAME=aarch64" >> $GITHUB_ENV
+          qmake -spec linux-g++-64 src/qt/_qmlui.pro
+          make
+          rm -rf bin-aarch64
+          mkdir bin-aarch64
+          cp src/libqmlui.so bin-aarch64
+
+      - name: Build - Linux
+        if: matrix.os == 'ubuntu-22.04'
+        run: |
+          echo "OS_NAME=linux" >> $GITHUB_ENV
           qmake -spec linux-g++-64 src/qt/_qmlui.pro
           make
           rm -rf bin-linux
           mkdir bin-linux
           cp src/libqmlui.so bin-linux
 
-      - name: Build Current Binary Osx
-        if: matrix.os == 'macos-11'
+      - name: Build - MacOS ARM
+        if: matrix.os == 'macos-14'
         run: |
-          qmake -spec macx-clang "QMAKE_CXXFLAGS+=-ObjC++" "QMAKE_LFLAGS_SONAME=-Wl,-install_name,@rpath/" "INCLUDEPATH+=/Users/runner/work/deps-qmlui-raub/Qt/5.13.0/clang_64/include" src/qt/_qmlui.pro
+          echo "OS_NAME=darwin-arm64" >> $GITHUB_ENV
+          qmake -spec macx-clang "QMAKE_CXXFLAGS+=-ObjC++" "QMAKE_LFLAGS_SONAME=-Wl,-install_name,@rpath/" "INCLUDEPATH+=${{ github.workspace }}/../Qt/6.8.0/macos/include" src/qt/_qmlui.pro
           make
-          rm -rf bin-osx
-          mkdir bin-osx
-          cp src/libqmlui.dylib bin-osx
+          rm -rf bin-darwin-arm64
+          mkdir bin-darwin-arm64
+          cp src/libqmlui.dylib bin-darwin-arm64
 
       - name: Get Package Version
         id: package-version
         run: node -p "'version='+require('./package').version" >> $GITHUB_OUTPUT
 
       - name: Pack Files
-        id: pack-files
-        run: node -e "require('addon-tools-raub').actionPack()" >> $GITHUB_OUTPUT
+        run: |
+          cd 'bin-${{ env.OS_NAME }}'
+          tar -czf ../${{ env.OS_NAME }}.gz *
 
       - name: Store Binaries
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           draft: true
           tag_name: ${{ steps.package-version.outputs.version }}
           name: Release ${{ steps.package-version.outputs.version }}
-          files: ${{ steps.pack-files.outputs.pack }}
+          files: ${{ env.OS_NAME }}.gz

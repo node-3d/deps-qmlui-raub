@@ -13,15 +13,16 @@ npm i -s deps-qmlui-raub
 ```
 
 **OpenGL QML offscreen** renderer with **non-Qt C++ API**.
-Uses [QQuickRenderControl](https://doc.qt.io/qt-5/qquickrendercontrol.html) to render QML
+Uses [QQuickRenderControl](https://doc.qt.io/qt-6/qquickrendercontrol.html) to render QML
 scenes to textures. The QML renderer has a separate OpenGL context, so
-[resource sharing](https://www.glfw.org/docs/3.3/context_guide.html#context_sharing) is used.
+[resource sharing](https://www.glfw.org/docs/3.4/context_guide.html#context_sharing) is used.
 
 Binaries are prebuilt and then used as dependency package.
 
-* Platforms (x64): Windows, Linux, OSX.
-* Libraries: QmlUi.
+* Platforms (x64): Windows, Linux, Linux ARM, MacOS ARM.
+* Library: QmlUi.
 * Linking: static dll-type.
+
 
 ## Common workflow
 
@@ -116,26 +117,50 @@ The paths for Unix have to be compiled into the node-addon with `rpath` option.
 
   // ... inside some kind of init() function
   #ifdef __linux__
-  dlopen("libicui18n.so.56", RTLD_NOW | RTLD_GLOBAL);
-  dlopen("libicuuc.so.56", RTLD_NOW | RTLD_GLOBAL);
-  dlopen("libicudata.so.56", RTLD_NOW | RTLD_GLOBAL);
-  dlopen("libicuio.so.56", RTLD_NOW | RTLD_GLOBAL);
-  dlopen("libicule.so.56", RTLD_NOW | RTLD_GLOBAL);
-  dlopen("libicutu.so.56", RTLD_NOW | RTLD_GLOBAL);
-  dlopen("libQt5Core.so.5", RTLD_NOW | RTLD_GLOBAL);
-  dlopen("libQt5Network.so.5", RTLD_NOW | RTLD_GLOBAL);
-  dlopen("libQt5DBus.so.5", RTLD_NOW | RTLD_GLOBAL);
-  dlopen("libQt5Gui.so.5", RTLD_NOW | RTLD_GLOBAL);
-  dlopen("libQt5OpenGL.so.5", RTLD_NOW | RTLD_GLOBAL);
-  dlopen("libQt5Widgets.so.5", RTLD_NOW | RTLD_GLOBAL);
-  dlopen("libQt5XcbQpa.so.5", RTLD_NOW | RTLD_GLOBAL);
-  dlopen("libQt5Qml.so.5", RTLD_NOW | RTLD_GLOBAL);
-  dlopen("libQt5Quick.so.5", RTLD_NOW | RTLD_GLOBAL);
-  dlopen("libQt5QuickControls2.so.5", RTLD_NOW | RTLD_GLOBAL);
-  dlopen("libQt5QuickTemplates2.so.5", RTLD_NOW | RTLD_GLOBAL);
-  dlopen("libQt5QuickWidgets.so.5", RTLD_NOW | RTLD_GLOBAL);
+  dlopen("libicui18n.so.73", RTLD_NOW | RTLD_GLOBAL);
+  dlopen("libicuuc.so.73", RTLD_NOW | RTLD_GLOBAL);
+  dlopen("libicudata.so.73", RTLD_NOW | RTLD_GLOBAL);
+  dlopen("libicuio.so.73", RTLD_NOW | RTLD_GLOBAL);
+  dlopen("libicule.so.73", RTLD_NOW | RTLD_GLOBAL);
+  dlopen("libicutu.so.73", RTLD_NOW | RTLD_GLOBAL);
+  dlopen("libQt6Core.so.6", RTLD_NOW | RTLD_GLOBAL);
+  dlopen("libQt6Network.so.6", RTLD_NOW | RTLD_GLOBAL);
+  dlopen("libQt6DBus.so.6", RTLD_NOW | RTLD_GLOBAL);
+  dlopen("libQt6Gui.so.6", RTLD_NOW | RTLD_GLOBAL);
+  dlopen("libQt6OpenGL.so.6", RTLD_NOW | RTLD_GLOBAL);
+  dlopen("libQt6Widgets.so.6", RTLD_NOW | RTLD_GLOBAL);
+  dlopen("libQt6XcbQpa.so.6", RTLD_NOW | RTLD_GLOBAL);
+  dlopen("libQt6Qml.so.6", RTLD_NOW | RTLD_GLOBAL);
+  dlopen("libQt6Quick.so.6", RTLD_NOW | RTLD_GLOBAL);
+  dlopen("libQt6QuickControls2.so.6", RTLD_NOW | RTLD_GLOBAL);
+  dlopen("libQt6QuickTemplates2.so.6", RTLD_NOW | RTLD_GLOBAL);
+  dlopen("libQt6QuickWidgets.so.6", RTLD_NOW | RTLD_GLOBAL);
   dlopen("libqmlui.so", RTLD_NOW | RTLD_GLOBAL);
   #endif
 ```
 
 </details>
+
+
+## Legal notice
+
+This software uses the [Qt library](https://www.qt.io/).
+Qt is legally used under the LGPLv3 (GNU Lesser General Public License) version.
+It is [explicitly stated](https://www.qt.io/licensing/open-source-lgpl-obligations)
+that Qt Libraries can be used in a commercial closed-source app (if you wish):
+
+> In case of dynamic linking, it is possible, but not mandatory,
+to keep application source code proprietary as long as it is
+“work that uses the library” – typically achieved
+via dynamic linking of the library.
+
+These **terms and conditions** allow using (unmodified) Qt as a
+shared library (DLL), in a closed-source project.
+
+Qt licensing information (a COPY) is given in a [separate file](/QT_LGPL),
+which also can be found on
+[Qt's official web-site](http://doc.qt.io/qt-6/lgpl.html).
+
+---
+
+The rest of this package is MIT licensed.
