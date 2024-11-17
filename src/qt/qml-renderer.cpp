@@ -1,5 +1,4 @@
 #include <QOffscreenSurface>
-#include <QOpenGLContext>
 // #include <QDebug>
 
 #include "qml-renderer.hpp"
@@ -12,7 +11,7 @@ QmlRenderer::QmlRenderer(
 	_directoryPath = workingDir;
 	
 	// Native context takes different argument sets per platform
-	NativeContext nativeContext(
+	QOpenGLContext* extContext = NativeContext::fromNative(
 		reinterpret_cast<CtxHandle>(windowContext)
 		#if defined __linux__
 		, reinterpret_cast<Display*>(display), reinterpret_cast<WndHandle>(windowHandle), 0
@@ -20,9 +19,7 @@ QmlRenderer::QmlRenderer(
 		, reinterpret_cast<WndHandle>(windowHandle)
 		#endif
 	);
-	QOpenGLContext* extContext = new QOpenGLContext();
-	extContext->setNativeHandle(QVariant::fromValue(nativeContext));
-	extContext->create();
+	// extContext->create();
 	
 	QSurfaceFormat format;
 	format.setDepthBufferSize(16);

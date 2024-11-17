@@ -34,7 +34,7 @@ jobs:
 
       - name: Create Draft Release
         id: create_release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -47,7 +47,7 @@ jobs:
     name: Build
     strategy:
         matrix:
-          os: [ubuntu-22.04, windows-2022, macos-14]
+          os: [ubuntu-22.04, windows-2022, macos-14, [self-hosted, linux, ARM64]]
 
     runs-on: ${{ matrix.os }}
 

@@ -1,6 +1,7 @@
 #ifndef PLATFORM_HPP
 #define PLATFORM_HPP
 
+#include <QOpenGLContext>
 
 #if defined WIN32
 	
@@ -8,8 +9,7 @@
 	typedef HGLRC CtxHandle;
 	typedef HWND WndHandle;
 	
-	#include <QtPlatformHeaders/QWGLNativeContext>
-	typedef QWGLNativeContext NativeContext;
+	typedef QNativeInterface::QWGLContext NativeContext;
 	
 #elif defined __linux__
 	
@@ -21,9 +21,8 @@
 	typedef GLXContext CtxHandle;
 	typedef Window WndHandle;
 	
-	#include <QtPlatformHeaders/QGLXNativeContext>
 	// GLXContext ctx, Display *dpy = 0, Window wnd = 0, VisualID vid = 0
-	typedef QGLXNativeContext NativeContext;
+	typedef QNativeInterface::QGLXContext NativeContext;
 	
 #elif defined __APPLE__
 	
@@ -31,8 +30,7 @@
 	typedef NSOpenGLContext *CtxHandle;
 	typedef int WndHandle;
 	
-	#include <QtPlatformHeaders/QCocoaNativeContext>
-	typedef QCocoaNativeContext NativeContext;
+	typedef QNativeInterface::QCocoaGLContext NativeContext;
 	
 #endif
 

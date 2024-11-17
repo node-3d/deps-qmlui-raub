@@ -16,6 +16,9 @@
 #include <QQuickWindow>
 #include <QThread>
 #include <QDebug>
+#include <QQuickOpenGLUtils>
+#include <QQuickGraphicsDevice>
+#include <QQuickRenderTarget>
 
 #include "qml-renderer.hpp"
 #include "qml-view.hpp"
@@ -54,7 +57,8 @@ QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 	
 	// Set window looks accordingly
 	_offscreenWindow->setGeometry(0, 0, w, h);
-	_offscreenWindow->setClearBeforeRendering(true);
+	_offscreenWindow->setGraphicsApi(QSGRendererInterface::OpenGL);
+	// _offscreenWindow->setClearBeforeRendering(true);
 	_currentSize = QSize(w, h);
 	_offscreenWindow->contentItem()->setSize( QSizeF(_offscreenWindow->size()) );
 	_offscreenWindow->setColor(Qt::transparent);
@@ -68,7 +72,7 @@ QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 	// Apply additional library paths
 	foreach (const QString &dir, QCoreApplication::libraryPaths()) {
 		QString replaced = dir;
-		replaced = replaced.replace(QRegExp("plugins$"), "qml");
+		replaced = replaced.replace(QRegularExpression("plugins$"), "qml");
 		_qmlEngine->addImportPath(replaced);
 	}
 	
@@ -96,21 +100,29 @@ QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 	
 	// Set up event listeners
 	connect(
-		_offscreenWindow, &QQuickWindow::sceneGraphInitialized,
-		this,             &QmlView::_createFramebuffer
+		_offscreenWindow,
+		&QQuickWindow::sceneGraphInitialized,
+		this,
+		&QmlView::_createFramebuffer
 	);
 	
 	connect(
-		_offscreenWindow, &QQuickWindow::sceneGraphInvalidated,
-		this,             &QmlView::_destroyFramebuffer
+		_offscreenWindow,
+		&QQuickWindow::sceneGraphInvalidated,
+		this,
+		&QmlView::_destroyFramebuffer
 	);
 	connect(
-		_renderControl, &QQuickRenderControl::renderRequested,
-		this,           &QmlView::_requestUpdate
+		_renderControl,
+		&QQuickRenderControl::renderRequested,
+		this,
+		&QmlView::_requestUpdate
 	);
 	connect(
-		_renderControl, &QQuickRenderControl::sceneChanged,
-		this,           &QmlView::_syncScene
+		_renderControl,
+		&QQuickRenderControl::sceneChanged,
+		this,
+		&QmlView::_syncScene
 	);
 	
 	// Init system component, ASYNC
@@ -121,7 +133,6 @@ QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 }
 
 QmlView::~QmlView() {
-	
 	if (QThread::currentThread() != this->thread()) {
 		// Well, it's not my business!
 		return;
@@ -152,7 +163,7 @@ QmlView::~QmlView() {
 
 // Create a new FBO
 void QmlView::_createFramebuffer() {
-	if ( ! _openglContext->makeCurrent(_offscreenSurface) ) {
+	if (!_openglContext->makeCurrent(_offscreenSurface)) {
 		return;
 	}
 	
@@ -169,7 +180,9 @@ void QmlView::_createFramebuffer() {
 	delete _oldFramebuffer;
 	
 	// Set the Window to render into it
-	_offscreenWindow->setRenderTarget(_framebuffer);
+	_offscreenWindow->setRenderTarget(QQuickRenderTarget::fromOpenGLTexture(
+		_framebuffer->texture(), _offscreenWindow->size(), 1
+	));
 	
 	// Respond to JS: GL texture id of a new FBO
 	QVariantMap pmap;
@@ -201,7 +214,7 @@ void QmlView::_render() {
 	_renderControl->render();
 	
 	// Finish OpenGL business
-	_offscreenWindow->resetOpenGLState();
+	QQuickOpenGLUtils::resetOpenGLState();
 	_openglContext->functions()->glFlush();
 }
 
@@ -314,8 +327,9 @@ void QmlView::_rootStatusUpdate(QQmlComponent::Status status) {
 	_systemError = qobject_cast<QQuickItem *>(_systemItem->findChild<QObject*>("__error"));
 	
 	// Initialize the render control and our OpenGL resources.
-	_openglContext->makeCurrent( _offscreenSurface );
-	_renderControl->initialize( _openglContext );
+	_openglContext->makeCurrent(_offscreenSurface);
+	_renderControl->initialize();
+	// _renderControl->initialize( _openglContext );
 	
 	// Now system is ready to load user ui
 	_isReady = true;
@@ -580,7 +594,7 @@ std::string QmlView::invoke(
 	QMetaMethod metaMethod = meta->method(index);
 	
 	QVariant returnValue(
-		QMetaType::type(metaMethod.typeName()),
+		QMetaType::fromName(metaMethod.typeName()),
 		static_cast<void*>(nullptr)
 	);
 	QGenericReturnArgument returnArgument(
@@ -652,26 +666,27 @@ void QmlView::mouse(int type, int button, int buttons, int x, int y) {
 	
 	if (type == 0) {
 		QMouseEvent event = QMouseEvent(
-			QEvent::MouseMove, mousePoint, qbutton, qbuttons, modifiers
+			QEvent::MouseMove, mousePoint, mousePoint, qbutton, qbuttons, modifiers
 		);
 		QCoreApplication::sendEvent(_offscreenWindow, &event);
 	} else if (type == 1) {
 		QMouseEvent event = QMouseEvent(
 			QEvent::MouseButtonPress,
-			mousePoint,
+			mousePoint, mousePoint,
 			qbutton, qbuttons, modifiers
 		);
 		QCoreApplication::sendEvent(_offscreenWindow, &event);
 	} else if (type == 2) {
 		QMouseEvent event = QMouseEvent(
 			QEvent::MouseButtonRelease,
-			mousePoint,
+			mousePoint, mousePoint,
 			qbutton, qbuttons, modifiers
 		);
 		QCoreApplication::sendEvent(_offscreenWindow, &event);
 	} else if (type == 3) {
 		QWheelEvent event = QWheelEvent(
-			mousePoint, button, qbuttons, modifiers
+			mousePoint, mousePoint, QPoint(0, 0), QPoint(0, 0),
+			qbuttons, modifiers, Qt::ScrollPhase::ScrollEnd, false
 		);
 		QCoreApplication::sendEvent(_offscreenWindow, &event);
 	}

@@ -32,7 +32,6 @@ void QmlUi::init2(const char *cwdOwn, size_t wnd, size_t ctx, size_t device, Qml
 	QGuiApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
 	QGuiApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
 	QGuiApplication::setAttribute(Qt::AA_DontCheckOpenGLContextThreadAffinity);
-	QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 	app = new QGuiApplication(argc, &argv);
 	
 	renderer = new QmlRenderer(QString(cwdOwn), wnd, ctx, device);
