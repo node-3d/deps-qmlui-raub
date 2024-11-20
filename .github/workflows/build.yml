@@ -47,7 +47,8 @@ jobs:
     name: Build
     strategy:
         matrix:
-          os: [ubuntu-22.04, windows-2022, macos-14, [self-hosted, linux, ARM64]]
+          os: [ubuntu-22.04, windows-2022, macos-14]
+          # os: [ubuntu-22.04, windows-2022, macos-14, [self-hosted, linux, ARM64]]
 
     runs-on: ${{ matrix.os }}
 
@@ -92,15 +93,15 @@ jobs:
           cp src/qmlui.dll bin-windows
           cp src/qmlui.lib bin-windows
 
-      - name: Build - Linux ARM
-        if: matrix.os != 'ubuntu-22.04' && matrix.os != 'macos-14' && matrix.os != 'windows-2022'
-        run: |
-          echo "OS_NAME=aarch64" >> $GITHUB_ENV
-          qmake -spec linux-g++-64 src/qt/_qmlui.pro
-          make
-          rm -rf bin-aarch64
-          mkdir bin-aarch64
-          cp src/libqmlui.so bin-aarch64
+      # - name: Build - Linux ARM
+      #   if: matrix.os != 'ubuntu-22.04' && matrix.os != 'macos-14' && matrix.os != 'windows-2022'
+      #   run: |
+      #     echo "OS_NAME=aarch64" >> $GITHUB_ENV
+      #     qmake -spec linux-g++-64 src/qt/_qmlui.pro
+      #     make
+      #     rm -rf bin-aarch64
+      #     mkdir bin-aarch64
+      #     cp src/libqmlui.so bin-aarch64
 
       - name: Build - Linux
         if: matrix.os == 'ubuntu-22.04'
