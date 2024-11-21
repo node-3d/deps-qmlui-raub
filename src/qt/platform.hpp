@@ -1,5 +1,4 @@
-#ifndef PLATFORM_HPP
-#define PLATFORM_HPP
+#pragma once
 
 #include <QOpenGLContext>
 
@@ -33,6 +32,3 @@
 	typedef QNativeInterface::QCocoaGLContext NativeContext;
 	
 #endif
-
-
-#endif // PLATFORM_HPP

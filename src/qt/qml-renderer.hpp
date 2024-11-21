@@ -1,5 +1,4 @@
-#ifndef QML_RENDERER_HPP
-#define QML_RENDERER_HPP
+#pragma once
 
 #include <QWindow>
 
@@ -12,7 +11,7 @@ class QmlRenderer : public QWindow {
 	Q_OBJECT
 	
 public:
-	QmlRenderer(const QString &workingDir, size_t windowHandle, size_t windowContext, size_t display);
+	QmlRenderer(const QString &workingDir, size_t windowHandle, size_t windowContext);
 	~QmlRenderer();
 	
 	QOpenGLContext *context() const { return _openglContext; }
@@ -25,6 +24,3 @@ private:
 	QString _directoryPath;
 	QOffscreenSurface *_offscreenSurface;
 };
-
-
-#endif // QML_RENDERER_HPP

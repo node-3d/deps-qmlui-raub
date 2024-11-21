@@ -25,6 +25,9 @@
 #include "qml-cb.hpp"
 
 
+QRegularExpression regexPlugins = QRegularExpression("plugins$");
+
+
 QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 	// Initial values all zero
 	_systemItem = nullptr;
@@ -52,27 +55,32 @@ QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 	
 	// Create a window with custom RenderControl to render offscreen
 	_renderControl = new QQuickRenderControl();
-	_offscreenWindow = new QQuickWindow( _renderControl );
+	_offscreenWindow = new QQuickWindow(_renderControl);
 	_framebuffer = nullptr;
 	
 	// Set window looks accordingly
 	_offscreenWindow->setGeometry(0, 0, w, h);
 	_offscreenWindow->setGraphicsApi(QSGRendererInterface::OpenGL);
-	// _offscreenWindow->setClearBeforeRendering(true);
+	_offscreenWindow->setGraphicsDevice(
+		QQuickGraphicsDevice::fromOpenGLContext(_openglContext)
+	);
+	
 	_currentSize = QSize(w, h);
-	_offscreenWindow->contentItem()->setSize( QSizeF(_offscreenWindow->size()) );
+	_offscreenWindow->contentItem()->setSize(QSizeF(_offscreenWindow->size()));
 	_offscreenWindow->setColor(Qt::transparent);
 	
 	// Create a separate instance of QML Engine for this window
 	_qmlEngine = new QQmlEngine();
-	if ( ! _qmlEngine->incubationController() ) {
-		_qmlEngine->setIncubationController(_offscreenWindow->incubationController());
+	if (!_qmlEngine->incubationController()) {
+		_qmlEngine->setIncubationController(
+			_offscreenWindow->incubationController()
+		);
 	}
 	
 	// Apply additional library paths
 	foreach (const QString &dir, QCoreApplication::libraryPaths()) {
 		QString replaced = dir;
-		replaced = replaced.replace(QRegularExpression("plugins$"), "qml");
+		replaced = replaced.replace(regexPlugins, "qml");
 		_qmlEngine->addImportPath(replaced);
 	}
 	
@@ -100,36 +108,30 @@ QmlView::QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb) {
 	
 	// Set up event listeners
 	connect(
-		_offscreenWindow,
-		&QQuickWindow::sceneGraphInitialized,
-		this,
-		&QmlView::_createFramebuffer
+		_offscreenWindow, &QQuickWindow::sceneGraphInitialized,
+		this, &QmlView::_createFramebuffer
 	);
 	
 	connect(
-		_offscreenWindow,
-		&QQuickWindow::sceneGraphInvalidated,
-		this,
-		&QmlView::_destroyFramebuffer
+		_offscreenWindow, &QQuickWindow::sceneGraphInvalidated,
+		this, &QmlView::_destroyFramebuffer
 	);
 	connect(
-		_renderControl,
-		&QQuickRenderControl::renderRequested,
-		this,
-		&QmlView::_requestUpdate
+		_renderControl, &QQuickRenderControl::renderRequested,
+		this, &QmlView::_requestUpdate
 	);
 	connect(
-		_renderControl,
-		&QQuickRenderControl::sceneChanged,
-		this,
-		&QmlView::_syncScene
+		_renderControl, &QQuickRenderControl::sceneChanged,
+		this, &QmlView::_syncScene
 	);
 	
 	// Init system component, ASYNC
-	_systemComponent = new QQmlComponent( _qmlEngine );
-	connect( _systemComponent, &QQmlComponent::statusChanged, this, &QmlView::_rootStatusUpdate );
+	_systemComponent = new QQmlComponent(_qmlEngine);
+	connect(
+		_systemComponent, &QQmlComponent::statusChanged,
+		this, &QmlView::_rootStatusUpdate
+	);
 	_systemComponent->loadUrl(QString("qrc:/main.qml"), QQmlComponent::Asynchronous);
-	
 }
 
 QmlView::~QmlView() {
@@ -200,9 +202,11 @@ void QmlView::_destroyFramebuffer() {
 
 // Update and render the scene
 void QmlView::_render() {
-	if ( ! _openglContext->makeCurrent(_offscreenSurface) ) {
+	if (!_openglContext->makeCurrent(_offscreenSurface)) {
 		return;
 	}
+	
+	_renderControl->beginFrame();
 	
 	// Only sync scene content if it has some changes
 	if (_hasChanged) {
@@ -212,9 +216,11 @@ void QmlView::_render() {
 	}
 	
 	_renderControl->render();
+	_renderControl->endFrame();
 	
 	// Finish OpenGL business
 	QQuickOpenGLUtils::resetOpenGLState();
+	_framebuffer->bind();
 	_openglContext->functions()->glFlush();
 }
 
@@ -223,7 +229,7 @@ void QmlView::_render() {
 void QmlView::resize(const QSize &size) {
 	_currentSize = size;
 	
-	if ( _resizeTimer.isActive() ) {
+	if (_resizeTimer.isActive()) {
 		_resizeTimer.stop();
 	}
 	
@@ -235,10 +241,10 @@ void QmlView::resize(const QSize &size) {
 void QmlView::_applySize() {
 	// Both window and content
 	_offscreenWindow->setGeometry(0, 0, _currentSize.width(), _currentSize.height());
-	_offscreenWindow->contentItem()->setSize( QSizeF(_currentSize) );
+	_offscreenWindow->contentItem()->setSize(QSizeF(_currentSize));
 	
 	// Also reset render target
-	if ( _openglContext && _openglContext->makeCurrent( _offscreenSurface ) ) {
+	if (_openglContext && _openglContext->makeCurrent(_offscreenSurface)) {
 		_createFramebuffer();
 	}
 }
@@ -246,14 +252,16 @@ void QmlView::_applySize() {
 
 // Call for render if not called yet
 void QmlView::_requestUpdate() {
-	if ( ! _renderTimer.isActive() ) {
+	if (!_renderTimer.isActive()) {
 		_renderTimer.start();
 	}
 }
 
 
 // Scene changed, set changed flag and call for render
-void QmlView::_syncScene() { _hasChanged = true; _requestUpdate(); }
+void QmlView::_syncScene() {
+	_hasChanged = true; _requestUpdate();
+}
 
 
 // Reports the error as an event and shows it on the screen if possible
@@ -344,20 +352,20 @@ void QmlView::_customStatusUpdate(QQmlComponent::Status status) {
 	result["status"] = "error";
 	
 	// If not ready yet, then only check for errors
-	if ( QQmlComponent::Ready != status ) {
-		
-		if ( ! _qmlCheckErrors(_customComponent) ) {
+	if (QQmlComponent::Ready != status ) {
+		if (!_qmlCheckErrors(_customComponent)) {
 			result["status"] = "loading";
 		}
 		
 		_cb->eventEmit("_qml_load", result);
-		
 		return;
-		
 	}
 	
 	// Prevent further status changes
-	disconnect(_customComponent, &QQmlComponent::statusChanged, this, &QmlView::_customStatusUpdate);
+	disconnect(
+		_customComponent, &QQmlComponent::statusChanged,
+		this, &QmlView::_customStatusUpdate
+	);
 	
 	// If any errors - quit
 	if (_qmlCheckErrors(_customComponent)) {
@@ -374,7 +382,7 @@ void QmlView::_customStatusUpdate(QQmlComponent::Status status) {
 	
 	// Check validity of the root Item
 	_customItem = qobject_cast<QQuickItem *>(rootObject);
-	if ( ! _customItem ) {
+	if (!_customItem) {
 		_qmlReport("Not a QQuickItem: " + _currentQml);
 		delete rootObject;
 		rootObject = nullptr;
@@ -397,9 +405,14 @@ void QmlView::loadQml(const QString &fileName) {
 	
 	// Setup the new component
 	_currentQml = fileName;
-	_customComponent = new QQmlComponent( _qmlEngine );
-	connect( _customComponent, &QQmlComponent::statusChanged, this, &QmlView::_customStatusUpdate );
-	_customComponent->loadUrl(QUrl::fromLocalFile(_currentQml), QQmlComponent::Asynchronous);
+	_customComponent = new QQmlComponent(_qmlEngine);
+	connect(
+		_customComponent, &QQmlComponent::statusChanged,
+		this, &QmlView::_customStatusUpdate
+	);
+	_customComponent->loadUrl(
+		QUrl::fromLocalFile(_currentQml), QQmlComponent::Asynchronous
+	);
 }
 
 
@@ -410,7 +423,10 @@ void QmlView::loadText(const QString &source) {
 	// Setup the new component
 	_currentQml = source;
 	_customComponent = new QQmlComponent( _qmlEngine );
-	connect( _customComponent, &QQmlComponent::statusChanged, this, &QmlView::_customStatusUpdate );
+	connect(
+		_customComponent, &QQmlComponent::statusChanged,
+		this, &QmlView::_customStatusUpdate
+	);
 	_customComponent->setData( source.toUtf8(), QString("loadText") );
 }
 
@@ -420,14 +436,17 @@ void QmlView::unload() {
 	if (_systemError) {
 		_systemError->setVisible(false);
 	}
-	if (_customComponent) {
-		if (_customItem) {
-			_customItem->deleteLater();
-			_customItem = nullptr;
-		}
-		_customComponent->deleteLater();
-		_customComponent = nullptr;
+	
+	if (!_customComponent) {
+		return;
 	}
+	
+	if (_customItem) {
+		_customItem->deleteLater();
+		_customItem = nullptr;
+	}
+	_customComponent->deleteLater();
+	_customComponent = nullptr;
 }
 
 
@@ -437,7 +456,7 @@ void QmlView::setProp(
 	const char *propname,
 	const char *json
 ) {
-	if ( ! _customItem ) {
+	if (!_customItem) {
 		_qmlReport(
 			"Qml setProp() failed. Do a proper loadQml() first.",
 			"prop",
@@ -449,7 +468,7 @@ void QmlView::setProp(
 	QString strName = QString(objname);
 	QObject *obj = _findItem(_customItem, strName);
 	
-	if ( ! obj ) {
+	if (!obj) {
 		_qmlReport(
 			QString("Qml setProp() failed. Object not found: ") + strName,
 			"prop",
@@ -462,7 +481,7 @@ void QmlView::setProp(
 		.toVariant()
 		.toList();
 	
-	if ( ! parsed.size() ) {
+	if (!parsed.size()) {
 		_qmlReport(
 			QString(
 				"Qml setProp() failed. Invalid value: '%1'"
@@ -480,7 +499,7 @@ void QmlView::setProp(
 
 
 std::string QmlView::getProp(const char *objname, const char *propname) {
-	if ( ! _customItem ) {
+	if (!_customItem) {
 		_qmlReport(
 			"Qml getProp() failed. Do a proper loadQml() first.",
 			"prop",
@@ -492,7 +511,7 @@ std::string QmlView::getProp(const char *objname, const char *propname) {
 	QString strName = QString(objname);
 	QObject *object = _findItem(_customItem, strName);
 	
-	if ( ! object ) {
+	if (!object) {
 		_qmlReport(
 			QString("Qml getProp() failed. Object not found: ") + strName,
 			"prop",
@@ -503,7 +522,7 @@ std::string QmlView::getProp(const char *objname, const char *propname) {
 	
 	QVariant prop = object->property(propname);
 	
-	if ( ! prop.isValid() ) {
+	if (!prop.isValid()) {
 		_qmlReport(
 			QString("Qml getProp() failed. Can't get: ") + QString(propname),
 			"prop",
@@ -527,7 +546,7 @@ std::string QmlView::invoke(
 	const char *method,
 	const char *json
 ) {
-	if ( ! _customItem ) {
+	if (!_customItem) {
 		_qmlReport(
 			"Qml invoke() failed. Do a proper loadQml() first.",
 			"invoke",
@@ -537,9 +556,9 @@ std::string QmlView::invoke(
 	}
 	
 	QString strName = QString(objname);
-	QObject *object = _findItem(_customItem, strName);
+	QQuickItem *object = _findItem(_customItem, strName);
 	
-	if ( ! object ) {
+	if (!object) {
 		_qmlReport(
 			QString("Qml invoke() failed. Object not found: ") + strName,
 			"invoke",
@@ -548,89 +567,34 @@ std::string QmlView::invoke(
 		return _undefined;
 	}
 	
-	QByteArray baJson = QByteArray(json);
-	QVariant parsed = QJsonDocument::fromJson(baJson).toVariant();
+	QVariant returnValue = QVariant();
+	QVariant varObject;
+	varObject.setValue<QObject*>(object);
 	
-	if ( ! parsed.isValid() ) {
-		_qmlReport(
-			QString(
-				"Qml invoke() failed. Invalid value: '%1'"
-			).arg(
-				json
-			),
-			"invoke",
-			false
-		);
-		return _undefined;
-	}
-	
-	const QMetaObject *meta = object->metaObject();
-	
-	QVariantList args = parsed.toList();
-	QByteArray signature = QByteArray(method) + "(";
-	for (int i = args.size() - 1; i >= 0; i--) {
-		signature.append("QVariant");
-		if (i > 0) {
-			signature.append(",");
-		}
-	}
-	signature.append(")");
-	
-	int index = meta->indexOfMethod(signature.constData());
-	
-	if (index < 0) {
-		_qmlReport(
-			QString(
-				"Qml invoke() failed. Method not found: '%1'"
-			).arg(
-				signature.constData()
-			),
-			"invoke",
-			false
-		);
-		return _undefined;
-	}
-	
-	QMetaMethod metaMethod = meta->method(index);
-	
-	QVariant returnValue(
-		QMetaType::fromName(metaMethod.typeName()),
-		static_cast<void*>(nullptr)
-	);
-	QGenericReturnArgument returnArgument(
-		metaMethod.typeName(),
-		const_cast<void*>(returnValue.constData())
-	);
-	
-	
-	bool ok = metaMethod.invoke(
-		object,
+	bool isOk = _systemRoot->metaObject()->invokeMethod(
+		_systemRoot,
+		"__invoke",
 		Qt::DirectConnection,
-		returnArgument,
-		Q_ARG(QVariant, args.value(0)),
-		Q_ARG(QVariant, args.value(1)),
-		Q_ARG(QVariant, args.value(2)),
-		Q_ARG(QVariant, args.value(3)),
-		Q_ARG(QVariant, args.value(4)),
-		Q_ARG(QVariant, args.value(5)),
-		Q_ARG(QVariant, args.value(6)),
-		Q_ARG(QVariant, args.value(7)),
-		Q_ARG(QVariant, args.value(8)),
-		Q_ARG(QVariant, args.value(9))
+		Q_RETURN_ARG(QVariant, returnValue),
+		Q_ARG(QVariant, varObject),
+		Q_ARG(QVariant, QVariant(method)),
+		Q_ARG(QVariant, QVariant(json))
 	);
 	
-	if ( ! ok ) {
+	if (!isOk) {
 		_qmlReport(
 			QString(
-				"Qml invoke() failed. Invalid call to %1 with %2"
+				"Qml invoke() failed. Invalid call to %1.%2() with %3"
 			).arg(
-				signature.constData()
-			).arg(
-				json
+				objname, method, json
 			),
 			"invoke",
 			false
 		);
+		return _undefined;
+	}
+	
+	if (returnValue.isNull()) {
 		return _undefined;
 	}
 	
@@ -759,20 +723,22 @@ void QmlView::addLibsDir(const QString &dirName) {
 }
 
 
-QObject* QmlView::_findItem(QObject* node, const QString& name, int depth) const {
+QQuickItem* QmlView::_findItem(QQuickItem* node, const QString& name, int depth) const {
 	if (node && node->objectName() == name) {
-		
-		return node;//qobject_cast<QQuickItem *>(node);
-		
-	} else if (node && node->children().size() > 0) {
-		
+		return node;
+	}
+	
+	if (node && node->children().size() > 0) {
 		for (int i = node->children().size() - 1; i >= 0; i--) {
-			QObject* item = _findItem(node->children().at(i), name, depth + 1);
+			QQuickItem *asItem = qobject_cast<QQuickItem *>(node->children().at(i));
+			if (!asItem) {
+				continue;
+			}
+			QQuickItem* item = _findItem(asItem, name, depth + 1);
 			if (item) {
 				return item;
 			}
 		}
-		
 	}
 	
 	// not found

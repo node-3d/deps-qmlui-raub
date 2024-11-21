@@ -6,20 +6,17 @@
 
 
 QmlRenderer::QmlRenderer(
-	const QString &workingDir, size_t windowHandle, size_t windowContext, size_t display
+	const QString &workingDir, size_t windowHandle, size_t windowContext
 ) {
 	_directoryPath = workingDir;
-	// QNativeInterface::QGLXContext
+	
 	// Native context takes different argument sets per platform
 	QOpenGLContext* extContext = NativeContext::fromNative(
 		reinterpret_cast<CtxHandle>(windowContext)
-		#if defined __linux__
-		// , reinterpret_cast<Display*>(display), reinterpret_cast<WndHandle>(windowHandle), 0
-		#elif defined WIN32
+		#ifdef WIN32
 		, reinterpret_cast<WndHandle>(windowHandle)
 		#endif
 	);
-	// extContext->create();
 	
 	QSurfaceFormat format;
 	format.setDepthBufferSize(16);

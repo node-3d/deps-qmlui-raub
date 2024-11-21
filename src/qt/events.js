@@ -3,12 +3,12 @@
 /* global Qt */
 
 
-var MOUSE_BUTTONS = {};
+const MOUSE_BUTTONS = {};
 MOUSE_BUTTONS[Qt.LeftButton] = 0;
 MOUSE_BUTTONS[Qt.RightButton] = 2;
 MOUSE_BUTTONS[Qt.MiddleButton] = 1;
 
-var KEY_CODES = {};
+const KEY_CODES = {};
 KEY_CODES[Qt.Key_Alt] = 18;
 KEY_CODES[Qt.Key_Backspace] = 8;
 KEY_CODES[Qt.Key_CapsLock] = 20;
@@ -45,7 +45,7 @@ KEY_CODES[Qt.Key_Tab] = 9;
 KEY_CODES[Qt.Key_Up] = 38;
 
 
-var KEY_NAMES = {};
+const KEY_NAMES = {};
 KEY_NAMES[Qt.Key_Alt] = 'Alt';
 KEY_NAMES[Qt.Key_Backspace] = 'Backspace';
 KEY_NAMES[Qt.Key_CapsLock] = 'CapsLock';
@@ -83,7 +83,6 @@ KEY_NAMES[Qt.Key_Up] = 'Up';
 
 
 function MouseEvent(type, mouse) {
-	
 	this.type = type;
 	
 	this.button = MOUSE_BUTTONS[mouse.button] || 0;
@@ -100,16 +99,14 @@ function MouseEvent(type, mouse) {
 	this.ctrlKey = (mouse.modifiers & Qt.ControlModifier) > 0;
 	this.metaKey = (mouse.modifiers & Qt.MetaModifier) > 0;
 	this.shiftKey = (mouse.modifiers & Qt.ShiftModifier) > 0;
-	
 }
 
 
-var prevX = 0;
-var prevY = 0;
+let prevX = 0;
+let prevY = 0;
 
 // eslint-disable-next-line no-unused-vars
 function MouseMoveEvent(mouse) {
-	
 	MouseEvent.call(this, 'mousemove', mouse);
 	
 	this.movementX = mouse.x - prevX;
@@ -117,13 +114,11 @@ function MouseMoveEvent(mouse) {
 	
 	prevX = mouse.x;
 	prevY = mouse.y;
-	
 }
 
 
 // eslint-disable-next-line no-unused-vars
 function MouseWheelEvent(mouse) {
-	
 	MouseEvent.call(this, 'wheel', mouse);
 	
 	this.wheelDeltaX = mouse.angleDelta.x > 0 ? 120 : -120;
@@ -132,13 +127,11 @@ function MouseWheelEvent(mouse) {
 	this.deltaX = mouse.angleDelta.x > 0 ? 100 : -100;
 	this.deltaY = mouse.angleDelta.y > 0 ? 100 : -100;
 	this.deltaZ = 0;
-	
 }
 
 
 // eslint-disable-next-line no-unused-vars
 function KeyEvent(type, event) {
-	
 	this.type = type;
 	
 	this.which = KEY_CODES[event.key] || event.key;
@@ -159,5 +152,4 @@ function KeyEvent(type, event) {
 	this.ctrlKey = (event.modifiers & Qt.ControlModifier) > 0;
 	this.metaKey = (event.modifiers & Qt.MetaModifier) > 0;
 	this.shiftKey = (event.modifiers & Qt.ShiftModifier) > 0;
-	
 }

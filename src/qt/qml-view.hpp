@@ -1,5 +1,4 @@
-#ifndef QML_VIEW_HPP
-#define QML_VIEW_HPP
+#pragma once
 
 #include <QWindow>
 #include <QTimer>
@@ -24,8 +23,7 @@ class QmlView : public QWindow {
 	Q_OBJECT
 	
 public:
-	
-	QmlView(QmlRenderer * renderer, int w, int h, QmlCb *cb);
+	QmlView(QmlRenderer *renderer, int w, int h, QmlCb *cb);
 	~QmlView();
 	
 	// Add an import path to QML Engine
@@ -72,9 +70,7 @@ public:
 		const char *json
 	);
 	
-	
 private slots:
-	
 	// React to the status of `main.qml`
 	void _rootStatusUpdate(QQmlComponent::Status status);
 	
@@ -96,16 +92,13 @@ private slots:
 	// Schedule re-render in 5msec due to scene change
 	void _syncScene();
 	
-	
 private:
-	
 	// Find an Item by name
-	QObject* _findItem(
-		QObject* node,
+	QQuickItem* _findItem(
+		QQuickItem* node,
 		const QString& name,
 		int depth = 0
 	) const;
-	
 	
 	// Report an error message to JS
 	void _qmlReport(
@@ -114,10 +107,8 @@ private:
 		bool critical = true
 	) const;
 	
-	
 	// Check if the given component has some errors. Report if any.
 	bool _qmlCheckErrors(const QQmlComponent *component) const;
-	
 	
 	// OpenGL
 	QOpenGLContext *_openglContext;
@@ -125,7 +116,6 @@ private:
 	QQuickRenderControl *_renderControl;
 	QQuickWindow *_offscreenWindow;
 	QOpenGLFramebufferObject *_framebuffer;
-	
 	
 	// QML
 	QQmlEngine *_qmlEngine;
@@ -136,26 +126,20 @@ private:
 	QQmlComponent *_customComponent;
 	QQuickItem *_customItem;
 	
-	
 	// States
 	bool _hasChanged;
 	bool _isReady;
-	
 	
 	// Timers
 	QTimer _renderTimer;
 	QTimer _resizeTimer;
 	
-	
 	// Callback router
 	QmlCb *_cb;
-	
 	
 	// Cache
 	QString _currentQml;
 	QSize _currentSize;
 	std::string _undefined;
 };
-
-#endif // QML_VIEW_HPP
 

@@ -9,21 +9,16 @@ QmlUi::Cb QmlCb::__cb;
 
 
 void QmlCb::init(QmlUi::Cb cb) {
-	
 	__cb = cb;
-	
 }
 
 
 QmlCb::QmlCb(QmlUi *owner) {
-	
 	_owner = owner;
-	
 }
 
 
 void QmlCb::eventEmit(const QByteArray &name, QVariant data) const {
-	
 	QList<QVariant> vlist;
 	
 	QVariant jsVariant = data.value<QJSValue>().toVariant();
@@ -34,5 +29,4 @@ void QmlCb::eventEmit(const QByteArray &name, QVariant data) const {
 	}
 	
 	__cb(_owner, name, QJsonDocument::fromVariant(vlist).toJson());
-	
 }

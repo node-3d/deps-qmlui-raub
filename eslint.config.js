@@ -1,5 +1,6 @@
 'use strict';
 
+const globals = require('globals');
 const js = require('@eslint/js');
 
 
@@ -9,15 +10,10 @@ module.exports = [
 		languageOptions: {
 			'parserOptions': {
 				'ecmaVersion': 2022,
-				sourceType: 'commonjs'
+				sourceType: 'script',
 			},
 			globals: {
-				require: 'readonly',
-				Buffer: 'readonly',
-				module: 'readonly',
-				console: 'readonly',
-				__dirname: 'readonly',
-				process: 'readonly',
+				...globals.node,
 			},
 		},
 		'rules': {
