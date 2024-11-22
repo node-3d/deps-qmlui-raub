@@ -36,10 +36,11 @@ jobs:
 
   upload-qt:
     docker:
-      - image: cibuilds/github:0.10
+      - image: circleci/golang:1.8
     steps:
       - attach_workspace:
           at: /tmp/artifacts
       - run: |
+          go get github.com/tcnksm/ghr
           PKG_VERSION=`cat /tmp/artifacts/pkg-version`
-          ghr -u "node-3d" -r "${CIRCLE_PROJECT_REPONAME}" -c "${CIRCLE_SHA1}" -replace ${PKG_VERSION} /tmp/artifacts/aarch64.gz
+          ghr -u "node-3d" -r "${CIRCLE_PROJECT_REPONAME}" -c "${CIRCLE_SHA1}" -n "Release ${PKG_VERSION}" -replace ${PKG_VERSION} /tmp/artifacts/aarch64.gz
