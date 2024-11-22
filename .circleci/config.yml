@@ -1,18 +1,18 @@
 version: 2.1
 
 workflows:
-  pack-qt:
+  pack-binaries:
     jobs:
-      - pack-qt
-      - upload-qt:
+      - pack-binaries
+      - upload-binaries:
           context:
             - github
           requires:
-            - pack-qt
+            - pack-binaries
 
 jobs:
 
-  pack-qt:
+  pack-binaries:
     machine:
       image: ubuntu-2204:current
     resource_class: arm.medium
@@ -22,7 +22,7 @@ jobs:
       - checkout
       - run: mkdir -p ~/artifacts
       - run: node -p "require('./package').version" > ~/artifacts/pkg-version
-      - run: qmake -spec linux-aarch64-gnu-g++ src/qt/_qmlui.pro
+      - run: ~/Qt/6.8.0/gcc_arm64/bin/qmake -spec linux-aarch64-gnu-g++ src/qt/_qmlui.pro
       - run: make
       - run: mkdir -p ~/bin_tmp
       - run: cp src/libqmlui.so ~/bin_tmp
@@ -34,7 +34,7 @@ jobs:
             - aarch64.gz
             - pkg-version
 
-  upload-qt:
+  upload-binaries:
     docker:
       - image: circleci/golang:1.8
     steps:
