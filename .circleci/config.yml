@@ -1,0 +1,45 @@
+version: 2.1
+
+workflows:
+  pack-qt:
+    jobs:
+      - pack-qt
+      - upload-qt:
+          context:
+            - github
+          requires:
+            - pack-qt
+
+jobs:
+
+  pack-qt:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: arm.medium
+    steps:
+      - run: python -m pip install setuptools aqtinstall
+      - run: cd ~ && python -m aqt install-qt --outputdir ~/Qt linux_arm64 desktop 6.8.0 linux_gcc_arm64
+      - checkout
+      - run: mkdir -p ~/artifacts
+      - run: node -p "require('./package').version" > ~/artifacts/pkg-version
+      - run: qmake -spec linux-aarch64-gnu-g++ src/qt/_qmlui.pro
+      - run: make
+      - run: mkdir -p ~/bin_tmp
+      - run: cp src/libqmlui.so ~/bin_tmp
+      - run: cd ~/bin_tmp && tar -czf ../aarch64.gz *
+      - run: mkdir -p ~/artifacts && mv ~/aarch64.gz ~/artifacts
+      - persist_to_workspace:
+          root: ~/artifacts
+          paths:
+            - aarch64.gz
+            - pkg-version
+
+  upload-qt:
+    docker:
+      - image: cibuilds/github:0.10
+    steps:
+      - attach_workspace:
+          at: /tmp/artifacts
+      - run: |
+          PKG_VERSION=`cat /tmp/artifacts/pkg-version`
+          ghr -u "node-3d" -r "${CIRCLE_PROJECT_REPONAME}" -c "${CIRCLE_SHA1}" -replace ${PKG_VERSION} /tmp/artifacts/aarch64.gz

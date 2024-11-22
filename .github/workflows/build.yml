@@ -41,14 +41,12 @@ jobs:
           draft: true
           tag_name: ${{ steps.package-version.outputs.version }}
           name: Release ${{ steps.package-version.outputs.version }}
-          body: Binaries at ${{ github.sha }}
 
   build:
     name: Build
     strategy:
         matrix:
           os: [ubuntu-22.04, windows-2022, macos-14]
-          # os: [ubuntu-22.04, windows-2022, macos-14, [self-hosted, linux, ARM64]]
 
     runs-on: ${{ matrix.os }}
 
@@ -60,7 +58,6 @@ jobs:
           persist-credentials: false
 
       - name: Install Qt
-        if: matrix.os == 'ubuntu-22.04' || matrix.os == 'macos-14' || matrix.os == 'windows-2022'
         uses: jurplel/install-qt-action@v4
         with:
           version: '6.8.0'
@@ -92,16 +89,6 @@ jobs:
           mkdir bin-windows
           cp src/qmlui.dll bin-windows
           cp src/qmlui.lib bin-windows
-
-      # - name: Build - Linux ARM
-      #   if: matrix.os != 'ubuntu-22.04' && matrix.os != 'macos-14' && matrix.os != 'windows-2022'
-      #   run: |
-      #     echo "OS_NAME=aarch64" >> $GITHUB_ENV
-      #     qmake -spec linux-g++-64 src/qt/_qmlui.pro
-      #     make
-      #     rm -rf bin-aarch64
-      #     mkdir bin-aarch64
-      #     cp src/libqmlui.so bin-aarch64
 
       - name: Build - Linux
         if: matrix.os == 'ubuntu-22.04'
