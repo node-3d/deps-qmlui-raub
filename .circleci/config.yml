@@ -23,6 +23,8 @@ jobs:
       - run: mkdir -p ~/artifacts
       - run: node -p "require('./package').version" > ~/artifacts/pkg-version
       - run: ~/Qt/6.8.0/gcc_arm64/bin/qmake -spec linux-aarch64-gnu-g++ src/qt/_qmlui.pro
+      - run: sudo apt update
+      - run: sudo apt install glibc-source -y
       - run: make
       - run: mkdir -p ~/bin_tmp
       - run: cp src/libqmlui.so ~/bin_tmp
