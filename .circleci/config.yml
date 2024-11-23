@@ -50,15 +50,19 @@ jobs:
         keys:
           - glibc-2.40
       - run: |
-          sudo apt-get -y install bison
-          cd ~
-          git clone --branch release/2.40/master --depth 1 https://sourceware.org/git/glibc.git
-          cd glibc
-          mkdir build
-          cd build
-          ../configure --prefix "$GLIBC_INSTALL"
-          make -j `nproc`
-          make install -j `nproc`
+          if [ -d "~/glibc" ]; then
+            echo "GLIBC already installed."
+          else
+            sudo apt-get -y install bison
+            cd ~
+            git clone --branch release/2.40/master --depth 1 https://sourceware.org/git/glibc.git
+            cd glibc
+            mkdir build
+            cd build
+            ../configure --prefix "$GLIBC_INSTALL"
+            make -j `nproc`
+            make install -j `nproc`
+          fi
           ls $GLIBC_INSTALL/lib
       - save_cache:
           name: Save GLIBC Cache
