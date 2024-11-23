@@ -46,9 +46,9 @@ jobs:
           GLIBC_INSTALL="$(pwd)/glibc/build/install"
 
       - restore_cache:
-        name: Restore GLIBC Cache
-        keys:
-          - glibc-2.40
+          name: Restore GLIBC Cache
+          keys:
+            - glibc-2.40
       - run: |
           if [ -d "~/glibc" ]; then
             echo "GLIBC already installed."
