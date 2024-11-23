@@ -58,7 +58,7 @@ jobs:
             cd build
             ../configure --prefix "$GLIBC_INSTALL"
             make -j `nproc`
-            make install -j `nproc`
+            # make install -j `nproc`
           fi
           ls $GLIBC_INSTALL/lib
       - save_cache:
