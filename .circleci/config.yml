@@ -19,8 +19,7 @@ jobs:
     steps:
       - restore_cache:
           name: Restore Qt Cache
-          keys:
-            - Qt-6.8.0
+          key: Qt-6.8.0
       - run: |
           if [ -d "~/Qt" ]; then
             echo "Qt already installed."
@@ -31,8 +30,7 @@ jobs:
           fi
       - save_cache:
           name: Save Qt Cache
-          keys:
-            - Qt-6.8.0
+          key: Qt-6.8.0
           paths:
             - ~/Qt
 
@@ -47,8 +45,7 @@ jobs:
 
       - restore_cache:
           name: Restore GLIBC Cache
-          keys:
-            - glibc-2.40
+          key: glibc-2.40
       - run: |
           if [ -d "~/glibc" ]; then
             echo "GLIBC already installed."
@@ -66,8 +63,7 @@ jobs:
           ls $GLIBC_INSTALL/lib
       - save_cache:
           name: Save GLIBC Cache
-          keys:
-            - glibc-2.40
+          key: glibc-2.40
           paths:
             - ~/glibc
 
