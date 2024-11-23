@@ -20,14 +20,15 @@ jobs:
       - run: |
           cd ~
           echo 'export QT_NAME="Qt"' >> "$BASH_ENV"
-          echo 'export QT_VER="6.8.0"' >> "$BASH_ENV"
+          # echo 'export QT_VER="6.8.0"' >> "$BASH_ENV"
+          QT_VER="6.8.0"
           echo 'export QT_DIR="$(pwd)/$QT_NAME"' >> "$BASH_ENV"
           echo 'export GLIBC_NAME="glibc"' >> "$BASH_ENV"
           echo 'export GLIBC_VER="2.40"' >> "$BASH_ENV"
           echo 'export GLIBC_DIR="$(pwd)/$GLIBC_NAME"' >> "$BASH_ENV"
           echo 'export GLIBC_INSTALL="$GLIBC_DIR/build/install"' >> "$BASH_ENV"
-          echo QT_NAME $QT_NAME
-          echo QT_VER $QT_VER
+          echo QT_NAME $QT_NAME ${QT_NAME} {{ .Environment.QT_NAME }}
+          echo QT_VER $QT_VER ${QT_VER} {{ .Environment.QT_VER }}
           echo QT_DIR $QT_DIR
           echo GLIBC_NAME $GLIBC_NAME
           echo GLIBC_VER $GLIBC_VER
