@@ -26,7 +26,7 @@ jobs:
           echo 'export GLIBC_INSTALL="$GLIBC_DIR/build/install"' >> "$BASH_ENV"
       - restore_cache:
           name: Restore Qt Cache
-          key: Qt-$QT_VER
+          key: Qt-${QT_VER}
       - run: |
           if [ -d "$QT_DIR" ]; then
             echo "Qt $QT_VER already installed."
@@ -38,10 +38,11 @@ jobs:
           fi
       - save_cache:
           name: Save Qt Cache
-          key: Qt-$QT_VER
+          key: Qt-${QT_VER}
           paths:
             - $QT_DIR
 
+      - run: ls
       - checkout
       - run: |
           mkdir -p ~/artifacts
@@ -50,7 +51,7 @@ jobs:
 
       - restore_cache:
           name: Restore GLIBC Cache
-          key: glibc-$GLIBC_VER
+          key: glibc-${GLIBC_VER}
       - run: |
           if [ -d "$GLIBC_DIR" ]; then
             echo "GLIBC $GLIBC_VER already cached."
@@ -67,7 +68,7 @@ jobs:
           fi
       - save_cache:
           name: Save GLIBC Cache
-          key: glibc-$GLIBC_VER
+          key: glibc-${GLIBC_VER}
           paths:
             - $GLIBC_DIR
 
