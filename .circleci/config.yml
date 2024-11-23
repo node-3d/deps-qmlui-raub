@@ -26,9 +26,16 @@ jobs:
           echo 'export GLIBC_VER="2.40"' >> "$BASH_ENV"
           echo 'export GLIBC_DIR="$(pwd)/$GLIBC_NAME"' >> "$BASH_ENV"
           echo 'export GLIBC_INSTALL="$GLIBC_DIR/build/install"' >> "$BASH_ENV"
+          echo QT_NAME $QT_NAME
+          echo QT_VER $QT_VER
+          echo QT_DIR $QT_DIR
+          echo GLIBC_NAME $GLIBC_NAME
+          echo GLIBC_VER $GLIBC_VER
+          echo GLIBC_DIR $GLIBC_DIR
+          echo GLIBC_INSTALL $GLIBC_INSTALL
       - restore_cache:
           name: Restore Qt Cache
-          key: Qt-${QT_VER}-v1
+          key: Qt-{{ .Environment.QT_VER }}-v2
       - run: |
           if [ -d "$QT_DIR" ]; then
             echo "Qt $QT_VER already installed."
@@ -40,9 +47,9 @@ jobs:
           fi
       - save_cache:
           name: Save Qt Cache
-          key: Qt-${QT_VER}-v1
+          key: Qt-{{ .Environment.QT_VER }}-v2
           paths:
-            - ../${QT_NAME}
+            - ../{{ .Environment.QT_NAME }}
 
       - run: ls
       - checkout
@@ -53,7 +60,7 @@ jobs:
 
       - restore_cache:
           name: Restore GLIBC Cache
-          key: glibc-${GLIBC_VER}-v1
+          key: glibc-{{ .Environment.GLIBC_VER }}-v2
       - run: |
           if [ -d "$GLIBC_DIR" ]; then
             echo "GLIBC $GLIBC_VER already cached."
@@ -70,9 +77,9 @@ jobs:
           fi
       - save_cache:
           name: Save GLIBC Cache
-          key: glibc-${GLIBC_VER}-v1
+          key: glibc-{{ .Environment.GLIBC_VER }}-v2
           paths:
-            - ../${GLIBC_NAME}
+            - ../{{ .Environment.GLIBC_NAME }}
 
       - run: |
           cd $GLIBC_DIR/build
