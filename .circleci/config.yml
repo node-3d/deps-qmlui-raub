@@ -17,28 +17,57 @@ jobs:
       image: ubuntu-2204:current
     resource_class: arm.medium
     steps:
-      - run: python -m pip install setuptools aqtinstall
+      - restore_cache:
+          name: Restore Qt Cache
+          keys:
+            - Qt-6.8.0
       - run: |
-          cd ~
-          python -m aqt install-qt --outputdir ~/Qt linux_arm64 desktop 6.8.0 linux_gcc_arm64
+          if [ -d "~/Qt" ]; then
+            echo "Qt already installed."
+          else
+            python -m pip install setuptools aqtinstall
+            cd ~
+            python -m aqt install-qt --outputdir ~/Qt linux_arm64 desktop 6.8.0 linux_gcc_arm64
+          fi
+      - save_cache:
+          name: Save Qt Cache
+          keys:
+            - Qt-6.8.0
+          paths:
+            - ~/Qt
+
       - checkout
       - run: |
           mkdir -p ~/artifacts
           node -p "require('./package').version" > ~/artifacts/pkg-version
       - run: ~/Qt/6.8.0/gcc_arm64/bin/qmake -spec linux-aarch64-gnu-g++ src/qt/_qmlui.pro
       - run: |
+          cd ~
+          GLIBC_INSTALL="$(pwd)/glibc/build/install"
+
+      - restore_cache:
+        name: Restore GLIBC Cache
+        keys:
+          - glibc-2.40
+      - run: |
           sudo apt-get -y install bison
           cd ~
-          glibc_install="$(pwd)/glibc/build/install"
           git clone --branch release/2.40/master --depth 1 https://sourceware.org/git/glibc.git
           cd glibc
           mkdir build
           cd build
-          ../configure --prefix "$glibc_install"
+          ../configure --prefix "$GLIBC_INSTALL"
           make -j `nproc`
           make install -j `nproc`
-          ls $glibc_install
-      - run: LD_LIBRARY_PATH=$glibc_install make
+          ls $GLIBC_INSTALL/lib
+      - save_cache:
+          name: Save GLIBC Cache
+          keys:
+          - glibc-2.40
+          paths:
+            - ~/glibc
+
+      - run: LD_LIBRARY_PATH=$GLIBC_INSTALL/lib make
       - run: |
           mkdir -p ~/bin_tmp
           cp src/libqmlui.so ~/bin_tmp
