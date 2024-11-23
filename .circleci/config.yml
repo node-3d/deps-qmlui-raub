@@ -17,57 +17,66 @@ jobs:
       image: ubuntu-2204:current
     resource_class: arm.medium
     steps:
+      - run: |
+          cd ~
+          QT_VER="6.8.0"
+          QT_DIR="$(pwd)/Qt"
+          GLIBC_VER="2.40"
+          GLIBC_DIR="$(pwd)/glibc"
+          GLIBC_INSTALL="$GLIBC_DIR/build/install"
       - restore_cache:
           name: Restore Qt Cache
-          key: Qt-6.8.0
+          key: Qt-$QT_VER
       - run: |
-          if [ -d "~/Qt" ]; then
-            echo "Qt already installed."
+          if [ -d "$QT_DIR" ]; then
+            echo "Qt $QT_VER already installed."
           else
+            echo "Downloading Qt $QT_VER."
             python -m pip install setuptools aqtinstall
             cd ~
-            python -m aqt install-qt --outputdir ~/Qt linux_arm64 desktop 6.8.0 linux_gcc_arm64
+            python -m aqt install-qt --outputdir $QT_DIR linux_arm64 desktop $QT_VER linux_gcc_arm64
           fi
       - save_cache:
           name: Save Qt Cache
-          key: Qt-6.8.0
+          key: Qt-$QT_VER
           paths:
-            - ~/Qt
+            - $QT_DIR
 
       - checkout
       - run: |
           mkdir -p ~/artifacts
           node -p "require('./package').version" > ~/artifacts/pkg-version
-      - run: ~/Qt/6.8.0/gcc_arm64/bin/qmake -spec linux-aarch64-gnu-g++ src/qt/_qmlui.pro
-      - run: |
-          cd ~
-          GLIBC_INSTALL="$(pwd)/glibc/build/install"
+      - run: $QT_DIR/$QT_VER/gcc_arm64/bin/qmake -spec linux-aarch64-gnu-g++ src/qt/_qmlui.pro
 
       - restore_cache:
           name: Restore GLIBC Cache
-          key: glibc-2.40
+          key: glibc-$GLIBC_VER
       - run: |
-          if [ -d "~/glibc" ]; then
-            echo "GLIBC already installed."
+          if [ -d "$GLIBC_DIR" ]; then
+            echo "GLIBC $GLIBC_VER already cached."
           else
+            echo "Building GLIBC $GLIBC_VER from source."
             sudo apt-get -y install bison
             cd ~
-            git clone --branch release/2.40/master --depth 1 https://sourceware.org/git/glibc.git
+            git clone --branch release/$GLIBC_VER/master --depth 1 https://sourceware.org/git/glibc.git
             cd glibc
             mkdir build
             cd build
             ../configure --prefix "$GLIBC_INSTALL"
             make -j `nproc`
-            # make install -j `nproc`
           fi
-          ls $GLIBC_INSTALL/lib
       - save_cache:
           name: Save GLIBC Cache
-          key: glibc-2.40
+          key: glibc-$GLIBC_VER
           paths:
-            - ~/glibc
+            - $GLIBC_DIR
 
-      - run: LD_LIBRARY_PATH=$GLIBC_INSTALL/lib make
+      - run: |
+          cd $GLIBC_DIR/build
+          sudo make install -j `nproc`
+
+      - run: make # _qmlui.pro
+
       - run: |
           mkdir -p ~/bin_tmp
           cp src/libqmlui.so ~/bin_tmp
