@@ -19,11 +19,11 @@ jobs:
     steps:
       - run: |
           cd ~
-          QT_VER="6.8.0"
-          QT_DIR="$(pwd)/Qt"
-          GLIBC_VER="2.40"
-          GLIBC_DIR="$(pwd)/glibc"
-          GLIBC_INSTALL="$GLIBC_DIR/build/install"
+          echo 'export QT_VER="6.8.0"' >> "$BASH_ENV"
+          echo 'export QT_DIR="$(pwd)/Qt"' >> "$BASH_ENV"
+          echo 'export GLIBC_VER="2.40"' >> "$BASH_ENV"
+          echo 'export GLIBC_DIR="$(pwd)/glibc"' >> "$BASH_ENV"
+          echo 'export GLIBC_INSTALL="$GLIBC_DIR/build/install"' >> "$BASH_ENV"
       - restore_cache:
           name: Restore Qt Cache
           key: Qt-$QT_VER
