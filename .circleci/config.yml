@@ -56,7 +56,7 @@ jobs:
             cd glibc
             mkdir build
             cd build
-            ../configure
+            ../configure --disable-sanity-checks
             make -j `nproc`
             # ../configure --prefix "/home/circleci/glibc/build/install"
             # make -j `nproc`
@@ -70,7 +70,7 @@ jobs:
 
       - run: |
           cd ~/glibc/build
-          sudo make install -j `nproc`
+          sudo make install -j `nproc` --disable-sanity-checks
 
       - run: |
           export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/circleci/glibc/build/install/lib/
