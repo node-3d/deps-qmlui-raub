@@ -44,15 +44,15 @@ jobs:
 
       - restore_cache:
           name: Restore GLIBC Cache
-          key: glibc-2.38-v4
+          key: glibc-2.40-v4
       - run: |
           if [ -d "/home/circleci/glibc" ]; then
-            echo "GLIBC 2.38 already cached."
+            echo "GLIBC 2.40 already cached."
           else
-            echo "Building GLIBC 2.38 from source."
+            echo "Building GLIBC 2.40 from source."
             sudo apt-get -y install bison
             cd ~
-            git clone --branch release/2.38/master --depth 1 https://sourceware.org/git/glibc.git
+            git clone --branch release/2.40/master --depth 1 https://sourceware.org/git/glibc.git
             cd glibc
             mkdir build
             cd build
@@ -62,12 +62,13 @@ jobs:
           fi
       - save_cache:
           name: Save GLIBC Cache
-          key: glibc-2.38-v4
+          key: glibc-2.40-v4
           paths:
             - ../glibc
 
       - run: |
-          LD_PRELOAD=/home/circleci/glibc/build/install/lib/libc.so.6 LD_DEBUG=versions make
+          export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/circleci/glibc/build/install/lib/
+          LD_DEBUG=versions make
 
       - run: |
           mkdir -p ~/bin_tmp
