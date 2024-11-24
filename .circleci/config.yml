@@ -21,7 +21,6 @@ jobs:
           name: Restore Qt Cache
           key: Qt-6.8.0-v3
       - run: |
-          source "$BASH_ENV"
           if [ -d "~/Qt" ]; then
             echo "Qt 6.8.0 already installed."
           else
@@ -47,7 +46,6 @@ jobs:
           name: Restore GLIBC Cache
           key: glibc-2.40-v3
       - run: |
-          source "$BASH_ENV"
           if [ -d "~/glibc" ]; then
             echo "GLIBC 2.40 already cached."
           else
@@ -68,7 +66,6 @@ jobs:
             - ../glibc
 
       - run: |
-          source "$BASH_ENV"
           cd ~/glibc/build
           sudo make install -j `nproc`
 
