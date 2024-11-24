@@ -70,9 +70,10 @@ jobs:
           sudo make install -j `nproc`
 
       - run: |
+          sudo rm /etc/ld.so.cache
           sudo ldconfig
           ldd --version
-          LD_DEBUG=libs make
+          LD_DEBUG=versions make
 
       - run: |
           mkdir -p ~/bin_tmp
