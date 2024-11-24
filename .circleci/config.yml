@@ -17,17 +17,12 @@ jobs:
       image: ubuntu-2204:current
     resource_class: arm.medium
     steps:
-      - run: |
-          cd ~
-          echo 'export QT_DIR="$(pwd)/Qt"' >> "$BASH_ENV"
-          echo 'export GLIBC_DIR="$(pwd)/glibc"' >> "$BASH_ENV"
-          echo 'export GLIBC_INSTALL="$GLIBC_DIR/build/install"' >> "$BASH_ENV"
       - restore_cache:
           name: Restore Qt Cache
-          key: Qt-6.8.0-v2
+          key: Qt-6.8.0-v3
       - run: |
           source "$BASH_ENV"
-          if [ -d "$QT_DIR" ]; then
+          if [ -d "~/Qt" ]; then
             echo "Qt 6.8.0 already installed."
           else
             echo "Downloading Qt 6.8.0."
@@ -37,7 +32,7 @@ jobs:
           fi
       - save_cache:
           name: Save Qt Cache
-          key: Qt-6.8.0-v2
+          key: Qt-6.8.0-v3
           paths:
             - ../Qt
 
@@ -50,10 +45,10 @@ jobs:
 
       - restore_cache:
           name: Restore GLIBC Cache
-          key: glibc-2.40-v2
+          key: glibc-2.40-v3
       - run: |
           source "$BASH_ENV"
-          if [ -d "$GLIBC_DIR" ]; then
+          if [ -d "~/glibc" ]; then
             echo "GLIBC 2.40 already cached."
           else
             echo "Building GLIBC 2.40 from source."
@@ -63,18 +58,18 @@ jobs:
             cd glibc
             mkdir build
             cd build
-            ../configure --prefix "$GLIBC_INSTALL"
+            ../configure --prefix "~/glibc/build/install"
             make -j `nproc`
           fi
       - save_cache:
           name: Save GLIBC Cache
-          key: glibc-2.40-v2
+          key: glibc-2.40-v3
           paths:
             - ../glibc
 
       - run: |
           source "$BASH_ENV"
-          cd $GLIBC_DIR/build
+          cd ~/glibc/build
           sudo make install -j `nproc`
 
       - run: make # _qmlui.pro
