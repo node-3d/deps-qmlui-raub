@@ -44,7 +44,7 @@ jobs:
 
       - restore_cache:
           name: Restore GLIBC Cache
-          key: glibc-2.38-v3
+          key: glibc-2.38-v4
       - run: |
           if [ -d "/home/circleci/glibc" ]; then
             echo "GLIBC 2.38 already cached."
@@ -58,22 +58,17 @@ jobs:
             cd build
             ../configure --prefix "/home/circleci/glibc/build/install"
             make -j `nproc`
+            sudo make install -j `nproc`
           fi
       - save_cache:
           name: Save GLIBC Cache
-          key: glibc-2.38-v3
+          key: glibc-2.38-v4
           paths:
             - ../glibc
 
       - run: |
-          cd ~/glibc/build
-          sudo make install -j `nproc`
-
-      - run: |
-          sudo rm /etc/ld.so.cache
-          sudo ldconfig
-          ldd --version
-          LD_DEBUG=versions make
+          LD_PRELOAD=/home/circleci/glibc/build/install/lib/libc.so.6 ldd --version
+          LD_PRELOAD=/home/circleci/glibc/build/install/lib/libc.so.6 LD_DEBUG=versions make
 
       - run: |
           mkdir -p ~/bin_tmp
