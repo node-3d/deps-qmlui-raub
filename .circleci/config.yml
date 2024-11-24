@@ -19,57 +19,47 @@ jobs:
     steps:
       - run: |
           cd ~
-          QT_NAME="Qt"
-          QT_VER="6.8.0"
-          QT_DIR="$(pwd)/$QT_NAME"
-          GLIBC_NAME="glibc"
-          GLIBC_VER="2.40"
-          GLIBC_DIR="$(pwd)/$GLIBC_NAME"
-          GLIBC_INSTALL="$GLIBC_DIR/build/install"
-          echo QT_NAME $QT_NAME ${QT_NAME} {{ .Environment.QT_NAME }}
-          echo QT_VER $QT_VER ${QT_VER} {{ .Environment.QT_VER }}
-          echo QT_DIR $QT_DIR
-          echo GLIBC_NAME $GLIBC_NAME
-          echo GLIBC_VER $GLIBC_VER
-          echo GLIBC_DIR $GLIBC_DIR
-          echo GLIBC_INSTALL $GLIBC_INSTALL
+          echo 'export QT_DIR="$(pwd)/Qt"' >> "$BASH_ENV"
+          echo 'export GLIBC_DIR="$(pwd)/glibc"' >> "$BASH_ENV"
+          echo 'export GLIBC_INSTALL="$GLIBC_DIR/build/install"' >> "$BASH_ENV"
       - restore_cache:
           name: Restore Qt Cache
-          key: Qt-{{ .Environment.QT_VER }}-v2
+          key: Qt-6.8.0-v2
       - run: |
-          echo QT_VER $QT_VER ${QT_VER} {{ .Environment.QT_VER }}
+          source "$BASH_ENV"
           if [ -d "$QT_DIR" ]; then
-            echo "Qt $QT_VER already installed."
+            echo "Qt 6.8.0 already installed."
           else
-            echo "Downloading Qt $QT_VER."
+            echo "Downloading Qt 6.8.0."
             python -m pip install setuptools aqtinstall
             cd ~
-            python -m aqt install-qt --outputdir $QT_DIR linux_arm64 desktop $QT_VER linux_gcc_arm64
+            python -m aqt install-qt --outputdir ~/Qt linux_arm64 desktop 6.8.0 linux_gcc_arm64
           fi
       - save_cache:
           name: Save Qt Cache
-          key: Qt-{{ .Environment.QT_VER }}-v2
+          key: Qt-6.8.0-v2
           paths:
-            - ../{{ .Environment.QT_NAME }}
+            - ../Qt
 
       - run: ls
       - checkout
       - run: |
           mkdir -p ~/artifacts
           node -p "require('./package').version" > ~/artifacts/pkg-version
-      - run: $QT_DIR/$QT_VER/gcc_arm64/bin/qmake -spec linux-aarch64-gnu-g++ src/qt/_qmlui.pro
+      - run: ~/Qt/6.8.0/gcc_arm64/bin/qmake -spec linux-aarch64-gnu-g++ src/qt/_qmlui.pro
 
       - restore_cache:
           name: Restore GLIBC Cache
-          key: glibc-{{ .Environment.GLIBC_VER }}-v2
+          key: glibc-2.40-v2
       - run: |
+          source "$BASH_ENV"
           if [ -d "$GLIBC_DIR" ]; then
-            echo "GLIBC $GLIBC_VER already cached."
+            echo "GLIBC 2.40 already cached."
           else
-            echo "Building GLIBC $GLIBC_VER from source."
+            echo "Building GLIBC 2.40 from source."
             sudo apt-get -y install bison
             cd ~
-            git clone --branch release/$GLIBC_VER/master --depth 1 https://sourceware.org/git/glibc.git
+            git clone --branch release/2.40/master --depth 1 https://sourceware.org/git/glibc.git
             cd glibc
             mkdir build
             cd build
@@ -78,11 +68,12 @@ jobs:
           fi
       - save_cache:
           name: Save GLIBC Cache
-          key: glibc-{{ .Environment.GLIBC_VER }}-v2
+          key: glibc-2.40-v2
           paths:
-            - ../{{ .Environment.GLIBC_NAME }}
+            - ../glibc
 
       - run: |
+          source "$BASH_ENV"
           cd $GLIBC_DIR/build
           sudo make install -j `nproc`
 
