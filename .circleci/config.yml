@@ -44,15 +44,15 @@ jobs:
 
       - restore_cache:
           name: Restore GLIBC Cache
-          key: glibc-2.40-v3
+          key: glibc-2.38-v3
       - run: |
           if [ -d "~/glibc" ]; then
-            echo "GLIBC 2.40 already cached."
+            echo "GLIBC 2.38 already cached."
           else
-            echo "Building GLIBC 2.40 from source."
+            echo "Building GLIBC 2.38 from source."
             sudo apt-get -y install bison
             cd ~
-            git clone --branch release/2.40/master --depth 1 https://sourceware.org/git/glibc.git
+            git clone --branch release/2.38/master --depth 1 https://sourceware.org/git/glibc.git
             cd glibc
             mkdir build
             cd build
@@ -61,15 +61,16 @@ jobs:
           fi
       - save_cache:
           name: Save GLIBC Cache
-          key: glibc-2.40-v3
+          key: glibc-2.38-v3
           paths:
             - ../glibc
 
       - run: |
           cd ~/glibc/build
           sudo make install -j `nproc`
-
-      - run: make # _qmlui.pro
+          cd ~/project
+          ldd --version
+          make
 
       - run: |
           mkdir -p ~/bin_tmp
