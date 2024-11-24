@@ -67,7 +67,6 @@ jobs:
             - ../glibc
 
       - run: |
-          LD_PRELOAD=/home/circleci/glibc/build/install/lib/libc.so.6 ldd --version
           LD_PRELOAD=/home/circleci/glibc/build/install/lib/libc.so.6 LD_DEBUG=versions make
 
       - run: |
