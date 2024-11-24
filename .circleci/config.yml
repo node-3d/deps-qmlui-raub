@@ -56,7 +56,7 @@ jobs:
             cd glibc
             mkdir build
             cd build
-            ../configure --prefix "~/glibc/build/install"
+            ../configure --prefix "/home/circleci/glibc/build/install"
             make -j `nproc`
           fi
       - save_cache:
