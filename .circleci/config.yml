@@ -21,7 +21,7 @@ jobs:
           name: Restore Qt Cache
           key: Qt-6.8.0-v3
       - run: |
-          if [ -d "~/Qt" ]; then
+          if [ -d "/home/circleci/Qt" ]; then
             echo "Qt 6.8.0 already installed."
           else
             echo "Downloading Qt 6.8.0."
@@ -46,7 +46,7 @@ jobs:
           name: Restore GLIBC Cache
           key: glibc-2.38-v3
       - run: |
-          if [ -d "~/glibc" ]; then
+          if [ -d "/home/circleci/glibc" ]; then
             echo "GLIBC 2.38 already cached."
           else
             echo "Building GLIBC 2.38 from source."
@@ -68,9 +68,11 @@ jobs:
       - run: |
           cd ~/glibc/build
           sudo make install -j `nproc`
-          cd ~/project
+
+      - run: |
+          sudo ldconfig
           ldd --version
-          make
+          LD_DEBUG=libs make
 
       - run: |
           mkdir -p ~/bin_tmp
