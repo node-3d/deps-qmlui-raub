@@ -70,7 +70,7 @@ jobs:
 
       - run: |
           cd ~/glibc/build
-          sudo make install -j `nproc` --disable-sanity-checks
+          sudo make install -j `nproc`
 
       - run: |
           export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/circleci/glibc/build/install/lib/
