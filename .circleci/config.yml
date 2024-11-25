@@ -44,7 +44,7 @@ jobs:
 
       - restore_cache:
           name: Restore GLIBC Cache
-          key: glibc-2.38-v5
+          key: glibc-2.35-v6
       - run: |
           if [ -d "/home/circleci/glibc" ]; then
             echo "GLIBC 2.38 already cached."
@@ -64,7 +64,7 @@ jobs:
           fi
       - save_cache:
           name: Save GLIBC Cache
-          key: glibc-2.38-v5
+          key: glibc-2.35-v6
           paths:
             - ../glibc
 
