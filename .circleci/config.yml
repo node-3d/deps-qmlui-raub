@@ -69,12 +69,13 @@ jobs:
             - ../glibc
 
       - run: |
+          export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/lib"
           cd ~/glibc/build
           sudo make install -j `nproc`
-          ldconfig -n /usr/local/lib/libc.so.6
-          LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH sudo ldconfig
+          sudo ldconfig
 
       - run: |
+          export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/lib"
           LD_DEBUG=versions make
 
       - run: |
