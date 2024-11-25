@@ -75,8 +75,7 @@ jobs:
           sudo ldconfig
 
       - run: |
-          export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/circleci/glibc/build/install/lib/
-          LD_DEBUG=versions make
+          LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH LD_DEBUG=versions make
 
       - run: |
           mkdir -p ~/bin_tmp
