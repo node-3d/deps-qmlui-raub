@@ -71,6 +71,8 @@ jobs:
       - run: |
           cd ~/glibc/build
           sudo make install -j `nproc`
+          ldconfig -n /usr/local/lib/libc.so.6
+          sudo ldconfig
 
       - run: |
           export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/circleci/glibc/build/install/lib/
