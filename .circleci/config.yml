@@ -44,15 +44,15 @@ jobs:
 
       - restore_cache:
           name: Restore GLIBC Cache
-          key: glibc-2.35-v5
+          key: glibc-2.38-v5
       - run: |
           if [ -d "/home/circleci/glibc" ]; then
-            echo "GLIBC 2.35 already cached."
+            echo "GLIBC 2.38 already cached."
           else
-            echo "Building GLIBC 2.35 from source."
+            echo "Building GLIBC 2.38 from source."
             sudo apt-get -y install bison
             cd ~
-            git clone --branch release/2.35/master --depth 1 https://sourceware.org/git/glibc.git
+            git clone --branch release/2.38/master --depth 1 https://sourceware.org/git/glibc.git
             cd glibc
             mkdir build
             cd build
@@ -64,7 +64,7 @@ jobs:
           fi
       - save_cache:
           name: Save GLIBC Cache
-          key: glibc-2.35-v5
+          key: glibc-2.38-v5
           paths:
             - ../glibc
 
