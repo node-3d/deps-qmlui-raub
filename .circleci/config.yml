@@ -72,10 +72,10 @@ jobs:
           cd ~/glibc/build
           sudo make install -j `nproc`
           ldconfig -n /usr/local/lib/libc.so.6
-          sudo ldconfig
+          LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH sudo ldconfig
 
       - run: |
-          LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH LD_DEBUG=versions make
+          LD_DEBUG=versions make
 
       - run: |
           mkdir -p ~/bin_tmp
