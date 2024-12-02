@@ -40,8 +40,9 @@ jobs:
       - run: |
           mkdir -p ~/artifacts
           node -p "require('./package').version" > ~/artifacts/pkg-version
-
-      - run: sudo apt-get install -y libgl1-mesa-dev
+          
+      - run: sudo apt-get update -qq
+      - run: sudo apt-get install -qq libgl-dev xorg-dev libxkbcommon-x11-dev libgl1-mesa-dev
       - run: ~/Qt/6.8.0/gcc_arm64/bin/qmake -spec linux-aarch64-gnu-g++ src/qt/_qmlui.pro
       - run: make
 
