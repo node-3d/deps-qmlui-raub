@@ -36,52 +36,21 @@ jobs:
             - ../Qt
 
       - checkout
+
       - run: |
           mkdir -p ~/artifacts
           node -p "require('./package').version" > ~/artifacts/pkg-version
+
+      - run: sudo apt-get install -y libgl1-mesa-dev
       - run: ~/Qt/6.8.0/gcc_arm64/bin/qmake -spec linux-aarch64-gnu-g++ src/qt/_qmlui.pro
-
-      # - restore_cache:
-      #     name: Restore GLIBC Cache
-      #     key: glibc-2.35-v6
-      # - run: |
-      #     if [ -d "/home/circleci/glibc" ]; then
-      #       echo "GLIBC 2.38 already cached."
-      #     else
-      #       echo "Building GLIBC 2.38 from source."
-      #       sudo apt-get -y install bison
-      #       cd ~
-      #       git clone --branch release/2.38/master --depth 1 https://sourceware.org/git/glibc.git
-      #       cd glibc
-      #       mkdir build
-      #       cd build
-      #       ../configure --disable-sanity-checks
-      #       make -j `nproc`
-      #       # ../configure --prefix "/home/circleci/glibc/build/install"
-      #       # make -j `nproc`
-      #       # sudo make install -j `nproc`
-      #     fi
-      # - save_cache:
-      #     name: Save GLIBC Cache
-      #     key: glibc-2.35-v6
-      #     paths:
-      #       - ../glibc
-
-      # - run: |
-      #     export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/lib"
-      #     cd ~/glibc/build
-      #     sudo make install -j `nproc`
-      #     sudo ldconfig
-
-      - run: |
-          # export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/lib"
-          make
+      - run: make
 
       - run: |
           mkdir -p ~/bin_tmp
           cp src/libqmlui.so ~/bin_tmp
           cd ~/bin_tmp && tar -czf ../aarch64.gz *
           mkdir -p ~/artifacts && mv ~/aarch64.gz ~/artifacts
+
       - persist_to_workspace:
           root: ~/artifacts
           paths:
