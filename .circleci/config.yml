@@ -60,11 +60,11 @@ jobs:
 
   upload-binaries:
     docker:
-      - image: circleci/golang:1.8
+      - image: cimg/go:1.8
     steps:
       - attach_workspace:
           at: /tmp/artifacts
-      - run: go get github.com/tcnksm/ghr
+      - run: go install github.com/tcnksm/ghr@latest
       - run: |
           PKG_VERSION=`cat /tmp/artifacts/pkg-version`
           ghr -u "node-3d" -r "${CIRCLE_PROJECT_REPONAME}" -c "${CIRCLE_SHA1}" -n "Release ${PKG_VERSION}" -replace ${PKG_VERSION} /tmp/artifacts/aarch64.gz
