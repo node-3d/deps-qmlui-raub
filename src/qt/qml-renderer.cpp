@@ -1,5 +1,6 @@
 #include <QOffscreenSurface>
 #include <QOpenGLContext>
+#include <QGuiApplication>
 
 #include "qml-renderer.hpp"
 
@@ -27,7 +28,7 @@ QmlRenderer::QmlRenderer(
 		reinterpret_cast<HWND>(windowHandle)
 	);
 #elif defined __linux__
-	if (QGuiApplication::platformName() === "wayland") {
+	if (QGuiApplication::platformName() == "wayland") {
 		QOpenGLContext* extContext = QNativeInterface::QEGLContext::fromNative(
 			reinterpret_cast<EGLContext>(windowContext),
 			reinterpret_cast<EGLDisplay>(windowHandle)
