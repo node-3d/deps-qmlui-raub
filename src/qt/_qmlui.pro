@@ -33,7 +33,6 @@ SOURCES += \
 
 HEADERS += \
 	qml-renderer.hpp \
-	platform.hpp \
 	qml-cb.hpp \
 	qml-view.hpp \
 	../../include/qml-ui.hpp

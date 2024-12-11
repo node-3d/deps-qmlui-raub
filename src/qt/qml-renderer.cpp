@@ -1,8 +1,18 @@
 #include <QOffscreenSurface>
-// #include <QDebug>
+#include <QOpenGLContext>
 
 #include "qml-renderer.hpp"
-#include "platform.hpp"
+
+#if defined WIN32
+	#include <Windows.h>
+#elif defined __linux__
+	#include <QDataStream>
+	#include <qcoreevent.h>
+	#include <X11/Xlib.h>
+	#include <GL/glx.h>
+#elif defined __APPLE__
+	#import <Cocoa/Cocoa.h>
+#endif
 
 
 QmlRenderer::QmlRenderer(
@@ -11,12 +21,27 @@ QmlRenderer::QmlRenderer(
 	_directoryPath = workingDir;
 	
 	// Native context takes different argument sets per platform
-	QOpenGLContext* extContext = NativeContext::fromNative(
-		reinterpret_cast<CtxHandle>(windowContext)
-		#ifdef WIN32
-		, reinterpret_cast<WndHandle>(windowHandle)
-		#endif
+#if defined WIN32
+	QOpenGLContext* extContext = QNativeInterface::QWGLContext::fromNative(
+		reinterpret_cast<HGLRC>(windowContext),
+		reinterpret_cast<HWND>(windowHandle)
 	);
+#elif defined __linux__
+	if (QGuiApplication::platformName() === "wayland") {
+		QOpenGLContext* extContext = QNativeInterface::QEGLContext::fromNative(
+			reinterpret_cast<EGLContext>(windowContext),
+			reinterpret_cast<EGLDisplay>(windowHandle)
+		);
+	} else {
+		QOpenGLContext* extContext = QNativeInterface::QGLXContext::fromNative(
+			reinterpret_cast<GLXContext>(windowContext)
+		);
+	}
+#elif defined __APPLE__
+	QOpenGLContext* extContext = QNativeInterface::QCocoaGLContext::fromNative(
+		reinterpret_cast<NSOpenGLContext*>(windowContext)
+	);
+#endif
 	
 	QSurfaceFormat format;
 	format.setDepthBufferSize(16);
