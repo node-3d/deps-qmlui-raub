@@ -11,7 +11,7 @@ class QmlRenderer : public QWindow {
 	Q_OBJECT
 	
 public:
-	QmlRenderer(const QString &workingDir, size_t windowHandle, size_t windowContext);
+	QmlRenderer(const QString &workingDir, size_t wnd, size_t ctx, size_t device);
 	~QmlRenderer();
 	
 	QOpenGLContext *context() const { return _openglContext; }

@@ -17,30 +17,30 @@
 
 
 QmlRenderer::QmlRenderer(
-	const QString &workingDir, size_t windowHandle, size_t windowContext
+	const QString &workingDir, size_t wnd, size_t ctx, size_t device
 ) {
 	_directoryPath = workingDir;
 	QOpenGLContext* extContext = nullptr;
 	// Native context takes different argument sets per platform
 #if defined WIN32
 	extContext = QNativeInterface::QWGLContext::fromNative(
-		reinterpret_cast<HGLRC>(windowContext),
-		reinterpret_cast<HWND>(windowHandle)
+		reinterpret_cast<HGLRC>(ctx),
+		reinterpret_cast<HWND>(wnd)
 	);
 #elif defined __linux__
 	if (QGuiApplication::platformName() == "wayland") {
 		extContext = QNativeInterface::QEGLContext::fromNative(
-			reinterpret_cast<EGLContext>(windowContext),
-			reinterpret_cast<EGLDisplay>(windowHandle)
+			reinterpret_cast<EGLContext>(ctx),
+			reinterpret_cast<EGLDisplay>(device)
 		);
 	} else {
 		extContext = QNativeInterface::QGLXContext::fromNative(
-			reinterpret_cast<GLXContext>(windowContext)
+			reinterpret_cast<GLXContext>(ctx)
 		);
 	}
 #elif defined __APPLE__
 	extContext = QNativeInterface::QCocoaGLContext::fromNative(
-		reinterpret_cast<NSOpenGLContext*>(windowContext)
+		reinterpret_cast<NSOpenGLContext*>(ctx)
 	);
 #endif
 	

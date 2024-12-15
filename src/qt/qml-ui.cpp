@@ -21,7 +21,7 @@ void QmlUi::init(const char *cwdOwn, size_t wnd, size_t ctx, QmlUi::Cb cb) {
 	QmlUi::init2(cwdOwn, wnd, ctx, 0, cb);
 }
 
-void QmlUi::init2(const char *cwdOwn, size_t wnd, size_t ctx, size_t _device, QmlUi::Cb cb) {
+void QmlUi::init2(const char *cwdOwn, size_t wnd, size_t ctx, size_t device, QmlUi::Cb cb) {
 	if (renderer) {
 		return;
 	}
@@ -34,7 +34,7 @@ void QmlUi::init2(const char *cwdOwn, size_t wnd, size_t ctx, size_t _device, Qm
 	QGuiApplication::setAttribute(Qt::AA_DontCheckOpenGLContextThreadAffinity);
 	app = new QGuiApplication(argc, &argv);
 	
-	renderer = new QmlRenderer(QString(cwdOwn), wnd, ctx);
+	renderer = new QmlRenderer(QString(cwdOwn), wnd, ctx, device);
 }
 
 
