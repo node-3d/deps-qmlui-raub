@@ -649,7 +649,7 @@ void QmlView::mouse(int type, int button, int buttons, int x, int y) {
 		QCoreApplication::sendEvent(_offscreenWindow, &event);
 	} else if (type == 3) {
 		QWheelEvent event = QWheelEvent(
-			mousePoint, mousePoint, QPoint(0, 0), QPoint(0, 0),
+			mousePoint, mousePoint, QPoint(0, button), QPoint(0, button),
 			qbuttons, modifiers, Qt::ScrollPhase::ScrollEnd, false
 		);
 		QCoreApplication::sendEvent(_offscreenWindow, &event);
