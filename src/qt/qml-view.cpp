@@ -630,7 +630,7 @@ void QmlView::mouse(int type, int button, int buttons, int x, int y) {
 	
 	if (type == 0) {
 		QMouseEvent event = QMouseEvent(
-			QEvent::MouseMove, mousePoint, mousePoint, qbutton, qbuttons, modifiers
+			QEvent::MouseMove, mousePoint, mousePoint, Qt::NoButton, qbuttons, modifiers
 		);
 		QCoreApplication::sendEvent(_offscreenWindow, &event);
 	} else if (type == 1) {
