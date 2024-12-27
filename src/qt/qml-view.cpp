@@ -612,7 +612,7 @@ std::string QmlView::invoke(
 void QmlView::mouse(int type, int button, int buttons, int x, int y) {
 	QPointF mousePoint(x, y);
 	
-	Qt::MouseButton qbutton = static_cast<Qt::MouseButton>(0);
+	Qt::MouseButton qbutton = static_cast<Qt::MouseButton>(Qt::NoButton);
 	
 	if (type != 3) {
 		// Fix button
@@ -650,7 +650,7 @@ void QmlView::mouse(int type, int button, int buttons, int x, int y) {
 	} else if (type == 3) {
 		QWheelEvent event = QWheelEvent(
 			mousePoint, mousePoint, QPoint(0, button), QPoint(0, button),
-			qbuttons, modifiers, Qt::ScrollPhase::ScrollEnd, false
+			Qt::NoButton, modifiers, Qt::ScrollPhase::NoScrollPhase, false
 		);
 		QCoreApplication::sendEvent(_offscreenWindow, &event);
 	}
