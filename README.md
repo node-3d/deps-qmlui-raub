@@ -13,7 +13,7 @@ npm i -s deps-qmlui-raub
 ```
 
 **OpenGL QML offscreen** renderer with **non-Qt C++ API**.
-Uses [QQuickRenderControl](https://doc.qt.io/qt-6/qquickrendercontrol.html) to render QML
+Uses [QQuickRenderControl](https://doc.qt.io/qt-6/qquickrendercontrol.html) (**Qt 6.8.0**) to render QML
 scenes to textures. The QML renderer has a separate OpenGL context, so
 [resource sharing](https://www.glfw.org/docs/3.4/context_guide.html#context_sharing) is used.
 

@@ -19,6 +19,7 @@ static QmlRenderer *renderer = nullptr;
 
 void QmlUi::init(const char *cwdOwn, size_t wnd, size_t ctx, QmlUi::Cb cb) {
 	QmlUi::init2(cwdOwn, wnd, ctx, 0, cb);
+	QQuickStyle::setStyle("Basic");
 }
 
 void QmlUi::init2(const char *cwdOwn, size_t wnd, size_t ctx, size_t device, QmlUi::Cb cb) {

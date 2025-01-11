@@ -1,4 +1,4 @@
-declare module "deps-qt-gui-raub" {
+declare module "deps-qmlui-raub" {
 	/**
 	 * Exports of `deps-qt-core-raub`
 	*/
